@@ -23,6 +23,8 @@ import { DripSnowball }          from './components/calculators/DripSnowball';
 import { SilverAvgPrice }        from './components/calculators/SilverAvgPrice';
 import { MovingCost }            from './components/calculators/MovingCost';
 import { BrokerFee }             from './components/calculators/BrokerFee';
+import DidimdolLoan               from './components/calculators/DidimdolLoan';
+import BeotimokJeonse             from './components/calculators/BeotimokJeonse';
 import { SubscriptionLeak }      from './components/calculators/SubscriptionLeak';
 import { CoffeeRetirement }      from './components/calculators/CoffeeRetirement';
 import { AiVsCloud }             from './components/calculators/AiVsCloud';
@@ -88,8 +90,10 @@ const CATEGORIES: Category[] = [
     icon:<Truck size={24}/>, color:'#ec4899', bg:'#fdf2f8',
     desc:'이사 비용부터 중개 수수료까지 한 번에 파악',
     calculators:[
-      { id:'moving', emoji:'📦', name:'포장이사 견적 예측기',    desc:'거리·물량 기준 이사 비용 예상액 산출',  component:<MovingCost/>, isNew:true },
-      { id:'broker', emoji:'🔑', name:'중개 수수료 · 등기 비용', desc:'매매·전세 중개보수와 취득세 합산 계산', component:<BrokerFee/>, isNew:true },
+      { id:'moving',    emoji:'📦', name:'포장이사 견적 예측기',       desc:'거리·물량 기준 이사 비용 예상액 산출',        component:<MovingCost/>, isNew:true },
+      { id:'broker',    emoji:'🔑', name:'중개 수수료 · 등기 비용',    desc:'매매·전세 중개보수와 취득세 합산 계산',       component:<BrokerFee/>, isNew:true },
+      { id:'didimdol',  emoji:'🏡', name:'디딤돌 대출 계산기',         desc:'주택도시기금 디딤돌·신생아특례 대출 한도·월 상환액 계산', component:<DidimdolLoan/>, isNew:true },
+      { id:'beotimok',  emoji:'🔐', name:'버팀목 전세자금 대출',       desc:'버팀목·신생아특례 전세자금 한도·이자 계산',   component:<BeotimokJeonse/>, isNew:true },
     ],
   },
   {
@@ -658,11 +662,9 @@ export default function App() {
                 <p style={{ fontSize:13, fontWeight:800, color:titleColor, marginBottom:18 }}>📬 정보</p>
                 <ul style={{ listStyle:'none', display:'flex', flexDirection:'column', gap:12 }}>
                   {([
-                    { icon:<Info size={13}/>,      label:'서비스 소개',      act:()=>setModal('about') },
-                    { icon:<Shield size={13}/>,    label:'개인정보처리방침', act:()=>setModal('privacy') },
-                    { icon:<FileText size={13}/>,  label:'이용약관',         act:()=>setModal('terms') },
-                    { icon:<Mail size={13}/>,      label:'문의하기',         href:'mailto:mirririnside1024@gmail.com' },
-                    { icon:<Briefcase size={13}/>, label:'광고 문의',        href:'mailto:mirririnside1024@gmail.com' },
+                    { icon:<Info size={13}/>,     label:'서비스 소개',      act:()=>setModal('about')   },
+                    { icon:<Shield size={13}/>,   label:'개인정보처리방침', act:()=>setModal('privacy') },
+                    { icon:<FileText size={13}/>, label:'이용약관',         act:()=>setModal('terms')   },
                   ] as const).map((item) => (
                     <li key={item.label}>
                       <button onClick={item.act}
