@@ -3,8 +3,8 @@ import {
   Rocket, Building2, Monitor, Coins, Truck, Wallet,
   Calculator, Moon, Sun, ChevronLeft, ChevronRight,
   ArrowRight, Briefcase, X, Mail, Shield, Info,
-  TrendingUp, Users, Zap, BookOpen, Clock, Tag,
-  FileText, Sparkles, Lock,
+  Clock, Tag,
+  FileText, Sparkles,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -32,75 +32,74 @@ import { TermsOfService }        from './components/pages/TermsOfService';
 import { ARTICLES, type Article } from './data/articles';
 
 type CalcDef = {
-  id: string; name: string; desc: string;
+  id: string; name: string; desc: string; emoji: string;
   component?: React.ReactNode; status?: '준비중'; isNew?: boolean;
 };
 type Category = {
-  id: string; name: string; icon: React.ReactNode;
+  id: string; name: string; emoji: string; icon: React.ReactNode;
   color: string; bg: string; desc: string; calculators: CalcDef[];
 };
-type C = { title:string; body:string; muted:string; border:string; surface:string };
 
 const CATEGORIES: Category[] = [
   {
-    id:'viral', name:'재무 시뮬레이터',
+    id:'viral', name:'재무 시뮬레이터', emoji:'🚀',
     icon:<Rocket size={24}/>, color:'#6366f1', bg:'#eef2ff',
-    desc:'대출부터 FIRE까지, 재무 미래를 시뮬레이션합니다',
+    desc:'대출부터 FIRE까지, 재무 미래를 숫자로 시뮬레이션합니다',
     calculators:[
-      { id:'loan',  name:'대출 이자 · 대환 시뮬레이터',  desc:'현재 대출과 새 대출의 이자 차이를 한눈에 비교',   component:<LoanRefinancing/> },
-      { id:'fire',  name:'FIRE(조기은퇴) 시뮬레이터',    desc:'목표 자산과 생존 자금을 역산해 은퇴 시점을 계산', component:<FireSimulator/> },
-      { id:'njob',  name:'N잡 · 프리랜서 실소득 계산기', desc:'세금·4대보험 공제 후 실수령액을 정확히 계산',     component:<NJobCalculator/> },
-      { id:'lotto', name:'로또 vs S&P500 기회비용',       desc:'로또 구입비를 투자했다면 얼마가 됐을지 비교',    component:<LottoOpportunity/> },
-      { id:'remit', name:'해외송금 환율 최적화',          desc:'수수료·환율 포함 실제 수령액 비교',              component:<RemittanceOptimizer/> },
+      { id:'loan',  emoji:'🏦', name:'대출 이자 · 대환 시뮬레이터',  desc:'현재 대출과 새 대출의 이자 차이를 한눈에 비교',   component:<LoanRefinancing/> },
+      { id:'fire',  emoji:'🔥', name:'FIRE(조기은퇴) 시뮬레이터',    desc:'목표 자산과 생존 자금을 역산해 은퇴 시점을 계산', component:<FireSimulator/> },
+      { id:'njob',  emoji:'💼', name:'N잡 · 프리랜서 실소득 계산기', desc:'세금·4대보험 공제 후 실수령액을 정확히 계산',     component:<NJobCalculator/> },
+      { id:'lotto', emoji:'🎰', name:'로또 vs S&P500 기회비용',       desc:'로또 구입비를 투자했다면 얼마가 됐을지 비교',    component:<LottoOpportunity/> },
+      { id:'remit', emoji:'✈️', name:'해외송금 환율 최적화',          desc:'수수료·환율 포함 실제 수령액 비교',              component:<RemittanceOptimizer/> },
     ],
   },
   {
-    id:'hr', name:'인사 · 노무',
+    id:'hr', name:'인사 · 노무', emoji:'🏢',
     icon:<Building2 size={24}/>, color:'#10b981', bg:'#ecfdf5',
     desc:'퇴직금, 연차 등 근로자가 꼭 알아야 할 계산기',
     calculators:[
-      { id:'severance', name:'퇴직금 정밀 계산기',   desc:'평균임금 기준 법정 퇴직금을 정확하게 계산',  component:<SeveranceCalculator/> },
-      { id:'annual',    name:'연차 계산기',           desc:'입사일 기준 연차 발생일수 및 잔여일수 계산', component:<AnnualLeave/>, isNew:true },
-      { id:'insurance', name:'4대보험 사업자 부담금', desc:'회사 부담 4대보험료를 직종·급여별로 산출',  component:<InsuranceContribution/>, isNew:true },
+      { id:'severance', emoji:'📋', name:'퇴직금 정밀 계산기',   desc:'평균임금 기준 법정 퇴직금을 정확하게 계산',  component:<SeveranceCalculator/> },
+      { id:'annual',    emoji:'🗓️', name:'연차 계산기',           desc:'입사일 기준 연차 발생일수 및 잔여일수 계산', component:<AnnualLeave/>, isNew:true },
+      { id:'insurance', emoji:'🛡️', name:'4대보험 사업자 부담금', desc:'회사 부담 4대보험료를 직종·급여별로 산출',  component:<InsuranceContribution/>, isNew:true },
     ],
   },
   {
-    id:'tech', name:'IT 인프라',
+    id:'tech', name:'IT 인프라', emoji:'💻',
     icon:<Monitor size={24}/>, color:'#3b82f6', bg:'#eff6ff',
     desc:'개발자와 IT 매니아를 위한 비용 분석 도구',
     calculators:[
-      { id:'nas',   name:'NAS 24시간 전기요금 계산기',   desc:'누진세 포함 월 전기요금과 손익분기점 계산', component:<NasElectricity/> },
-      { id:'ai',    name:'Local AI vs Cloud API 가성비', desc:'GPU 구매 vs 클라우드 API 비용 비교',       component:<AiVsCloud/>, isNew:true },
-      { id:'cloud', name:'클라우드 vs 물리 서버 손익',   desc:'총 소유비용(TCO) 기준 최적 선택 안내',     component:<ServerTco/>, isNew:true },
+      { id:'nas',   emoji:'🖥️', name:'NAS 24시간 전기요금 계산기',   desc:'누진세 포함 월 전기요금과 손익분기점 계산', component:<NasElectricity/> },
+      { id:'ai',    emoji:'🤖', name:'Local AI vs Cloud API 가성비', desc:'GPU 구매 vs 클라우드 API 비용 비교',       component:<AiVsCloud/>, isNew:true },
+      { id:'cloud', emoji:'☁️', name:'클라우드 vs 물리 서버 손익',   desc:'총 소유비용(TCO) 기준 최적 선택 안내',     component:<ServerTco/>, isNew:true },
     ],
   },
   {
-    id:'invest', name:'투자 · 자산',
+    id:'invest', name:'투자 · 자산', emoji:'💰',
     icon:<Coins size={24}/>, color:'#f59e0b', bg:'#fffbeb',
     desc:'파킹통장부터 배당 스노우볼까지, 자산을 굴리는 법',
     calculators:[
-      { id:'parking', name:'파킹통장 일복리 쪼개기',        desc:'은행별 금리 비교와 복리 수익을 시각화',       component:<ParkingAccount/> },
-      { id:'silver',  name:'은(Silver) 현물 평단가 계산기', desc:'분할 매수 시 평균 단가와 손익을 계산',        component:<SilverAvgPrice/>, isNew:true },
-      { id:'drip',    name:'배당주 재투자 스노우볼',        desc:'배당금 재투자로 쌓이는 복리 효과 시뮬레이션', component:<DripSnowball/>, isNew:true },
+      { id:'parking', emoji:'🅿️', name:'파킹통장 일복리 쪼개기',        desc:'은행별 금리 비교와 복리 수익을 시각화',       component:<ParkingAccount/> },
+      { id:'silver',  emoji:'🥈', name:'은(Silver) 현물 평단가 계산기', desc:'분할 매수 시 평균 단가와 손익을 계산',        component:<SilverAvgPrice/>, isNew:true },
+      { id:'drip',    emoji:'📈', name:'배당주 재투자 스노우볼',        desc:'배당금 재투자로 쌓이는 복리 효과 시뮬레이션', component:<DripSnowball/>, isNew:true },
     ],
   },
   {
-    id:'estate', name:'부동산 · 이사',
+    id:'estate', name:'부동산 · 이사', emoji:'🏠',
     icon:<Truck size={24}/>, color:'#ec4899', bg:'#fdf2f8',
     desc:'이사 비용부터 중개 수수료까지 한 번에 파악',
     calculators:[
-      { id:'moving', name:'포장이사 견적 예측기',    desc:'거리·물량 기준 이사 비용 예상액 산출',  component:<MovingCost/>, isNew:true },
-      { id:'broker', name:'중개 수수료 · 등기 비용', desc:'매매·전세 중개보수와 취득세 합산 계산', component:<BrokerFee/>, isNew:true },
+      { id:'moving', emoji:'📦', name:'포장이사 견적 예측기',    desc:'거리·물량 기준 이사 비용 예상액 산출',  component:<MovingCost/>, isNew:true },
+      { id:'broker', emoji:'🔑', name:'중개 수수료 · 등기 비용', desc:'매매·전세 중개보수와 취득세 합산 계산', component:<BrokerFee/>, isNew:true },
     ],
   },
   {
-    id:'daily', name:'지출 통제',
+    id:'daily', name:'지출 통제', emoji:'💳',
     icon:<Wallet size={24}/>, color:'#ef4444', bg:'#fef2f2',
     desc:'무의식 지출을 숫자로 때려잡는 계산기',
     calculators:[
-      { id:'carpoor', name:'자동차 할부 vs 카푸어 타이머', desc:'차 할부가 자산에 미치는 실질적 충격 계산',  component:<CarPoorTimer/> },
-      { id:'sub',     name:'구독료 누수 탐지기',           desc:'월별 구독 지출이 연간·10년에 얼마인지 계산', component:<SubscriptionLeak/>, isNew:true },
-      { id:'coffee',  name:'커피값 노후 연금 환산기',      desc:'매일 커피값을 투자했다면 노후에 얼마가 될까', component:<CoffeeRetirement/>, isNew:true },
+      { id:'carpoor', emoji:'🚗', name:'자동차 할부 vs 카푸어 타이머', desc:'차 할부가 자산에 미치는 실질적 충격 계산',  component:<CarPoorTimer/> },
+      { id:'sub',     emoji:'📱', name:'구독료 누수 탐지기',           desc:'월별 구독 지출이 연간·10년에 얼마인지 계산', component:<SubscriptionLeak/>, isNew:true },
+      { id:'coffee',  emoji:'☕', name:'커피값 노후 연금 환산기',      desc:'매일 커피값을 투자했다면 노후에 얼마가 될까', component:<CoffeeRetirement/>, isNew:true },
     ],
   },
 ];
@@ -109,12 +108,23 @@ const FEATURED = ['loan','annual','fire','severance','drip','broker','sub','insu
 function getFeatured() {
   return CATEGORIES.flatMap((c) =>
     c.calculators.filter((cc) => FEATURED.includes(cc.id) && !cc.status)
-      .map((cc) => ({ ...cc, catName:c.name, catColor:c.color, catBg:c.bg }))
+      .map((cc) => ({ ...cc, catName:c.name, catEmoji:c.emoji, catColor:c.color, catBg:c.bg }))
   );
 }
 
 function W({ children, className='' }: { children:React.ReactNode; className?:string }) {
   return <div className={`w ${className}`}>{children}</div>;
+}
+
+/* Cute pill badge */
+function Pill({ children, color, bg }: { children:React.ReactNode; color:string; bg:string }) {
+  return (
+    <span style={{
+      display:'inline-flex', alignItems:'center', gap:4,
+      padding:'4px 12px', borderRadius:99, fontSize:12, fontWeight:700,
+      background:bg, color:color,
+    }}>{children}</span>
+  );
 }
 
 export default function App() {
@@ -128,51 +138,56 @@ export default function App() {
   const selectedCalc     = selectedCategory?.calculators.find((c) => c.id === activeCalcId);
   const reset = () => { setActiveCategory(null); setActiveCalcId(null); };
 
-  const titleColor  = isDark ? '#f5f5f7'              : '#1d1d1f';
-  const bodyColor   = isDark ? 'rgba(235,235,245,0.8)' : '#3a3a3c';
-  const mutedColor  = isDark ? '#8e8e93'              : '#6e6e73';
-  const borderColor = isDark ? 'rgba(255,255,255,0.1)': 'rgba(0,0,0,0.08)';
-  const surfaceBg   = isDark ? '#1c1c1e'              : '#ffffff';
+  const titleColor  = isDark ? '#f5f5f7'               : '#1d1d1f';
+  const bodyColor   = isDark ? 'rgba(235,235,245,0.85)' : '#3a3a3c';
+  const mutedColor  = isDark ? '#8e8e93'               : '#6e6e73';
+  const borderColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.07)';
+  const surfaceBg   = isDark ? '#1c1c1e'               : '#ffffff';
+  const pageBg      = isDark ? '#000'                  : '#f2f2f7';
+  const altBg       = isDark ? '#0a0a0a'               : '#ffffff';
 
   return (
     <div className={isDark ? 'dark' : ''}>
-      <div style={{ minHeight:'100vh', background: isDark ? '#000' : '#f2f2f7' }}>
+      <div style={{ minHeight:'100vh', background:pageBg }}>
 
-        {/* Nav */}
+        {/* ── Nav ────────────────────────────────────────────── */}
         <header className="sticky top-0 z-50 nav" role="banner">
-          <div className="w" style={{ display:'flex', alignItems:'center', justifyContent:'space-between', height:60 }}>
+          <div className="w" style={{ display:'flex', alignItems:'center', justifyContent:'space-between', height:64 }}>
             <button onClick={reset} style={{ display:'flex', alignItems:'center', gap:10, flexShrink:0 }} aria-label="홈">
               <div style={{
-                width:36, height:36, borderRadius:12,
+                width:38, height:38, borderRadius:12,
                 background:'linear-gradient(135deg,#6366f1,#8b5cf6)',
                 display:'flex', alignItems:'center', justifyContent:'center',
+                boxShadow:'0 0 16px rgba(139,92,246,0.4)',
               }}>
-                <Calculator size={18} color="#fff" />
+                <Calculator size={18} color="#fff"/>
               </div>
-              <span className="text-gradient" style={{ fontWeight:800, fontSize:18, letterSpacing:'-0.03em' }}>
-                별의별 계산기
-              </span>
+              <div style={{ display:'flex', flexDirection:'column', lineHeight:1.1 }}>
+                <span className="text-gradient" style={{ fontWeight:800, fontSize:17, letterSpacing:'-0.03em' }}>별의별 계산기</span>
+                <span style={{ fontSize:10, color:'rgba(255,255,255,0.4)', fontWeight:500 }}>무료 · 즉시 · 개인정보 0</span>
+              </div>
             </button>
 
-            <nav style={{ display:'flex', alignItems:'center', gap:4 }} aria-label="카테고리" className="hidden lg:flex">
+            <nav style={{ display:'flex', alignItems:'center', gap:2 }} aria-label="카테고리" className="hidden lg:flex">
               {CATEGORIES.map((cat) => (
                 <button key={cat.id}
                   onClick={() => { setActiveCategory(cat.id); setActiveCalcId(null); }}
                   style={{
-                    padding:'6px 14px', borderRadius:10, fontSize:13, fontWeight:600,
-                    color:'rgba(255,255,255,0.65)', transition:'color 0.15s, background 0.15s',
+                    padding:'7px 13px', borderRadius:10, fontSize:13, fontWeight:600,
+                    color:'rgba(255,255,255,0.6)', transition:'all 0.15s', display:'flex', alignItems:'center', gap:5,
                   }}
-                  onMouseEnter={(e) => { e.currentTarget.style.color='#fff'; e.currentTarget.style.background='rgba(255,255,255,0.08)'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.color='rgba(255,255,255,0.65)'; e.currentTarget.style.background='transparent'; }}>
-                  {cat.name}
+                  onMouseEnter={(e) => { e.currentTarget.style.color='#fff'; e.currentTarget.style.background='rgba(255,255,255,0.09)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.color='rgba(255,255,255,0.6)'; e.currentTarget.style.background='transparent'; }}>
+                  <span>{cat.emoji}</span> {cat.name}
                 </button>
               ))}
             </nav>
 
             <button onClick={() => setIsDark(!isDark)} aria-label={isDark?'라이트모드':'다크모드'}
               style={{
-                width:38, height:38, borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center',
-                background:'rgba(255,255,255,0.1)', color:'rgba(255,255,255,0.7)', border:'1px solid rgba(255,255,255,0.12)',
+                width:40, height:40, borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center',
+                background:'rgba(255,255,255,0.1)', color:'rgba(255,255,255,0.75)',
+                border:'1px solid rgba(255,255,255,0.12)',
               }}>
               {isDark ? <Sun size={17}/> : <Moon size={17}/>}
             </button>
@@ -181,46 +196,51 @@ export default function App() {
 
         <AnimatePresence mode="wait">
 
-          {/* Home */}
+          {/* ── Home ──────────────────────────────────────────── */}
           {!activeCategory && (
             <motion.div key="home" initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }} transition={{ duration:0.2 }}>
 
               {/* Hero */}
-              <section className="hero" style={{ paddingTop:80, paddingBottom:96 }}>
+              <section className="hero" style={{ paddingTop:96, paddingBottom:104 }}>
                 <W>
                   <div style={{ textAlign:'center' }}>
                     <motion.div initial={{ opacity:0, y:10 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.05 }}
-                      style={{ marginBottom:28 }}>
+                      style={{ marginBottom:32 }}>
                       <span className="hero-badge">
-                        <Sparkles size={13}/> 완전 무료 · 개인정보 미수집 · 즉시 계산
+                        <Sparkles size={13}/> 완전 무료 &nbsp;·&nbsp; 개인정보 미수집 &nbsp;·&nbsp; 즉시 계산
                       </span>
                     </motion.div>
 
-                    <motion.h1 initial={{ opacity:0, y:16 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.09 }}
-                      style={{ fontSize:'clamp(40px,7vw,72px)', fontWeight:800, lineHeight:1.08,
-                               letterSpacing:'-0.035em', color:'#ffffff', marginBottom:20 }}>
-                      복잡한 계산,<br/><span className="text-gradient">숫자로 바로 해결</span>
+                    <motion.h1 initial={{ opacity:0, y:18 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.09 }}
+                      style={{
+                        fontSize:'clamp(38px,6.5vw,70px)', fontWeight:800, lineHeight:1.1,
+                        letterSpacing:'-0.035em', color:'#ffffff', marginBottom:24,
+                      }}>
+                      복잡한 계산,<br/>
+                      <span className="text-gradient">숫자로 바로 해결 ✨</span>
                     </motion.h1>
 
                     <motion.p initial={{ opacity:0, y:10 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.13 }}
-                      style={{ fontSize:18, color:'rgba(255,255,255,0.6)', lineHeight:1.75,
-                               maxWidth:380, margin:'0 auto 56px' }}>
-                      대출·퇴직금·연차·FIRE까지.<br/>인터넷 검색 없이 즉시 결과를 확인하세요.
+                      style={{
+                        fontSize:18, color:'rgba(255,255,255,0.58)', lineHeight:1.85,
+                        maxWidth:420, margin:'0 auto 64px',
+                      }}>
+                      대출·퇴직금·연차·FIRE까지.<br/>
+                      인터넷 검색 없이 즉시 결과를 확인하세요.
                     </motion.p>
 
                     <motion.div initial={{ opacity:0, y:10 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.17 }}
-                      style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:12,
-                               maxWidth:560, margin:'0 auto' }}>
+                      style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:14, maxWidth:580, margin:'0 auto' }}>
                       {([
-                        { icon:<Calculator size={22}/>, value:'18+',  label:'계산기', color:'#a78bfa' },
-                        { icon:<Zap size={22}/>,        value:'즉시', label:'실시간 계산', color:'#34d399' },
-                        { icon:<Lock size={22}/>,       value:'0건',  label:'정보 미수집', color:'#fbbf24' },
-                        { icon:<TrendingUp size={22}/>, value:'무료', label:'완전 무료', color:'#f472b6' },
+                        { emoji:'🧮', value:'18+',  label:'계산기 운영 중', color:'#a78bfa' },
+                        { emoji:'⚡', value:'즉시', label:'실시간 계산',    color:'#34d399' },
+                        { emoji:'🔒', value:'0건',  label:'정보 미수집',   color:'#fbbf24' },
+                        { emoji:'🎁', value:'무료', label:'완전 무료',      color:'#f472b6' },
                       ] as const).map((s) => (
                         <div key={s.label} className="stat">
-                          <div style={{ color:s.color, marginBottom:8, display:'flex', justifyContent:'center' }}>{s.icon}</div>
+                          <div style={{ fontSize:28, marginBottom:10 }}>{s.emoji}</div>
                           <div className="num" style={{ fontSize:26, fontWeight:800, color:s.color, lineHeight:1 }}>{s.value}</div>
-                          <div style={{ fontSize:12, color:'rgba(255,255,255,0.5)', marginTop:5, fontWeight:500 }}>{s.label}</div>
+                          <div style={{ fontSize:12, color:'rgba(255,255,255,0.45)', marginTop:7, fontWeight:500, lineHeight:1.4 }}>{s.label}</div>
                         </div>
                       ))}
                     </motion.div>
@@ -229,34 +249,33 @@ export default function App() {
               </section>
 
               {/* Featured calculators */}
-              <section style={{ background: isDark ? '#0a0a0a' : '#fff', padding:'72px 0' }}>
+              <section style={{ background:altBg, padding:'88px 0' }}>
                 <W>
-                  <SectionTitle
-                    emoji="⭐" title="인기 계산기"
-                    sub="가장 많이 찾는 계산기를 바로 사용해보세요"
-                    titleColor={titleColor} mutedColor={mutedColor}/>
-                  <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))', gap:16 }}>
+                  <SectionTitle emoji="⭐" title="인기 계산기" sub="가장 많이 찾는 계산기를 바로 사용해보세요" titleColor={titleColor} mutedColor={mutedColor}/>
+                  <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(290px,1fr))', gap:20 }}>
                     {getFeatured().map((calc, idx) => (
                       <motion.button key={calc.id}
-                        initial={{ opacity:0, y:16 }} animate={{ opacity:1, y:0 }} transition={{ delay:idx*0.05 }}
+                        initial={{ opacity:0, y:18 }} animate={{ opacity:1, y:0 }} transition={{ delay:idx*0.05 }}
                         onClick={() => {
                           const cat = CATEGORIES.find((cc) => cc.calculators.some((c) => c.id===calc.id));
                           if (cat) { setActiveCategory(cat.id); setActiveCalcId(calc.id); }
                         }}
                         className="card"
-                        style={{ padding:24, textAlign:'left', width:'100%', display:'flex', flexDirection:'column' }}>
-                        <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:14 }}>
-                          <span style={{
-                            fontSize:11, fontWeight:700, padding:'3px 10px', borderRadius:99,
-                            background:calc.catBg, color:calc.catColor,
-                          }}>{calc.catName}</span>
-                          {calc.isNew && <span className="pill-new">NEW</span>}
+                        style={{ padding:28, textAlign:'left', width:'100%', display:'flex', flexDirection:'column', gap:0 }}>
+                        {/* Top row */}
+                        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:18 }}>
+                          <Pill color={calc.catColor} bg={calc.catBg}>
+                            {calc.catEmoji} {calc.catName}
+                          </Pill>
+                          {calc.isNew && <span className="pill-new">NEW ✦</span>}
                         </div>
-                        <h3 style={{ fontWeight:700, fontSize:15, color:titleColor, lineHeight:1.45,
-                                     marginBottom:8, flex:1 }}>{calc.name}</h3>
-                        <p style={{ fontSize:13, color:mutedColor, lineHeight:1.65, marginBottom:16 }}>{calc.desc}</p>
-                        <div style={{ display:'flex', alignItems:'center', gap:5, fontSize:13,
-                                      fontWeight:700, color:calc.catColor }}>
+                        {/* Emoji + title */}
+                        <div style={{ fontSize:36, marginBottom:12, lineHeight:1 }}>{calc.emoji}</div>
+                        <h3 style={{ fontWeight:700, fontSize:16, color:titleColor, lineHeight:1.5, marginBottom:10, flex:1 }}>
+                          {calc.name}
+                        </h3>
+                        <p style={{ fontSize:13, color:mutedColor, lineHeight:1.75, marginBottom:20 }}>{calc.desc}</p>
+                        <div style={{ display:'flex', alignItems:'center', gap:6, fontSize:13, fontWeight:700, color:calc.catColor }}>
                           바로가기 <ArrowRight size={13}/>
                         </div>
                       </motion.button>
@@ -266,59 +285,61 @@ export default function App() {
               </section>
 
               {/* Categories */}
-              <section style={{ background: isDark ? '#111' : '#f2f2f7', padding:'72px 0' }}>
+              <section style={{ background:pageBg, padding:'88px 0' }}>
                 <W>
-                  <SectionTitle
-                    emoji="📂" title="전체 카테고리"
-                    sub="원하는 분야의 계산기를 골라보세요"
-                    titleColor={titleColor} mutedColor={mutedColor}/>
-                  <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))', gap:20 }}>
+                  <SectionTitle emoji="📂" title="전체 카테고리" sub="원하는 분야의 계산기를 골라보세요" titleColor={titleColor} mutedColor={mutedColor}/>
+                  <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(310px,1fr))', gap:22 }}>
                     {CATEGORIES.map((cat, idx) => {
                       const available = cat.calculators.filter((cc) => !cc.status);
                       return (
                         <motion.button key={cat.id}
-                          initial={{ opacity:0, y:18 }} animate={{ opacity:1, y:0 }} transition={{ delay:idx*0.07 }}
+                          initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay:idx*0.07 }}
                           onClick={() => setActiveCategory(cat.id)}
                           className="card"
                           style={{ textAlign:'left', width:'100%', overflow:'hidden', display:'flex', flexDirection:'column' }}>
-
                           {/* Colored header */}
                           <div className="cat-header" style={{ background:cat.bg }}>
-                            <div className="icon-box" style={{
-                              width:46, height:46, background:`${cat.color}18`,
-                              border:`1.5px solid ${cat.color}30`,
+                            <div style={{
+                              width:52, height:52, borderRadius:16, flexShrink:0,
+                              background:`${cat.color}20`, border:`1.5px solid ${cat.color}35`,
+                              display:'flex', alignItems:'center', justifyContent:'center',
+                              fontSize:24,
                             }}>
-                              <span style={{ color:cat.color }}>{cat.icon}</span>
+                              {cat.emoji}
                             </div>
-                            <div>
-                              <p style={{ fontWeight:800, fontSize:16, color:cat.color, marginBottom:2 }}>{cat.name}</p>
-                              <p style={{ fontSize:12, color:`${cat.color}99`, fontWeight:500 }}>
-                                {available.length}개 계산기
+                            <div style={{ flex:1 }}>
+                              <p style={{ fontWeight:800, fontSize:17, color:cat.color, marginBottom:3, letterSpacing:'-0.01em' }}>
+                                {cat.name}
+                              </p>
+                              <p style={{ fontSize:12, color:`${cat.color}aa`, fontWeight:600 }}>
+                                계산기 {available.length}개
                               </p>
                             </div>
                           </div>
-
                           {/* Body */}
-                          <div style={{ padding:'16px 24px 20px', flex:1, display:'flex', flexDirection:'column', gap:12 }}>
-                            <p style={{ fontSize:13, color:bodyColor, lineHeight:1.65 }}>{cat.desc}</p>
-                            <div style={{ display:'flex', flexWrap:'wrap', gap:6 }}>
+                          <div style={{ padding:'20px 28px 26px', flex:1, display:'flex', flexDirection:'column', gap:16 }}>
+                            <p style={{ fontSize:14, color:bodyColor, lineHeight:1.8 }}>{cat.desc}</p>
+                            <div style={{ display:'flex', flexWrap:'wrap', gap:7 }}>
                               {cat.calculators.slice(0,3).map((cc) => (
-                                <span key={cc.id} className="tag-badge" style={{
-                                  background: cc.status ? (isDark?'#2c2c2e':'#e5e5ea') : `${cat.color}18`,
+                                <span key={cc.id} style={{
+                                  display:'inline-flex', alignItems:'center', gap:4,
+                                  padding:'5px 13px', borderRadius:99, fontSize:12, fontWeight:600,
+                                  background: cc.status ? (isDark?'#2c2c2e':'#ebebef') : `${cat.color}15`,
                                   color: cc.status ? mutedColor : cat.color,
-                                  border:`1px solid ${cc.status?(isDark?'#3a3a3c':'#d1d1d6'):`${cat.color}30`}`,
+                                  border:`1px solid ${cc.status?(isDark?'#3a3a3c':'#d1d1d6'):`${cat.color}28`}`,
                                 }}>
-                                  {cc.name.split(/[ ·]/)[0]}{cc.isNew&&<span className="pill-new" style={{ marginLeft:3 }}>N</span>}
+                                  {cc.emoji} {cc.name.split(/[ ·]/)[0]}
+                                  {cc.isNew && <span style={{ fontSize:9, fontWeight:800, color:cat.color, opacity:0.8 }}>✦</span>}
                                 </span>
                               ))}
                               {cat.calculators.length > 3 && (
-                                <span className="tag-badge" style={{
-                                  background:isDark?'#2c2c2e':'#e5e5ea',
-                                  color:mutedColor, border:`1px solid ${isDark?'#3a3a3c':'#d1d1d6'}`
-                                }}>+{cat.calculators.length-3}</span>
+                                <span style={{
+                                  display:'inline-flex', alignItems:'center', padding:'5px 13px', borderRadius:99,
+                                  fontSize:12, fontWeight:600, background:isDark?'#2c2c2e':'#ebebef', color:mutedColor,
+                                }}>+{cat.calculators.length - 3}개</span>
                               )}
                             </div>
-                            <div style={{ display:'flex', alignItems:'center', gap:5, fontSize:13,
+                            <div style={{ display:'flex', alignItems:'center', gap:6, fontSize:13,
                                           fontWeight:700, color:cat.color, marginTop:'auto' }}>
                               전체 보기 <ChevronRight size={14}/>
                             </div>
@@ -331,52 +352,49 @@ export default function App() {
               </section>
 
               {/* Articles */}
-              <section style={{ background: isDark ? '#0a0a0a' : '#fff', padding:'72px 0' }}>
+              <section style={{ background:altBg, padding:'88px 0' }}>
                 <W>
-                  <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:32 }}>
-                    <div style={{ display:'flex', alignItems:'center', gap:14 }}>
-                      <div className="icon-box" style={{
-                        width:48, height:48, background:'#eef2ff', borderRadius:14,
-                      }}>
-                        <BookOpen size={20} color="#6366f1"/>
-                      </div>
-                      <div>
-                        <h2 style={{ fontWeight:800, fontSize:20, color:titleColor, letterSpacing:'-0.02em', marginBottom:3 }}>
+                  <div style={{ display:'flex', alignItems:'flex-end', justifyContent:'space-between', marginBottom:40, flexWrap:'wrap', gap:12 }}>
+                    <div>
+                      <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:8 }}>
+                        <span style={{ fontSize:28 }}>📚</span>
+                        <h2 style={{ fontWeight:800, fontSize:24, color:titleColor, letterSpacing:'-0.02em' }}>
                           알아두면 돈 되는 금융 상식
                         </h2>
-                        <p style={{ fontSize:13, color:mutedColor }}>계산기와 함께 읽으면 더 유용한 실전 가이드</p>
                       </div>
+                      <p style={{ fontSize:14, color:mutedColor, lineHeight:1.7, paddingLeft:40 }}>
+                        계산기와 함께 읽으면 더 유용한 실전 금융 가이드
+                      </p>
                     </div>
-                    <span style={{
-                      fontSize:13, fontWeight:700, padding:'6px 14px', borderRadius:99,
-                      background:'#eef2ff', color:'#6366f1',
-                    }}>{ARTICLES.length}개</span>
+                    <Pill color="#6366f1" bg="#eef2ff">📖 총 {ARTICLES.length}편</Pill>
                   </div>
-                  <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(260px,1fr))', gap:16 }}>
+                  <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(270px,1fr))', gap:18 }}>
                     {ARTICLES.map((article, idx) => (
                       <motion.button key={article.id}
-                        initial={{ opacity:0, y:10 }} animate={{ opacity:1, y:0 }}
+                        initial={{ opacity:0, y:12 }} animate={{ opacity:1, y:0 }}
                         transition={{ delay:Math.min(idx*0.025, 0.4) }}
                         onClick={() => setActiveArticle(article)}
                         className="card"
-                        style={{ padding:22, textAlign:'left', width:'100%', display:'flex', flexDirection:'column' }}>
-                        <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:12 }}>
-                          <span style={{
-                            fontSize:11, fontWeight:700, padding:'3px 10px', borderRadius:99,
-                            background:'#eef2ff', color:'#6366f1',
-                          }}>{article.category}</span>
+                        style={{ padding:26, textAlign:'left', width:'100%', display:'flex', flexDirection:'column', gap:0 }}>
+                        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:14 }}>
+                          <Pill color="#6366f1" bg="#eef2ff">{article.category}</Pill>
                           <span style={{ display:'flex', alignItems:'center', gap:4, fontSize:11, color:mutedColor }}>
                             <Clock size={11}/> {article.readTime}
                           </span>
                         </div>
-                        <h3 style={{ fontWeight:700, fontSize:14, color:titleColor, lineHeight:1.5,
-                                     flex:1, display:'-webkit-box', WebkitLineClamp:2,
-                                     WebkitBoxOrient:'vertical', overflow:'hidden', marginBottom:8 }}>
+                        <h3 style={{
+                          fontWeight:700, fontSize:14, color:titleColor, lineHeight:1.6,
+                          flex:1, marginBottom:12,
+                          display:'-webkit-box', WebkitLineClamp:2,
+                          WebkitBoxOrient:'vertical', overflow:'hidden',
+                        }}>
                           {article.title}
                         </h3>
-                        <p style={{ fontSize:12, color:mutedColor, lineHeight:1.6,
-                                    display:'-webkit-box', WebkitLineClamp:2,
-                                    WebkitBoxOrient:'vertical', overflow:'hidden' }}>
+                        <p style={{
+                          fontSize:13, color:mutedColor, lineHeight:1.7,
+                          display:'-webkit-box', WebkitLineClamp:2,
+                          WebkitBoxOrient:'vertical', overflow:'hidden',
+                        }}>
                           {article.summary}
                         </p>
                       </motion.button>
@@ -386,42 +404,55 @@ export default function App() {
               </section>
 
               {/* About */}
-              <section style={{ background: isDark ? '#111' : '#f2f2f7', padding:'80px 0', textAlign:'center' }}>
+              <section style={{ background:pageBg, padding:'96px 0', textAlign:'center' }}>
                 <W>
-                  <span className="hero-badge" style={{ marginBottom:24, display:'inline-flex',
-                    background:'rgba(99,102,241,0.12)', color:'#6366f1',
-                    border:'1px solid rgba(99,102,241,0.25)' }}>
+                  <div style={{ marginBottom:24 }}>
+                    <span style={{ fontSize:40 }}>✨</span>
+                  </div>
+                  <span style={{
+                    display:'inline-flex', alignItems:'center', gap:6,
+                    padding:'6px 18px', borderRadius:99, fontSize:13, fontWeight:700, marginBottom:20,
+                    background:'rgba(99,102,241,0.1)', color:'#6366f1',
+                    border:'1px solid rgba(99,102,241,0.2)',
+                  }}>
                     <Info size={13}/> 별의별 계산기란?
                   </span>
-                  <h2 style={{ fontSize:'clamp(26px,4vw,36px)', fontWeight:800, color:titleColor,
-                               letterSpacing:'-0.025em', marginBottom:14, marginTop:16 }}>
-                    복잡한 금융 계산을<br/>누구나 쉽게
+                  <h2 style={{
+                    fontSize:'clamp(26px,4vw,38px)', fontWeight:800, color:titleColor,
+                    letterSpacing:'-0.025em', lineHeight:1.25, marginBottom:18, marginTop:16,
+                  }}>
+                    복잡한 금융 계산을<br/>누구나 쉽게 🎯
                   </h2>
-                  <p style={{ fontSize:16, color:mutedColor, lineHeight:1.75, maxWidth:400,
-                               margin:'0 auto 56px' }}>
-                    일상에서 꼭 필요하지만 계산하기 어려운 금융·생활 계산기를 무료로 제공합니다.
+                  <p style={{
+                    fontSize:16, color:mutedColor, lineHeight:1.9, maxWidth:440,
+                    margin:'0 auto 64px',
+                  }}>
+                    일상에서 꼭 필요하지만 계산하기 어려운 금융·생활 계산기를<br/>
+                    완전 무료로 제공합니다.
                   </p>
-                  <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(260px,1fr))', gap:20 }}>
+                  <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(260px,1fr))', gap:22 }}>
                     {[
-                      { icon:<Shield size={24}/>,    color:'#10b981', bg:'#ecfdf5',
+                      { emoji:'🔒', color:'#10b981', bg:'#ecfdf5',
                         title:'개인정보 완전 보호',
                         desc:'서버에 어떤 데이터도 저장하지 않습니다. 모든 계산은 브라우저에서만 이루어집니다.' },
-                      { icon:<Zap size={24}/>,       color:'#6366f1', bg:'#eef2ff',
+                      { emoji:'⚡', color:'#6366f1', bg:'#eef2ff',
                         title:'실시간 즉시 계산',
                         desc:'숫자를 입력하는 즉시 결과가 업데이트됩니다. 별도의 버튼 클릭이 필요 없습니다.' },
-                      { icon:<Users size={24}/>,     color:'#f59e0b', bg:'#fffbeb',
+                      { emoji:'🎯', color:'#f59e0b', bg:'#fffbeb',
                         title:'전문가 수준 정확도',
                         desc:'금융감독원 기준과 세법을 반영한 정확한 계산 로직으로 신뢰할 수 있는 결과를 제공합니다.' },
                     ].map((item) => (
-                      <div key={item.title} className="card" style={{ padding:28, textAlign:'center' }}>
-                        <div className="icon-box" style={{
-                          width:56, height:56, background:item.bg,
-                          borderRadius:16, margin:'0 auto 18px',
+                      <div key={item.title} className="card" style={{ padding:36, textAlign:'center' }}>
+                        <div style={{
+                          width:64, height:64, borderRadius:20,
+                          background:item.bg, margin:'0 auto 20px',
+                          display:'flex', alignItems:'center', justifyContent:'center',
+                          fontSize:32,
                         }}>
-                          <span style={{ color:item.color }}>{item.icon}</span>
+                          {item.emoji}
                         </div>
-                        <h3 style={{ fontWeight:700, fontSize:16, color:titleColor, marginBottom:10 }}>{item.title}</h3>
-                        <p style={{ fontSize:13, color:mutedColor, lineHeight:1.7 }}>{item.desc}</p>
+                        <h3 style={{ fontWeight:800, fontSize:16, color:titleColor, marginBottom:12 }}>{item.title}</h3>
+                        <p style={{ fontSize:13, color:mutedColor, lineHeight:1.85 }}>{item.desc}</p>
                       </div>
                     ))}
                   </div>
@@ -431,95 +462,148 @@ export default function App() {
             </motion.div>
           )}
 
-          {/* Category list */}
-          {activeCategory && !activeCalcId && (
+          {/* ── Category list ─────────────────────────────────── */}
+          {activeCategory && !activeCalcId && selectedCategory && (
             <motion.div key="cat"
-              initial={{ opacity:0, x:20 }} animate={{ opacity:1, x:0 }} exit={{ opacity:0, x:-20 }}
-              transition={{ duration:0.2 }}>
-              <div style={{ background: isDark ? '#0a0a0a' : '#f2f2f7', padding:'48px 0', minHeight:'70vh' }}>
-                <W>
-                  <div style={{ display:'flex', alignItems:'center', gap:14, marginBottom:32 }}>
-                    <button onClick={reset} aria-label="뒤로가기"
+              initial={{ opacity:0, x:24 }} animate={{ opacity:1, x:0 }} exit={{ opacity:0, x:-24 }}
+              transition={{ duration:0.22 }}>
+              <div style={{ background:pageBg, minHeight:'80vh', paddingBottom:80 }}>
+                {/* Category hero banner */}
+                <div style={{ background:selectedCategory.bg, padding:'48px 0 40px' }}>
+                  <W>
+                    <button onClick={reset}
                       style={{
-                        width:40, height:40, borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center',
-                        background: isDark ? '#2c2c2e' : '#e5e5ea', color:mutedColor, flexShrink:0,
+                        display:'inline-flex', alignItems:'center', gap:6, marginBottom:24,
+                        fontSize:13, fontWeight:600, color:`${selectedCategory.color}bb`,
+                        padding:'6px 14px', borderRadius:99,
+                        background:`${selectedCategory.color}15`,
                       }}>
-                      <ChevronLeft size={20}/>
+                      <ChevronLeft size={15}/> 홈으로
                     </button>
-                    <div>
-                      <Crumb parts={[{ label:'홈', onClick:reset }, { label:selectedCategory?.name??'' }]}
-                        titleColor={titleColor} mutedColor={mutedColor}/>
-                      <h2 style={{ fontSize:26, fontWeight:800, color:selectedCategory?.color, letterSpacing:'-0.02em' }}>
-                        {selectedCategory?.name}
-                      </h2>
-                    </div>
-                  </div>
-                  <p style={{ fontSize:14, color:mutedColor, marginBottom:28, lineHeight:1.65 }}>{selectedCategory?.desc}</p>
-                  <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))', gap:16 }}>
-                    {selectedCategory?.calculators.map((calc, idx) => (
-                      <motion.button key={calc.id}
-                        initial={{ opacity:0, y:10 }} animate={{ opacity:1, y:0 }} transition={{ delay:idx*0.06 }}
-                        onClick={() => calc.status !== '준비중' && setActiveCalcId(calc.id)}
-                        disabled={calc.status === '준비중'}
-                        className="card"
-                        style={{
-                          padding:24, textAlign:'left', width:'100%',
-                          display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:16,
-                          opacity: calc.status ? 0.45 : 1,
-                          cursor: calc.status ? 'not-allowed' : 'pointer',
-                        }}>
-                        <div style={{ minWidth:0, flex:1 }}>
-                          <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:8, flexWrap:'wrap' }}>
-                            <span style={{ fontWeight:700, fontSize:15, color:titleColor }}>{calc.name}</span>
-                            {calc.isNew && <span className="pill-new">NEW</span>}
-                            {calc.status && (
-                              <span style={{
-                                fontSize:11, padding:'2px 8px', borderRadius:99,
-                                background: isDark?'#2c2c2e':'#e5e5ea', color:mutedColor,
-                              }}>준비중</span>
-                            )}
-                          </div>
-                          <p style={{ fontSize:13, color:mutedColor, lineHeight:1.65 }}>{calc.desc}</p>
+                    <div style={{ display:'flex', alignItems:'center', gap:18 }}>
+                      <div style={{
+                        width:68, height:68, borderRadius:20, flexShrink:0,
+                        background:`${selectedCategory.color}20`,
+                        border:`2px solid ${selectedCategory.color}30`,
+                        display:'flex', alignItems:'center', justifyContent:'center',
+                        fontSize:34,
+                      }}>
+                        {selectedCategory.emoji}
+                      </div>
+                      <div>
+                        <div style={{ fontSize:12, fontWeight:700, color:`${selectedCategory.color}99`, marginBottom:6, letterSpacing:'0.05em' }}>
+                          CATEGORY
                         </div>
-                        {!calc.status && (
-                          <ChevronRight size={18} style={{ flexShrink:0, marginTop:3, color:mutedColor }}/>
-                        )}
-                      </motion.button>
-                    ))}
+                        <h2 style={{ fontSize:28, fontWeight:800, color:selectedCategory.color, letterSpacing:'-0.025em', marginBottom:6 }}>
+                          {selectedCategory.name}
+                        </h2>
+                        <p style={{ fontSize:14, color:`${selectedCategory.color}bb`, lineHeight:1.6 }}>
+                          {selectedCategory.desc}
+                        </p>
+                      </div>
+                    </div>
+                  </W>
+                </div>
+
+                <W>
+                  <div style={{ paddingTop:40 }}>
+                    <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(320px,1fr))', gap:18 }}>
+                      {selectedCategory.calculators.map((calc, idx) => (
+                        <motion.button key={calc.id}
+                          initial={{ opacity:0, y:12 }} animate={{ opacity:1, y:0 }} transition={{ delay:idx*0.07 }}
+                          onClick={() => calc.status !== '준비중' && setActiveCalcId(calc.id)}
+                          disabled={calc.status === '준비중'}
+                          className="card"
+                          style={{
+                            padding:28, textAlign:'left', width:'100%',
+                            display:'flex', alignItems:'flex-start', gap:18,
+                            opacity:calc.status ? 0.45 : 1,
+                            cursor:calc.status ? 'not-allowed' : 'pointer',
+                          }}>
+                          <div style={{
+                            width:54, height:54, borderRadius:16, flexShrink:0,
+                            background:calc.status ? (isDark?'#2c2c2e':'#ebebef') : selectedCategory.bg,
+                            display:'flex', alignItems:'center', justifyContent:'center',
+                            fontSize:28,
+                          }}>
+                            {calc.emoji}
+                          </div>
+                          <div style={{ flex:1, minWidth:0 }}>
+                            <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:8, flexWrap:'wrap' }}>
+                              <span style={{ fontWeight:800, fontSize:15, color:titleColor }}>{calc.name}</span>
+                              {calc.isNew && <span className="pill-new">NEW ✦</span>}
+                              {calc.status && (
+                                <span style={{
+                                  fontSize:11, padding:'2px 9px', borderRadius:99, fontWeight:600,
+                                  background:isDark?'#2c2c2e':'#ebebef', color:mutedColor,
+                                }}>🚧 준비중</span>
+                              )}
+                            </div>
+                            <p style={{ fontSize:13, color:mutedColor, lineHeight:1.75 }}>{calc.desc}</p>
+                          </div>
+                          {!calc.status && (
+                            <ChevronRight size={18} style={{ flexShrink:0, marginTop:4, color:selectedCategory.color, opacity:0.6 }}/>
+                          )}
+                        </motion.button>
+                      ))}
+                    </div>
                   </div>
                 </W>
               </div>
             </motion.div>
           )}
 
-          {/* Calculator */}
-          {activeCategory && activeCalcId && (
+          {/* ── Calculator ────────────────────────────────────── */}
+          {activeCategory && activeCalcId && selectedCategory && selectedCalc && (
             <motion.div key={activeCalcId}
-              initial={{ opacity:0, y:14 }} animate={{ opacity:1, y:0 }} exit={{ opacity:0, y:-14 }}
+              initial={{ opacity:0, y:16 }} animate={{ opacity:1, y:0 }} exit={{ opacity:0, y:-16 }}
               transition={{ duration:0.2 }}>
-              <div style={{ background: isDark ? '#0a0a0a' : '#f2f2f7', padding:'48px 0', minHeight:'70vh' }}>
-                <W>
-                  <div style={{ display:'flex', alignItems:'center', gap:14, marginBottom:36 }}>
-                    <button onClick={() => setActiveCalcId(null)} aria-label="뒤로가기"
-                      style={{
-                        width:40, height:40, borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center',
-                        background: isDark ? '#2c2c2e' : '#e5e5ea', color:mutedColor, flexShrink:0,
-                      }}>
-                      <ChevronLeft size={20}/>
-                    </button>
-                    <div>
-                      <Crumb parts={[
-                        { label:'홈', onClick:reset },
-                        { label:selectedCategory?.name??'', onClick:()=>setActiveCalcId(null) },
-                        { label:selectedCalc?.name??'' },
-                      ]} titleColor={titleColor} mutedColor={mutedColor}/>
-                      <h2 style={{ fontSize:24, fontWeight:800, color:titleColor, letterSpacing:'-0.02em' }}>
-                        {selectedCalc?.name}
-                      </h2>
-                      <p style={{ fontSize:13, color:mutedColor, marginTop:3 }}>{selectedCalc?.desc}</p>
+              <div style={{ background:pageBg, minHeight:'80vh', paddingBottom:80 }}>
+                {/* Calc header */}
+                <div style={{ background:selectedCategory.bg, padding:'40px 0 32px' }}>
+                  <W>
+                    <nav style={{ display:'flex', alignItems:'center', gap:6, fontSize:12, color:`${selectedCategory.color}99`, marginBottom:20 }}>
+                      <button onClick={reset}
+                        style={{ fontWeight:600, color:`${selectedCategory.color}aa` }}
+                        onMouseEnter={(e) => e.currentTarget.style.color=selectedCategory.color}
+                        onMouseLeave={(e) => e.currentTarget.style.color=`${selectedCategory.color}aa`}>
+                        🏠 홈
+                      </button>
+                      <ChevronRight size={11}/>
+                      <button onClick={() => setActiveCalcId(null)}
+                        style={{ fontWeight:600, color:`${selectedCategory.color}aa` }}
+                        onMouseEnter={(e) => e.currentTarget.style.color=selectedCategory.color}
+                        onMouseLeave={(e) => e.currentTarget.style.color=`${selectedCategory.color}aa`}>
+                        {selectedCategory.emoji} {selectedCategory.name}
+                      </button>
+                      <ChevronRight size={11}/>
+                      <span style={{ color:selectedCategory.color, fontWeight:700 }}>{selectedCalc.name}</span>
+                    </nav>
+                    <div style={{ display:'flex', alignItems:'center', gap:16 }}>
+                      <button onClick={() => setActiveCalcId(null)}
+                        style={{
+                          width:42, height:42, borderRadius:13, flexShrink:0,
+                          background:`${selectedCategory.color}20`,
+                          border:`1.5px solid ${selectedCategory.color}30`,
+                          display:'flex', alignItems:'center', justifyContent:'center',
+                          color:selectedCategory.color,
+                        }}>
+                        <ChevronLeft size={20}/>
+                      </button>
+                      <div style={{ fontSize:36, flexShrink:0 }}>{selectedCalc.emoji}</div>
+                      <div>
+                        <h2 style={{ fontSize:22, fontWeight:800, color:selectedCategory.color, letterSpacing:'-0.02em', marginBottom:4 }}>
+                          {selectedCalc.name}
+                        </h2>
+                        <p style={{ fontSize:13, color:`${selectedCategory.color}bb`, lineHeight:1.6 }}>{selectedCalc.desc}</p>
+                      </div>
                     </div>
+                  </W>
+                </div>
+                <W>
+                  <div style={{ paddingTop:36 }}>
+                    {selectedCalc.component}
                   </div>
-                  {selectedCalc?.component}
                 </W>
               </div>
             </motion.div>
@@ -527,38 +611,41 @@ export default function App() {
 
         </AnimatePresence>
 
-        {/* Footer */}
-        <footer style={{ background: isDark ? '#000' : '#fff', borderTop:`1px solid ${borderColor}` }} role="contentinfo">
-          <W className="py-12">
-            <div style={{ display:'grid', gridTemplateColumns:'2fr 1fr 1fr', gap:40, marginBottom:40 }}
-              className="footer-grid">
+        {/* ── Footer ────────────────────────────────────────── */}
+        <footer style={{ background:altBg, borderTop:`1px solid ${borderColor}` }} role="contentinfo">
+          <W>
+            <div style={{ padding:'64px 0 40px', display:'grid', gap:40 }} className="footer-grid">
               <div>
-                <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:14 }}>
+                <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:16 }}>
                   <div style={{
-                    width:30, height:30, borderRadius:10,
+                    width:32, height:32, borderRadius:10,
                     background:'linear-gradient(135deg,#6366f1,#8b5cf6)',
                     display:'flex', alignItems:'center', justifyContent:'center',
                   }}>
                     <Calculator size={15} color="#fff"/>
                   </div>
-                  <span className="text-gradient" style={{ fontWeight:800, fontSize:16 }}>별의별 계산기</span>
+                  <span className="text-gradient" style={{ fontWeight:800, fontSize:17 }}>별의별 계산기</span>
                 </div>
-                <p style={{ fontSize:13, color:mutedColor, lineHeight:1.75, maxWidth:280 }}>
+                <p style={{ fontSize:14, color:mutedColor, lineHeight:1.85, maxWidth:300 }}>
                   대출, 퇴직금, 연차, FIRE 등 일상의 복잡한 계산을 무료로 해결하는 스마트 계산기 서비스입니다.
                 </p>
-                <p style={{ fontSize:11, color:mutedColor, opacity:0.6, marginTop:14, lineHeight:1.7 }}>
+                <p style={{ fontSize:11, color:mutedColor, opacity:0.5, marginTop:16, lineHeight:1.7 }}>
                   ※ 계산 결과는 참고용이며 실제 금융 상품·법률과 차이가 있을 수 있습니다.
                 </p>
               </div>
               <div>
-                <p style={{ fontSize:13, fontWeight:700, color:titleColor, marginBottom:14 }}>주요 계산기</p>
-                <ul style={{ listStyle:'none', display:'flex', flexDirection:'column', gap:10 }}>
-                  {[['loan','viral','대출 이자 계산기'],['fire','viral','FIRE 시뮬레이터'],
-                    ['severance','hr','퇴직금 계산기'],['annual','hr','연차 계산기'],
-                    ['parking','invest','파킹통장 계산기']].map(([id,cat,name]) => (
+                <p style={{ fontSize:13, fontWeight:800, color:titleColor, marginBottom:18 }}>📌 주요 계산기</p>
+                <ul style={{ listStyle:'none', display:'flex', flexDirection:'column', gap:12 }}>
+                  {[
+                    ['loan','viral','🏦 대출 이자 계산기'],
+                    ['fire','viral','🔥 FIRE 시뮬레이터'],
+                    ['severance','hr','📋 퇴직금 계산기'],
+                    ['annual','hr','🗓️ 연차 계산기'],
+                    ['parking','invest','🅿️ 파킹통장 계산기'],
+                  ].map(([id,cat,name]) => (
                     <li key={id}>
                       <button onClick={() => { setActiveCategory(cat); setActiveCalcId(id); }}
-                        style={{ fontSize:13, color:mutedColor, transition:'color 0.15s' }}
+                        style={{ fontSize:13, color:mutedColor, lineHeight:1.6, transition:'color 0.15s' }}
                         onMouseEnter={(e) => e.currentTarget.style.color='#6366f1'}
                         onMouseLeave={(e) => e.currentTarget.style.color=mutedColor}>
                         {name}
@@ -568,98 +655,96 @@ export default function App() {
                 </ul>
               </div>
               <div>
-                <p style={{ fontSize:13, fontWeight:700, color:titleColor, marginBottom:14 }}>정보</p>
-                <ul style={{ listStyle:'none', display:'flex', flexDirection:'column', gap:10 }}>
+                <p style={{ fontSize:13, fontWeight:800, color:titleColor, marginBottom:18 }}>📬 정보</p>
+                <ul style={{ listStyle:'none', display:'flex', flexDirection:'column', gap:12 }}>
                   {([
                     { icon:<Info size={13}/>,      label:'서비스 소개',      act:()=>setModal('about') },
                     { icon:<Shield size={13}/>,    label:'개인정보처리방침', act:()=>setModal('privacy') },
                     { icon:<FileText size={13}/>,  label:'이용약관',         act:()=>setModal('terms') },
-                    { icon:<Mail size={13}/>,      label:'문의하기',         href:'mailto:mirririnside1024@gmail.com' },
-                    { icon:<Briefcase size={13}/>, label:'광고 문의',        href:'mailto:mirririnside1024@gmail.com' },
                   ] as const).map((item) => (
                     <li key={item.label}>
-                      {'act' in item ? (
-                        <button onClick={item.act}
-                          style={{ fontSize:13, color:mutedColor, display:'flex', alignItems:'center', gap:6, transition:'color 0.15s' }}
-                          onMouseEnter={(e) => e.currentTarget.style.color='#6366f1'}
-                          onMouseLeave={(e) => e.currentTarget.style.color=mutedColor}>
-                          {item.icon} {item.label}
-                        </button>
-                      ) : (
-                        <a href={item.href}
-                          style={{ fontSize:13, color:mutedColor, display:'flex', alignItems:'center', gap:6, textDecoration:'none', transition:'color 0.15s' }}
-                          onMouseEnter={(e) => e.currentTarget.style.color='#6366f1'}
-                          onMouseLeave={(e) => e.currentTarget.style.color=mutedColor}>
-                          {item.icon} {item.label}
-                        </a>
-                      )}
+                      <button onClick={item.act}
+                        style={{ fontSize:13, color:mutedColor, display:'flex', alignItems:'center', gap:7, transition:'color 0.15s' }}
+                        onMouseEnter={(e) => e.currentTarget.style.color='#6366f1'}
+                        onMouseLeave={(e) => e.currentTarget.style.color=mutedColor}>
+                        {item.icon} {item.label}
+                      </button>
+                    </li>
+                  ))}
+                  {([
+                    { icon:<Mail size={13}/>,      label:'문의하기',  href:'mailto:mirririnside1024@gmail.com' },
+                    { icon:<Briefcase size={13}/>, label:'광고 문의', href:'mailto:mirririnside1024@gmail.com' },
+                  ] as const).map((item) => (
+                    <li key={item.label}>
+                      <a href={item.href}
+                        style={{ fontSize:13, color:mutedColor, display:'flex', alignItems:'center', gap:7, textDecoration:'none', transition:'color 0.15s' }}
+                        onMouseEnter={(e) => e.currentTarget.style.color='#6366f1'}
+                        onMouseLeave={(e) => e.currentTarget.style.color=mutedColor}>
+                        {item.icon} {item.label}
+                      </a>
                     </li>
                   ))}
                 </ul>
               </div>
             </div>
-            <div style={{ paddingTop:24, borderTop:`1px solid ${borderColor}`,
-                          display:'flex', flexWrap:'wrap', alignItems:'center',
-                          justifyContent:'space-between', gap:12 }}>
-              <p style={{ fontSize:12, color:mutedColor }}>© 2026 별의별 계산기. All rights reserved.</p>
+            <div style={{
+              padding:'24px 0 32px', borderTop:`1px solid ${borderColor}`,
+              display:'flex', flexWrap:'wrap', alignItems:'center',
+              justifyContent:'space-between', gap:12,
+            }}>
+              <p style={{ fontSize:12, color:mutedColor }}>© 2026 별의별 계산기. All rights reserved. 🌟</p>
               <div style={{ display:'flex', alignItems:'center', gap:16, fontSize:12, color:mutedColor }}>
-                <button onClick={() => setModal('privacy')}
-                  onMouseEnter={(e) => e.currentTarget.style.color='#6366f1'}
-                  onMouseLeave={(e) => e.currentTarget.style.color=mutedColor}>
-                  개인정보처리방침
-                </button>
-                <span>·</span>
-                <button onClick={() => setModal('terms')}
-                  onMouseEnter={(e) => e.currentTarget.style.color='#6366f1'}
-                  onMouseLeave={(e) => e.currentTarget.style.color=mutedColor}>
-                  이용약관
-                </button>
-                <span>·</span>
-                <button onClick={() => setModal('about')}
-                  onMouseEnter={(e) => e.currentTarget.style.color='#6366f1'}
-                  onMouseLeave={(e) => e.currentTarget.style.color=mutedColor}>
-                  서비스 소개
-                </button>
+                {(['privacy' as const,'terms' as const,'about' as const]).map((m, i) => (
+                  <span key={m} style={{ display:'flex', alignItems:'center', gap:16 }}>
+                    {i>0 && <span style={{ opacity:0.3 }}>·</span>}
+                    <button onClick={()=>setModal(m)}
+                      style={{ color:mutedColor, transition:'color 0.15s' }}
+                      onMouseEnter={(e) => e.currentTarget.style.color='#6366f1'}
+                      onMouseLeave={(e) => e.currentTarget.style.color=mutedColor}>
+                      {m==='privacy'?'개인정보처리방침':m==='terms'?'이용약관':'서비스 소개'}
+                    </button>
+                  </span>
+                ))}
               </div>
             </div>
           </W>
         </footer>
 
-        {/* Legal modal */}
+        {/* ── Legal modal ───────────────────────────────────── */}
         <AnimatePresence>
           {modal && (
             <motion.div initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }}
               style={{
                 position:'fixed', inset:0, zIndex:50, display:'flex',
-                alignItems:'center', justifyContent:'center', padding:16,
-                background:'rgba(0,0,0,0.5)', backdropFilter:'blur(8px)',
+                alignItems:'center', justifyContent:'center', padding:20,
+                background:'rgba(0,0,0,0.5)', backdropFilter:'blur(10px)',
               }}
               onClick={() => setModal(null)}>
-              <motion.div initial={{ scale:0.95, y:20 }} animate={{ scale:1, y:0 }} exit={{ scale:0.95, y:20 }}
+              <motion.div initial={{ scale:0.94, y:24 }} animate={{ scale:1, y:0 }} exit={{ scale:0.94, y:24 }}
                 onClick={(e) => e.stopPropagation()}
                 style={{
-                  background:surfaceBg, borderRadius:24, maxWidth:560, width:'100%',
+                  background:surfaceBg, borderRadius:28, maxWidth:560, width:'100%',
                   maxHeight:'85vh', overflowY:'auto',
-                  boxShadow:'0 24px 80px rgba(0,0,0,0.25)',
+                  boxShadow:'0 32px 96px rgba(0,0,0,0.28)',
                 }}>
-                <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between',
-                               padding:'20px 24px', borderBottom:`1px solid ${borderColor}` }}>
+                <div style={{
+                  display:'flex', alignItems:'center', justifyContent:'space-between',
+                  padding:'22px 28px', borderBottom:`1px solid ${borderColor}`,
+                }}>
                   <h2 style={{ fontSize:18, fontWeight:800, color:titleColor }}>
-                    {modal==='privacy'?'개인정보처리방침':modal==='terms'?'이용약관':'서비스 소개'}
+                    {modal==='privacy'?'🔒 개인정보처리방침':modal==='terms'?'📄 이용약관':'✨ 서비스 소개'}
                   </h2>
                   <button onClick={() => setModal(null)}
                     style={{
-                      width:34, height:34, borderRadius:10, display:'flex', alignItems:'center', justifyContent:'center',
-                      background: isDark ? '#2c2c2e' : '#f2f2f7', color:mutedColor,
+                      width:36, height:36, borderRadius:11, display:'flex', alignItems:'center', justifyContent:'center',
+                      background:isDark?'#2c2c2e':'#f2f2f7', color:mutedColor,
                     }}>
                     <X size={16}/>
                   </button>
                 </div>
-                <div style={{ padding:24 }}>
-                  {modal==='privacy'
-                    ? <PrivacyPolicy/>
-                    : modal==='terms'
-                    ? <TermsOfService/>
+                <div style={{ padding:28 }}>
+                  {modal==='privacy' ? <PrivacyPolicy/>
+                    : modal==='terms' ? <TermsOfService/>
                     : <AboutContent titleColor={titleColor} mutedColor={mutedColor}/>}
                 </div>
               </motion.div>
@@ -667,76 +752,72 @@ export default function App() {
           )}
         </AnimatePresence>
 
-        {/* Article modal */}
+        {/* ── Article modal ─────────────────────────────────── */}
         <AnimatePresence>
           {activeArticle && (
             <motion.div initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }}
               style={{
                 position:'fixed', inset:0, zIndex:50, display:'flex',
-                alignItems:'center', justifyContent:'center', padding:16,
-                background:'rgba(0,0,0,0.55)', backdropFilter:'blur(8px)',
+                alignItems:'center', justifyContent:'center', padding:20,
+                background:'rgba(0,0,0,0.55)', backdropFilter:'blur(10px)',
               }}
               onClick={() => setActiveArticle(null)}>
-              <motion.div initial={{ scale:0.95, y:20 }} animate={{ scale:1, y:0 }} exit={{ scale:0.95, y:20 }}
+              <motion.div initial={{ scale:0.94, y:24 }} animate={{ scale:1, y:0 }} exit={{ scale:0.94, y:24 }}
                 onClick={(e) => e.stopPropagation()}
                 style={{
-                  background:surfaceBg, borderRadius:24, maxWidth:580, width:'100%',
+                  background:surfaceBg, borderRadius:28, maxWidth:600, width:'100%',
                   maxHeight:'90vh', overflowY:'auto',
-                  boxShadow:'0 24px 80px rgba(0,0,0,0.3)',
+                  boxShadow:'0 32px 96px rgba(0,0,0,0.32)',
                 }}>
-                <div style={{ height:4, borderRadius:'24px 24px 0 0',
+                <div style={{ height:5, borderRadius:'28px 28px 0 0',
                                background:'linear-gradient(90deg,#6366f1,#8b5cf6,#ec4899)'}}/>
-                <div style={{ padding:'20px 24px', borderBottom:`1px solid ${borderColor}` }}>
+                <div style={{ padding:'24px 28px', borderBottom:`1px solid ${borderColor}` }}>
                   <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:16 }}>
                     <div style={{ flex:1 }}>
-                      <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:10 }}>
-                        <span style={{
-                          fontSize:11, fontWeight:700, padding:'3px 10px', borderRadius:99,
-                          background:'#eef2ff', color:'#6366f1',
-                        }}>{activeArticle.category}</span>
-                        <span style={{ display:'flex', alignItems:'center', gap:4, fontSize:11, color:mutedColor }}>
+                      <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:14 }}>
+                        <Pill color="#6366f1" bg="#eef2ff">{activeArticle.category}</Pill>
+                        <span style={{ display:'flex', alignItems:'center', gap:4, fontSize:12, color:mutedColor }}>
                           <Clock size={11}/> {activeArticle.readTime} 읽기
                         </span>
                       </div>
-                      <h2 style={{ fontSize:20, fontWeight:800, color:titleColor, lineHeight:1.4 }}>
+                      <h2 style={{ fontSize:22, fontWeight:800, color:titleColor, lineHeight:1.45, marginBottom:10 }}>
                         {activeArticle.title}
                       </h2>
-                      <p style={{ fontSize:13, color:mutedColor, marginTop:8, lineHeight:1.65 }}>
+                      <p style={{ fontSize:14, color:mutedColor, lineHeight:1.8 }}>
                         {activeArticle.summary}
                       </p>
                     </div>
                     <button onClick={() => setActiveArticle(null)}
                       style={{
-                        width:34, height:34, borderRadius:10, display:'flex', alignItems:'center', justifyContent:'center',
-                        background: isDark ? '#2c2c2e' : '#f2f2f7', color:mutedColor, flexShrink:0,
+                        width:36, height:36, borderRadius:11, display:'flex', alignItems:'center', justifyContent:'center',
+                        background:isDark?'#2c2c2e':'#f2f2f7', color:mutedColor, flexShrink:0,
                       }}>
                       <X size={16}/>
                     </button>
                   </div>
                 </div>
-                <div style={{ padding:24, display:'flex', flexDirection:'column', gap:16 }}>
+                <div style={{ padding:'28px', display:'flex', flexDirection:'column', gap:18 }}>
                   {activeArticle.content.map((p, i) => (
-                    <p key={i} style={{ fontSize:14, color:bodyColor, lineHeight:1.8 }}>{p}</p>
+                    <p key={i} style={{ fontSize:14, color:bodyColor, lineHeight:1.9 }}>{p}</p>
                   ))}
-                  <div style={{ paddingTop:16, borderTop:`1px solid ${borderColor}`,
-                                 display:'flex', flexWrap:'wrap', gap:8 }}>
+                  <div style={{ paddingTop:20, borderTop:`1px solid ${borderColor}`, display:'flex', flexWrap:'wrap', gap:8 }}>
                     {activeArticle.tags.map((tag) => (
                       <span key={tag} style={{
                         display:'flex', alignItems:'center', gap:5, fontSize:12,
-                        padding:'4px 12px', borderRadius:99,
-                        background: isDark ? '#2c2c2e' : '#f2f2f7', color:mutedColor,
+                        padding:'5px 13px', borderRadius:99,
+                        background:isDark?'#2c2c2e':'#f2f2f7', color:mutedColor,
                       }}>
                         <Tag size={10}/> {tag}
                       </span>
                     ))}
                   </div>
                   <p style={{
-                    fontSize:12, padding:'12px 16px', borderRadius:16, lineHeight:1.7,
-                    background: isDark ? 'rgba(255,149,0,0.08)' : '#fff8ee',
-                    color: isDark ? '#ff9500' : '#92400e',
-                    border:`1px solid ${isDark ? 'rgba(255,149,0,0.15)' : '#fde68a'}`,
+                    fontSize:12, padding:'14px 18px', borderRadius:16, lineHeight:1.75,
+                    background:isDark?'rgba(255,149,0,0.08)':'#fff8ee',
+                    color:isDark?'#ff9500':'#92400e',
+                    border:`1px solid ${isDark?'rgba(255,149,0,0.15)':'#fde68a'}`,
                   }}>
-                    ※ 본 가이드는 참고용이며, 중요한 재무·법률 결정 전에는 전문가 상담을 권장합니다.
+                    ⚠️ 본 가이드는 참고용이며, 중요한 재무·법률 결정 전에는 전문가 상담을 권장합니다.
                   </p>
                 </div>
               </motion.div>
@@ -749,60 +830,41 @@ export default function App() {
   );
 }
 
-/* Sub-components */
+/* ── Sub-components ──────────────────────────────────────── */
 function SectionTitle({ emoji, title, sub, titleColor, mutedColor }: {
   emoji:string; title:string; sub:string; titleColor:string; mutedColor:string;
 }) {
   return (
-    <div style={{ marginBottom:32 }}>
-      <h2 style={{ fontSize:24, fontWeight:800, color:titleColor, letterSpacing:'-0.02em', marginBottom:6 }}>
-        {emoji} {title}
-      </h2>
-      <p style={{ fontSize:14, color:mutedColor }}>{sub}</p>
+    <div style={{ marginBottom:40 }}>
+      <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:8 }}>
+        <span style={{ fontSize:28 }}>{emoji}</span>
+        <h2 style={{ fontSize:26, fontWeight:800, color:titleColor, letterSpacing:'-0.025em' }}>{title}</h2>
+      </div>
+      <p style={{ fontSize:14, color:mutedColor, lineHeight:1.7, paddingLeft:40 }}>{sub}</p>
     </div>
-  );
-}
-
-function Crumb({ parts, titleColor, mutedColor }: {
-  parts:{label:string; onClick?:()=>void}[];
-  titleColor:string; mutedColor:string;
-}) {
-  return (
-    <nav style={{ display:'flex', alignItems:'center', gap:5, fontSize:12, color:mutedColor, marginBottom:4 }}
-      aria-label="브레드크럼">
-      {parts.map((p, i) => (
-        <span key={i} style={{ display:'flex', alignItems:'center', gap:5 }}>
-          {i > 0 && <ChevronRight size={10}/>}
-          {p.onClick
-            ? <button onClick={p.onClick}
-                style={{ color:mutedColor, transition:'color 0.15s' }}
-                onMouseEnter={(e) => e.currentTarget.style.color='#6366f1'}
-                onMouseLeave={(e) => e.currentTarget.style.color=mutedColor}>
-                {p.label}
-              </button>
-            : <span style={{ color:titleColor }}>{p.label}</span>}
-        </span>
-      ))}
-    </nav>
   );
 }
 
 function AboutContent({ titleColor, mutedColor }: { titleColor:string; mutedColor:string }) {
   return (
-    <div style={{ display:'flex', flexDirection:'column', gap:20, fontSize:14, lineHeight:1.75, color:mutedColor }}>
+    <div style={{ display:'flex', flexDirection:'column', gap:24 }}>
       {[
-        { t:'서비스 소개', d:'별의별 계산기는 대한민국 직장인과 투자자들이 자주 마주치는 복잡한 금융·생활 계산을 쉽고 정확하게 해결할 수 있도록 만들어진 무료 계산기 서비스입니다.' },
-        { t:'면책 고지',   d:'본 서비스의 계산 결과는 참고용이며, 실제 금융 상품이나 법률과 차이가 있을 수 있습니다. 중요한 재무적 결정 전에는 전문가(금융 상담사, 세무사, 노무사 등)와 상담하시기 바랍니다.' },
+        { emoji:'💡', t:'서비스 소개', d:'별의별 계산기는 대한민국 직장인과 투자자들이 자주 마주치는 복잡한 금융·생활 계산을 쉽고 정확하게 해결할 수 있도록 만들어진 무료 계산기 서비스입니다.' },
+        { emoji:'⚠️', t:'면책 고지',   d:'본 서비스의 계산 결과는 참고용이며, 실제 금융 상품이나 법률과 차이가 있을 수 있습니다. 중요한 재무적 결정 전에는 전문가(금융 상담사, 세무사, 노무사 등)와 상담하시기 바랍니다.' },
       ].map((s) => (
-        <div key={s.t}>
-          <h3 style={{ fontWeight:700, marginBottom:6, color:titleColor }}>{s.t}</h3>
-          <p>{s.d}</p>
+        <div key={s.t} style={{ padding:'18px 20px', borderRadius:16, background:'rgba(99,102,241,0.05)', border:'1px solid rgba(99,102,241,0.1)' }}>
+          <h3 style={{ fontWeight:800, marginBottom:10, color:titleColor, fontSize:15, display:'flex', alignItems:'center', gap:8 }}>
+            {s.emoji} {s.t}
+          </h3>
+          <p style={{ fontSize:13, color:mutedColor, lineHeight:1.85 }}>{s.d}</p>
         </div>
       ))}
-      <div>
-        <h3 style={{ fontWeight:700, marginBottom:6, color:titleColor }}>문의</h3>
-        <p>이메일로 연락주세요.{' '}
-          <a href="mailto:mirririnside1024@gmail.com" style={{ fontWeight:600, color:'#6366f1', textDecoration:'none' }}>
+      <div style={{ padding:'18px 20px', borderRadius:16, background:'rgba(99,102,241,0.05)', border:'1px solid rgba(99,102,241,0.1)' }}>
+        <h3 style={{ fontWeight:800, marginBottom:10, color:titleColor, fontSize:15, display:'flex', alignItems:'center', gap:8 }}>
+          📬 문의
+        </h3>
+        <p style={{ fontSize:13, color:mutedColor, lineHeight:1.85 }}>이메일로 연락주세요.{' '}
+          <a href="mailto:mirririnside1024@gmail.com" style={{ fontWeight:700, color:'#6366f1', textDecoration:'none' }}>
             mirririnside1024@gmail.com
           </a>
         </p>

@@ -4,6 +4,22 @@
   --font-family-sans: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
 }
 
+/* ── CSS design tokens (used by calculator components) ────── */
+:root {
+  --color-primary:   #6366f1;
+  --color-secondary: #8b5cf6;
+  --color-success:   #10b981;
+  --color-warning:   #f59e0b;
+  --color-danger:    #ef4444;
+  --color-pink:      #ec4899;
+  --bg-surface:      #ffffff;
+  --bg-page:         #f2f2f7;
+  --text-title:      #1d1d1f;
+  --text-body:       #3a3a3c;
+  --text-muted:      #6e6e73;
+  --border-color:    rgba(0,0,0,0.07);
+}
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 body {
@@ -166,3 +182,58 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 /* ── Footer responsive grid ─────────────────────────────── */
 .footer-grid { grid-template-columns: 2fr 1fr 1fr; }
 @media (max-width: 640px) { .footer-grid { grid-template-columns: 1fr; } }
+
+/* ── Legacy compatibility (used by calculator components) ─── */
+.glass {
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.07);
+  border-radius: 14px;
+}
+.dark .glass {
+  background: #1c1c1e;
+  border-color: rgba(255,255,255,0.1);
+}
+
+/* Text color helpers */
+.text-muted    { color: var(--text-muted) !important; }
+.text-primary  { color: var(--color-primary) !important; }
+.text-secondary{ color: var(--color-secondary) !important; }
+.text-danger   { color: var(--color-danger) !important; }
+.text-warning  { color: var(--color-warning) !important; }
+.text-success  { color: var(--color-success) !important; }
+
+/* Background helpers */
+.bg-primary   { background: var(--color-primary) !important; }
+.bg-secondary { background: var(--color-secondary) !important; }
+.bg-danger    { background: var(--color-danger) !important; }
+
+/* Input shared style */
+input[type="number"],
+input[type="text"],
+input[type="email"],
+select,
+textarea {
+  color: var(--text-title);
+}
+
+/* Space utilities that calc components use */
+.space-y-2 > * + * { margin-top: 8px; }
+.space-y-3 > * + * { margin-top: 12px; }
+.space-y-4 > * + * { margin-top: 16px; }
+.space-y-5 > * + * { margin-top: 20px; }
+.space-y-6 > * + * { margin-top: 24px; }
+
+/* Tabular nums */
+.tabular-nums { font-variant-numeric: tabular-nums; }
+
+/* hover:shadow-card-hover */
+.hover\:shadow-card-hover:hover {
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+}
+.hover\:-translate-y-1:hover { transform: translateY(-4px); }
+
+/* shadow-glow */
+.shadow-glow { box-shadow: 0 4px 14px rgba(99,102,241,0.4); }
+
+/* recharts label fix */
+.recharts-text { fill: var(--text-muted); font-size: 12px; }
