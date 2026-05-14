@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   Rocket, Building2, Monitor, Coins, Truck, Wallet,
   Calculator, Moon, Sun, ChevronLeft, ChevronRight,
@@ -46,10 +46,12 @@ import { ARTICLES, type Article } from './data/articles';
 type CalcDef = {
   id: string; name: string; desc: string; emoji: string;
   component?: React.ReactNode; status?: '준비중'; isNew?: boolean;
+  tags?: string[];   // 검색 키워드 태그
 };
 type Category = {
   id: string; name: string; emoji: string; icon: React.ReactNode;
   color: string; bg: string; desc: string; calculators: CalcDef[];
+  highlights: string[];  // 카테고리 주요 기능 설명
 };
 
 const CATEGORIES: Category[] = [
@@ -57,70 +59,122 @@ const CATEGORIES: Category[] = [
     id:'viral', name:'재무 시뮬레이터', emoji:'🚀',
     icon:<Rocket size={24}/>, color:'#6366f1', bg:'#eef2ff',
     desc:'대출부터 FIRE까지, 재무 미래를 숫자로 시뮬레이션합니다',
+    highlights:[
+      '대출 갈아타기 — 현재 vs 새 대출 이자 차이를 초 단위로 비교',
+      '조기은퇴(FIRE) — 목표 자산 도달까지 몇 년 걸리는지 역산',
+      'N잡·프리랜서 — 4대보험·세금 공제 후 실제 손에 쥐는 금액',
+      '로또 기회비용 — 매주 산 로또 금액을 S&P500에 넣었다면?',
+      '해외송금 — 토스·와이즈·카카오페이 실시간 환율 비교',
+    ],
     calculators:[
-      { id:'loan',  emoji:'🏦', name:'대출 이자 · 대환 시뮬레이터',  desc:'현재 대출과 새 대출의 이자 차이를 한눈에 비교',   component:<LoanRefinancing/> },
-      { id:'fire',  emoji:'🔥', name:'FIRE(조기은퇴) 시뮬레이터',    desc:'목표 자산과 생존 자금을 역산해 은퇴 시점을 계산', component:<FireSimulator/> },
-      { id:'njob',  emoji:'💼', name:'N잡 · 프리랜서 실소득 계산기', desc:'세금·4대보험 공제 후 실수령액을 정확히 계산',     component:<NJobCalculator/> },
-      { id:'lotto', emoji:'🎰', name:'로또 vs S&P500 기회비용',       desc:'로또 구입비를 투자했다면 얼마가 됐을지 비교',    component:<LottoOpportunity/> },
-      { id:'remit', emoji:'✈️', name:'해외송금 환율 최적화',          desc:'실시간 환율 조회로 수수료·환율 포함 실제 수령액 비교', component:<RemittanceOptimizer/> },
+      { id:'loan',  emoji:'🏦', name:'대출 이자 · 대환 시뮬레이터',  desc:'현재 대출과 새 대출의 이자 차이를 한눈에 비교',   component:<LoanRefinancing/>, tags:['대출','이자','대환','금리','갈아타기','원리금','원금'] },
+      { id:'fire',  emoji:'🔥', name:'FIRE(조기은퇴) 시뮬레이터',    desc:'목표 자산과 생존 자금을 역산해 은퇴 시점을 계산', component:<FireSimulator/>, tags:['FIRE','조기은퇴','은퇴','노후','자산','독립'] },
+      { id:'njob',  emoji:'💼', name:'N잡 · 프리랜서 실소득 계산기', desc:'세금·4대보험 공제 후 실수령액을 정확히 계산',     component:<NJobCalculator/>, tags:['N잡','프리랜서','부업','세금','소득','사업소득'] },
+      { id:'lotto', emoji:'🎰', name:'로또 vs S&P500 기회비용',       desc:'로또 구입비를 투자했다면 얼마가 됐을지 비교',    component:<LottoOpportunity/>, tags:['로또','복권','기회비용','투자','S&P500'] },
+      { id:'remit', emoji:'✈️', name:'해외송금 환율 최적화',          desc:'실시간 환율 조회로 수수료·환율 포함 실제 수령액 비교', component:<RemittanceOptimizer/>, tags:['송금','환율','해외송금','달러','엔','유로','외환','토스','와이즈','카카오'] },
     ],
   },
   {
     id:'hr', name:'인사 · 노무', emoji:'🏢',
     icon:<Building2 size={24}/>, color:'#10b981', bg:'#ecfdf5',
     desc:'퇴직금, 연차, 실업급여 등 근로자가 꼭 알아야 할 계산기',
+    highlights:[
+      '퇴직금 — 평균임금 기준 + 퇴직소득세까지 한번에 정확 계산',
+      '연차 — 2018년 개정법 반영, 입사 첫해 최대 26일 발생 여부 확인',
+      '월급 실수령액 — 4대보험·소득세·지방세 공제 후 통장 입금액',
+      '실업급여 — 근속·나이·고용보험 가입 기간별 수급액·수급일수',
+      '육아휴직급여 — 3개월 80%, 이후 50% + 아빠 육아휴직 보너스',
+    ],
     calculators:[
-      { id:'severance',    emoji:'📋', name:'퇴직금 정밀 계산기',       desc:'평균임금 기준 법정 퇴직금 + 퇴직소득세 정확 계산',   component:<SeveranceCalculator/> },
-      { id:'annual',       emoji:'🗓️', name:'연차 계산기',               desc:'2018년 이후 현행법 기준 연차 발생·잔여·수당 계산',    component:<AnnualLeave/>, isNew:true },
-      { id:'insurance',    emoji:'🛡️', name:'4대보험 사업자 부담금',     desc:'회사 부담 4대보험료를 직종·급여별로 산출',            component:<InsuranceContribution/>, isNew:true },
-      { id:'netsalary',    emoji:'💸', name:'월급 실수령액 계산기',       desc:'국민연금·건강보험·소득세 공제 후 실수령액 계산',       component:<NetSalary/>, isNew:true },
-      { id:'unemployment', emoji:'📉', name:'실업급여 계산기',           desc:'고용보험법 기준 구직급여 일수·금액 산출',             component:<UnemploymentBenefit/>, isNew:true },
-      { id:'parental',     emoji:'👶', name:'육아휴직급여 계산기',       desc:'육아휴직 기간·임금 기준 급여 지급액 계산',            component:<ParentalLeave/>, isNew:true },
+      { id:'severance',    emoji:'📋', name:'퇴직금 정밀 계산기',       desc:'평균임금 기준 법정 퇴직금 + 퇴직소득세 정확 계산',   component:<SeveranceCalculator/>, tags:['퇴직금','퇴직','해고','권고사직','평균임금','퇴직소득세','DC형','DB형'] },
+      { id:'annual',       emoji:'🗓️', name:'연차 계산기',               desc:'2018년 이후 현행법 기준 연차 발생·잔여·수당 계산',    component:<AnnualLeave/>, isNew:true, tags:['연차','휴가','유급휴가','연차수당','입사일','근속'] },
+      { id:'insurance',    emoji:'🛡️', name:'4대보험 사업자 부담금',     desc:'회사 부담 4대보험료를 직종·급여별로 산출',            component:<InsuranceContribution/>, isNew:true, tags:['4대보험','국민연금','건강보험','고용보험','산재','사업자'] },
+      { id:'netsalary',    emoji:'💸', name:'월급 실수령액 계산기',       desc:'국민연금·건강보험·소득세 공제 후 실수령액 계산',       component:<NetSalary/>, isNew:true, tags:['월급','실수령','연봉','급여','세후','공제','소득세','4대보험'] },
+      { id:'unemployment', emoji:'📉', name:'실업급여 계산기',           desc:'고용보험법 기준 구직급여 일수·금액 산출',             component:<UnemploymentBenefit/>, isNew:true, tags:['실업급여','구직급여','실직','해고','권고사직','고용보험','백수'] },
+      { id:'parental',     emoji:'👶', name:'육아휴직급여 계산기',       desc:'육아휴직 기간·임금 기준 급여 지급액 계산',            component:<ParentalLeave/>, isNew:true, tags:['육아휴직','육아','출산','아빠','엄마','임신','아기'] },
     ],
   },
   {
     id:'tech', name:'IT 인프라', emoji:'💻',
     icon:<Monitor size={24}/>, color:'#3b82f6', bg:'#eff6ff',
     desc:'개발자와 IT 매니아를 위한 비용 분석 도구',
+    highlights:[
+      'NAS 전기요금 — 누진세 포함 월 전기세와 클라우드 대비 손익분기',
+      'Local AI vs 클라우드 — GPU 직접 구매 vs API 비용 비교',
+      '서버 TCO — 물리 서버 vs AWS/GCP 5년 총 소유비용 분석',
+      '전기차 vs 내연기관 — 연료·유지·취득 비용 종합 손익분기점',
+    ],
     calculators:[
-      { id:'nas',    emoji:'🖥️', name:'NAS 24시간 전기요금 계산기',    desc:'누진세 포함 월 전기요금과 손익분기점 계산',     component:<NasElectricity/> },
-      { id:'ai',     emoji:'🤖', name:'Local AI vs Cloud API 가성비',  desc:'GPU 구매 vs 클라우드 API 비용 비교',           component:<AiVsCloud/>, isNew:true },
-      { id:'cloud',  emoji:'☁️', name:'클라우드 vs 물리 서버 손익',    desc:'총 소유비용(TCO) 기준 최적 선택 안내',         component:<ServerTco/>, isNew:true },
-      { id:'evvsgas',emoji:'⚡', name:'전기차 vs 내연기관 비교',       desc:'연료비·유지비·취득가 포함 손익분기점 계산',     component:<EvVsGas/>, isNew:true },
+      { id:'nas',    emoji:'🖥️', name:'NAS 24시간 전기요금 계산기',    desc:'누진세 포함 월 전기요금과 손익분기점 계산',     component:<NasElectricity/>, tags:['NAS','전기','전기요금','누진세','서버','하드디스크'] },
+      { id:'ai',     emoji:'🤖', name:'Local AI vs Cloud API 가성비',  desc:'GPU 구매 vs 클라우드 API 비용 비교',           component:<AiVsCloud/>, isNew:true, tags:['AI','GPU','ChatGPT','클라우드','API','딥러닝','머신러닝'] },
+      { id:'cloud',  emoji:'☁️', name:'클라우드 vs 물리 서버 손익',    desc:'총 소유비용(TCO) 기준 최적 선택 안내',         component:<ServerTco/>, isNew:true, tags:['클라우드','AWS','GCP','서버','TCO','호스팅'] },
+      { id:'evvsgas',emoji:'⚡', name:'전기차 vs 내연기관 비교',       desc:'연료비·유지비·취득가 포함 손익분기점 계산',     component:<EvVsGas/>, isNew:true, tags:['전기차','EV','테슬라','아이오닉','주유비','기름','휘발유','손익분기'] },
     ],
   },
   {
     id:'invest', name:'투자 · 자산', emoji:'💰',
     icon:<Coins size={24}/>, color:'#f59e0b', bg:'#fffbeb',
     desc:'파킹통장부터 배당 스노우볼까지, 자산을 굴리는 법',
+    highlights:[
+      '파킹통장 — 카카오·토스·케이뱅크 금리 비교 + 일복리 시뮬레이션',
+      '은 현물 평단가 — 분할 매수 시 평균 단가와 수익률 계산',
+      '배당 스노우볼 — 배당금 재투자로 쌓이는 복리 효과 시각화',
+    ],
     calculators:[
-      { id:'parking', emoji:'🅿️', name:'파킹통장 일복리 쪼개기',        desc:'은행별 금리 비교와 복리 수익을 시각화',       component:<ParkingAccount/> },
-      { id:'silver',  emoji:'🥈', name:'은(Silver) 현물 평단가 계산기', desc:'분할 매수 시 평균 단가와 손익을 계산',        component:<SilverAvgPrice/>, isNew:true },
-      { id:'drip',    emoji:'📈', name:'배당주 재투자 스노우볼',        desc:'배당금 재투자로 쌓이는 복리 효과 시뮬레이션', component:<DripSnowball/>, isNew:true },
+      { id:'parking', emoji:'🅿️', name:'파킹통장 일복리 쪼개기',        desc:'은행별 금리 비교와 복리 수익을 시각화',       component:<ParkingAccount/>, tags:['파킹통장','예금','적금','금리','복리','이자','저축'] },
+      { id:'silver',  emoji:'🥈', name:'은(Silver) 현물 평단가 계산기', desc:'분할 매수 시 평균 단가와 손익을 계산',        component:<SilverAvgPrice/>, isNew:true, tags:['은','실버','silver','현물','귀금속','평단가','분할매수'] },
+      { id:'drip',    emoji:'📈', name:'배당주 재투자 스노우볼',        desc:'배당금 재투자로 쌓이는 복리 효과 시뮬레이션', component:<DripSnowball/>, isNew:true, tags:['배당','배당주','재투자','DRIP','복리','주식','ETF'] },
     ],
   },
   {
     id:'estate', name:'부동산 · 이사', emoji:'🏠',
     icon:<Truck size={24}/>, color:'#ec4899', bg:'#fdf2f8',
     desc:'청약 가점부터 주택담보대출·이사비용까지 한 번에',
+    highlights:[
+      '청약 가점 — 무주택·부양가족·청약통장 기준 84점 만점 계산',
+      '디딤돌·버팀목·보금자리론 — 정부지원 대출 한도·월 상환액',
+      '청년 전월세 대출 — 중소기업 청년 전월세, 보증부 월세대출',
+      '중개 수수료 + 취득세 — 매매·전세 거래 시 총 부대비용',
+      '포장이사 견적 — 거리·물량·층수 기반 이사비용 예상액',
+    ],
     calculators:[
-      { id:'moving',      emoji:'📦', name:'포장이사 견적 예측기',       desc:'거리·물량 기준 이사 비용 예상액 산출',                  component:<MovingCost/>, isNew:true },
-      { id:'broker',      emoji:'🔑', name:'중개 수수료 · 등기 비용',    desc:'매매·전세 중개보수와 취득세 합산 계산',                 component:<BrokerFee/>, isNew:true },
-      { id:'subscription',emoji:'🏆', name:'청약 가점 계산기',           desc:'무주택·부양가족·청약통장 기준 84점 만점 가점 산출',      component:<HousingSubscription/>, isNew:true },
-      { id:'didimdol',    emoji:'🏡', name:'디딤돌 대출 계산기',         desc:'주택도시기금 디딤돌·신생아특례 대출 한도·월 상환액 계산', component:<DidimdolLoan/>, isNew:true },
-      { id:'beotimok',    emoji:'🔐', name:'버팀목 전세자금 대출',       desc:'버팀목·신생아특례 전세자금 한도·이자 계산',              component:<BeotimokJeonse/>, isNew:true },
-      { id:'bogeumjari',  emoji:'🏘️', name:'보금자리론 계산기',          desc:'HF 보금자리론 유형별 금리·월 상환액 계산',               component:<BogeumjariLoan/>, isNew:true },
-      { id:'youth',       emoji:'🌱', name:'청년 전월세 대출 계산기',    desc:'중소기업 청년 전월세·청년 보증부 월세대출 계산',          component:<YouthHousingLoan/>, isNew:true },
+      { id:'moving',      emoji:'📦', name:'포장이사 견적 예측기',       desc:'거리·물량 기준 이사 비용 예상액 산출',                  component:<MovingCost/>, isNew:true, tags:['이사','포장이사','이삿짐','이사비용','용달'] },
+      { id:'broker',      emoji:'🔑', name:'중개 수수료 · 등기 비용',    desc:'매매·전세 중개보수와 취득세 합산 계산',                 component:<BrokerFee/>, isNew:true, tags:['중개수수료','복비','취득세','부동산','공인중개사'] },
+      { id:'subscription',emoji:'🏆', name:'청약 가점 계산기',           desc:'무주택·부양가족·청약통장 기준 84점 만점 가점 산출',      component:<HousingSubscription/>, isNew:true, tags:['청약','청약가점','아파트','당첨','무주택','부양가족','청약통장'] },
+      { id:'didimdol',    emoji:'🏡', name:'디딤돌 대출 계산기',         desc:'주택도시기금 디딤돌·신생아특례 대출 한도·월 상환액 계산', component:<DidimdolLoan/>, isNew:true, tags:['디딤돌','주택도시기금','신생아특례','정부대출','주담대'] },
+      { id:'beotimok',    emoji:'🔐', name:'버팀목 전세자금 대출',       desc:'버팀목·신생아특례 전세자금 한도·이자 계산',              component:<BeotimokJeonse/>, isNew:true, tags:['버팀목','전세','전세자금','전세대출','신생아','보증금'] },
+      { id:'bogeumjari',  emoji:'🏘️', name:'보금자리론 계산기',          desc:'HF 보금자리론 유형별 금리·월 상환액 계산',               component:<BogeumjariLoan/>, isNew:true, tags:['보금자리론','HF','주택금융공사','고정금리','주담대'] },
+      { id:'youth',       emoji:'🌱', name:'청년 전월세 대출 계산기',    desc:'중소기업 청년 전월세·청년 보증부 월세대출 계산',          component:<YouthHousingLoan/>, isNew:true, tags:['청년','전월세','청년대출','중소기업','월세','보증금'] },
     ],
   },
   {
     id:'daily', name:'지출 통제', emoji:'💳',
     icon:<Wallet size={24}/>, color:'#ef4444', bg:'#fef2f2',
     desc:'무의식 지출을 숫자로 때려잡는 계산기',
+    highlights:[
+      '구독료 누수 — 넷플릭스·유튜브·카카오 구독료 연간·10년 환산',
+      '카푸어 타이머 — 차 할부가 내 자산에 미치는 실제 충격 계산',
+      '커피 연금 — 매일 커피값을 30년 투자하면 노후 자금이 얼마?',
+    ],
     calculators:[
-      { id:'carpoor', emoji:'🚗', name:'자동차 할부 vs 카푸어 타이머', desc:'차 할부가 자산에 미치는 실질적 충격 계산',  component:<CarPoorTimer/> },
-      { id:'sub',     emoji:'📱', name:'구독료 누수 탐지기',           desc:'월별 구독 지출이 연간·10년에 얼마인지 계산', component:<SubscriptionLeak/>, isNew:true },
-      { id:'coffee',  emoji:'☕', name:'커피값 노후 연금 환산기',      desc:'매일 커피값을 투자했다면 노후에 얼마가 될까', component:<CoffeeRetirement/>, isNew:true },
+      { id:'carpoor', emoji:'🚗', name:'자동차 할부 vs 카푸어 타이머', desc:'차 할부가 자산에 미치는 실질적 충격 계산',  component:<CarPoorTimer/>, tags:['자동차','할부','카푸어','차','자산','기회비용'] },
+      { id:'sub',     emoji:'📱', name:'구독료 누수 탐지기',           desc:'월별 구독 지출이 연간·10년에 얼마인지 계산', component:<SubscriptionLeak/>, isNew:true, tags:['구독','넷플릭스','유튜브','카카오','구독료','OTT'] },
+      { id:'coffee',  emoji:'☕', name:'커피값 노후 연금 환산기',      desc:'매일 커피값을 투자했다면 노후에 얼마가 될까', component:<CoffeeRetirement/>, isNew:true, tags:['커피','스타벅스','노후','연금','투자','절약'] },
+    ],
+  },
+  {
+    id:'fun', name:'재미있는 계산기', emoji:'🎉',
+    icon:<Laugh size={24}/>, color:'#8b5cf6', bg:'#f5f3ff',
+    desc:'숫자로 보는 인생 — 웃기고 진지한 엉뚱 계산기',
+    highlights:[
+      '치킨 환산기 — 내 연봉으로 치킨·피자·스타벅스 몇 개 살 수 있나',
+      '인생 시간 — 남은 인생을 밥·잠·월급날·심장박동수로 환산',
+      '비트코인 가정 — 그때 비트코인을 샀다면 지금 얼마가 됐을까?',
+    ],
+    calculators:[
+      { id:'chicken',  emoji:'🍗', name:'연봉 치킨 환산기',           desc:'내 연봉으로 치킨·피자·커피를 몇 개나 살 수 있을까?', component:<ChickenCount/>, isNew:true, tags:['치킨','연봉','환산','재미','피자','커피','스타벅스'] },
+      { id:'lifetime', emoji:'⏳', name:'인생 시간 계산기',           desc:'남은 인생을 시간·밥·잠·월급날로 환산해 보세요',    component:<LifeTimeCalc/>, isNew:true, tags:['인생','수명','나이','시간','남은','기대수명','생일'] },
+      { id:'bitcoin',  emoji:'₿', name:'비트코인을 샀다면?',          desc:'그때 비트코인을 샀다면 지금 얼마가 됐을지 계산',    component:<BitcoinWhatIf/>, isNew:true, tags:['비트코인','BTC','코인','가상화폐','암호화폐','투자','이더리움'] },
     ],
   },
   {
@@ -172,6 +226,16 @@ export default function App() {
 
   const scrollTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
+  /* Ctrl+K / Cmd+K to open search */
+  React.useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); setShowSearch(true); }
+      if (e.key === 'Escape') { setShowSearch(false); }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
+
   const navigate = useCallback((catId: string, calcId?: string) => {
     setActiveCategory(catId);
     setActiveCalcId(calcId ?? null);
@@ -182,12 +246,20 @@ export default function App() {
 
   const reset = () => { setActiveCategory(null); setActiveCalcId(null); scrollTop(); };
 
-  /* Search results */
+  /* Search results — 이름, 설명, 카테고리명, 태그 모두 검색 */
   const searchResults = searchQuery.trim().length >= 1
     ? CATEGORIES.flatMap((c) =>
         c.calculators
-          .filter((cc) => !cc.status &&
-            (cc.name.includes(searchQuery) || cc.desc.includes(searchQuery) || c.name.includes(searchQuery)))
+          .filter((cc) => {
+            if (cc.status) return false;
+            const q = searchQuery.trim().toLowerCase();
+            return (
+              cc.name.toLowerCase().includes(q) ||
+              cc.desc.toLowerCase().includes(q) ||
+              c.name.toLowerCase().includes(q) ||
+              (cc.tags ?? []).some((t) => t.toLowerCase().includes(q))
+            );
+          })
           .map((cc) => ({ ...cc, catId: c.id, catName: c.name, catEmoji: c.emoji, catColor: c.color, catBg: c.bg }))
       )
     : [];
@@ -241,13 +313,19 @@ export default function App() {
 
             <div style={{ display:'flex', alignItems:'center', gap:8, flexShrink:0 }}>
               {/* Search button */}
-              <button onClick={() => setShowSearch(true)} aria-label="검색"
+              <button onClick={() => setShowSearch(true)} aria-label="검색 (Ctrl+K)"
                 style={{
-                  width:40, height:40, borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center',
-                  background:'rgba(255,255,255,0.1)', color:'rgba(255,255,255,0.75)',
+                  height:38, borderRadius:12, display:'flex', alignItems:'center',
+                  gap:8, padding:'0 12px',
+                  background:'rgba(255,255,255,0.08)', color:'rgba(255,255,255,0.55)',
                   border:'1px solid rgba(255,255,255,0.12)',
                 }}>
-                <Search size={17}/>
+                <Search size={15}/>
+                <span style={{ fontSize:12, fontWeight:500 }} className="hidden lg:inline">계산기 검색</span>
+                <span style={{
+                  fontSize:10, padding:'2px 6px', borderRadius:6, fontWeight:700,
+                  background:'rgba(255,255,255,0.12)', color:'rgba(255,255,255,0.4)',
+                }} className="hidden lg:inline">⌘K</span>
               </button>
               <button onClick={() => setIsDark(!isDark)} aria-label={isDark?'라이트모드':'다크모드'}
                 style={{
@@ -573,7 +651,35 @@ export default function App() {
                 </div>
 
                 <W>
-                  <div style={{ paddingTop:40 }}>
+                  {/* 카테고리 기능 하이라이트 */}
+                  <div style={{ padding:'32px 0 8px' }}>
+                    <p style={{ fontSize:12, fontWeight:800, color:`${selectedCategory.color}99`, letterSpacing:'0.06em', marginBottom:14 }}>
+                      이 카테고리에서 할 수 있는 것
+                    </p>
+                    <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))', gap:10 }}>
+                      {selectedCategory.highlights.map((h, i) => (
+                        <div key={i} style={{
+                          display:'flex', alignItems:'flex-start', gap:10,
+                          padding:'13px 16px', borderRadius:14,
+                          background:`${selectedCategory.color}08`,
+                          border:`1px solid ${selectedCategory.color}18`,
+                        }}>
+                          <span style={{
+                            width:22, height:22, borderRadius:99, flexShrink:0,
+                            background:selectedCategory.color, color:'#fff',
+                            display:'flex', alignItems:'center', justifyContent:'center',
+                            fontSize:11, fontWeight:800,
+                          }}>{i+1}</span>
+                          <span style={{ fontSize:13, color:bodyColor, lineHeight:1.6, fontWeight:500 }}>{h}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div style={{ paddingTop:28 }}>
+                    <p style={{ fontSize:12, fontWeight:800, color:mutedColor, letterSpacing:'0.06em', marginBottom:16 }}>
+                      전체 계산기 {selectedCategory.calculators.filter(c=>!c.status).length}개
+                    </p>
                     <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(320px,1fr))', gap:18 }}>
                       {selectedCategory.calculators.map((calc, idx) => (
                         <motion.button key={calc.id}
@@ -852,18 +958,26 @@ export default function App() {
                     marginTop:10, background:surfaceBg, borderRadius:16, padding:'20px',
                     boxShadow:'0 20px 60px rgba(0,0,0,0.3)',
                   }}>
-                    <p style={{ fontSize:11, color:mutedColor, fontWeight:700, marginBottom:12 }}>빠른 이동</p>
+                    <p style={{ fontSize:11, color:mutedColor, fontWeight:700, marginBottom:12 }}>자주 찾는 키워드</p>
                     <div style={{ display:'flex', flexWrap:'wrap', gap:6 }}>
-                      {['퇴직금','연차','실업급여','전기차','치킨','비트코인','대출','청약'].map((kw) => (
+                      {[
+                        '퇴직금','연차','실업급여','월급','육아휴직',
+                        '청약','대출','보금자리론','전기차',
+                        '치킨','비트코인','인생','FIRE','파킹통장',
+                      ].map((kw) => (
                         <button key={kw} onClick={() => setSearchQuery(kw)}
                           style={{
-                            padding:'6px 14px', borderRadius:99, fontSize:13, fontWeight:700,
+                            padding:'6px 14px', borderRadius:99, fontSize:12, fontWeight:700,
                             background:'#eef2ff', color:'#6366f1', cursor:'pointer',
+                            border:'1px solid rgba(99,102,241,0.2)',
                           }}>
                           {kw}
                         </button>
                       ))}
                     </div>
+                    <p style={{ fontSize:10, color:'#aeaeb2', marginTop:14 }}>
+                      💡 Ctrl+K (Mac: ⌘K) 단축키로 검색창을 열 수 있습니다
+                    </p>
                   </div>
                 )}
               </motion.div>
