@@ -661,6 +661,8 @@ export default function App() {
                     { icon:<Info size={13}/>,      label:'서비스 소개',      act:()=>setModal('about') },
                     { icon:<Shield size={13}/>,    label:'개인정보처리방침', act:()=>setModal('privacy') },
                     { icon:<FileText size={13}/>,  label:'이용약관',         act:()=>setModal('terms') },
+                    { icon:<Mail size={13}/>,      label:'문의하기',         href:'mailto:mirririnside1024@gmail.com' },
+                    { icon:<Briefcase size={13}/>, label:'광고 문의',        href:'mailto:mirririnside1024@gmail.com' },
                   ] as const).map((item) => (
                     <li key={item.label}>
                       <button onClick={item.act}
