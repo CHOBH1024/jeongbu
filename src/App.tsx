@@ -131,7 +131,7 @@ export default function App() {
 
         {/* ── Nav ─────────────────────────────────────────── */}
         <header className="sticky top-0 z-50 glass-nav" role="banner">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 h-15 flex items-center justify-between gap-4" style={{ height: 60 }}>
+          <div className="max-w-6xl mx-auto px-6 sm:px-8 h-15 flex items-center justify-between gap-4" style={{ height: 60 }}>
             <button onClick={reset} className="flex items-center gap-2.5 shrink-0" aria-label="홈으로">
               <div
                 className="w-8 h-8 rounded-lg flex items-center justify-center animate-float"
@@ -177,7 +177,7 @@ export default function App() {
               <motion.div key="home" initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }} transition={{ duration:0.2 }}>
 
                 {/* Hero */}
-                <section className="relative pt-16 pb-20 px-4 sm:px-6 overflow-hidden" aria-labelledby="hero-heading">
+                <section className="relative pt-16 pb-20 px-6 sm:px-8 overflow-hidden" aria-labelledby="hero-heading">
                   {/* Background decoration */}
                   <div
                     className="absolute inset-x-0 top-0 h-1 hero-strip"
@@ -289,7 +289,7 @@ export default function App() {
                 </section>
 
                 {/* Categories grid — gray bg section */}
-                <section className="section-gray py-16 px-4 sm:px-6">
+                <section className="section-gray py-16 px-6 sm:px-8">
                   <div className="max-w-6xl mx-auto">
                     <SectionHeader title="📂 전체 카테고리" sub="원하는 분야의 계산기를 골라보세요" isDark={isDark} />
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -356,96 +356,65 @@ export default function App() {
                 </section>
 
                 {/* Articles */}
-                <section className="py-16 px-4 sm:px-6">
+                <section className="py-16 px-6 sm:px-8">
                   <div className="max-w-6xl mx-auto">
-                    <div className="flex items-end justify-between mb-6">
-                      <div>
-                        <div className="flex items-center gap-2 mb-0.5">
-                          <BookOpen size={19} style={{ color: '#6366f1' }} />
-                          <h2
-                            className="text-xl font-extrabold"
-                            style={{ color: isDark ? '#f1f5f9' : '#111827' }}
-                          >
+                    <div className="flex items-center justify-between mb-8">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: '#eef2ff' }}>
+                          <BookOpen size={18} style={{ color: '#6366f1' }} />
+                        </div>
+                        <div>
+                          <h2 className="text-xl font-extrabold" style={{ color: isDark ? '#f1f5f9' : '#111827' }}>
                             알아두면 돈 되는 금융 상식
                           </h2>
+                          <p className="text-sm" style={{ color: isDark ? '#94a3b8' : '#6b7280' }}>
+                            계산기와 함께 읽으면 더 유용한 실전 가이드
+                          </p>
                         </div>
-                        <p className="text-sm ml-7" style={{ color: isDark ? '#94a3b8' : '#6b7280' }}>
-                          계산기와 함께 읽으면 더 유용한 실전 가이드
-                        </p>
                       </div>
-                      <span className="hidden sm:block text-xs font-bold px-3 py-1 rounded-full" style={{ background: '#eef2ff', color: '#6366f1' }}>
-                        {ARTICLES.length}개 가이드
+                      <span className="hidden sm:flex items-center gap-1 text-sm font-bold px-3 py-1.5 rounded-full" style={{ background: '#eef2ff', color: '#6366f1' }}>
+                        {ARTICLES.length}개
                       </span>
                     </div>
 
-                    {/* Top 6 cards */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-                      {ARTICLES.slice(0, 6).map((article, idx) => (
+                    {/* All articles as uniform cards — 3 columns */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {ARTICLES.map((article, idx) => (
                         <motion.button
                           key={article.id}
-                          initial={{ opacity:0, y:14 }} animate={{ opacity:1, y:0 }} transition={{ delay: idx*0.05 }}
+                          initial={{ opacity:0, y:12 }} animate={{ opacity:1, y:0 }} transition={{ delay: Math.min(idx * 0.03, 0.4) }}
                           onClick={() => setActiveArticle(article)}
-                          className="card card-hover rounded-2xl p-5 text-left group"
+                          className="card card-hover rounded-2xl p-5 text-left group flex flex-col"
                         >
                           <div className="flex items-center gap-2 mb-3">
-                            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full" style={{ background: '#eef2ff', color: '#6366f1' }}>
+                            <span
+                              className="text-xs font-bold px-2.5 py-0.5 rounded-full"
+                              style={{ background: '#eef2ff', color: '#6366f1' }}
+                            >
                               {article.category}
                             </span>
                             <span className="flex items-center gap-1 text-xs" style={{ color: isDark ? '#94a3b8' : '#9ca3af' }}>
-                              <Clock size={11} /> {article.readTime}
+                              <Clock size={12} /> {article.readTime}
                             </span>
                           </div>
                           <h3
-                            className="font-bold text-sm leading-snug mb-2 group-hover:text-primary transition-colors line-clamp-2"
+                            className="font-bold text-sm leading-snug group-hover:text-primary transition-colors line-clamp-2 flex-1"
                             style={{ color: isDark ? '#f1f5f9' : '#111827' }}
                           >
                             {article.title}
                           </h3>
                           <p
-                            className="text-xs leading-relaxed line-clamp-3"
-                            style={{ color: isDark ? '#94a3b8' : '#4b5563' }}
+                            className="text-xs mt-2 leading-relaxed line-clamp-2"
+                            style={{ color: isDark ? '#94a3b8' : '#6b7280' }}
                           >
                             {article.summary}
                           </p>
-                          <div className="flex items-center gap-1 mt-4 text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: '#6366f1' }}>
+                          <div
+                            className="flex items-center gap-1 mt-3 text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity"
+                            style={{ color: '#6366f1' }}
+                          >
                             자세히 읽기 <ArrowRight size={11} />
                           </div>
-                        </motion.button>
-                      ))}
-                    </div>
-
-                    {/* Rest as rows */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-                      {ARTICLES.slice(6).map((article, idx) => (
-                        <motion.button
-                          key={article.id}
-                          initial={{ opacity:0, y:8 }} animate={{ opacity:1, y:0 }} transition={{ delay: 0.30 + idx*0.035 }}
-                          onClick={() => setActiveArticle(article)}
-                          className="card card-hover rounded-xl p-3.5 text-left group flex gap-3 items-center"
-                        >
-                          <div
-                            className="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center"
-                            style={{ background: '#eef2ff', color: '#6366f1' }}
-                          >
-                            <FileText size={15} />
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-2 mb-0.5">
-                              <span className="text-[11px] font-bold uppercase tracking-wide" style={{ color: '#6366f1' }}>
-                                {article.category}
-                              </span>
-                              <span className="flex items-center gap-1 text-[11px]" style={{ color: isDark ? '#94a3b8' : '#9ca3af' }}>
-                                <Clock size={10} /> {article.readTime}
-                              </span>
-                            </div>
-                            <h3
-                              className="font-semibold text-sm line-clamp-1 group-hover:text-primary transition-colors"
-                              style={{ color: isDark ? '#f1f5f9' : '#111827' }}
-                            >
-                              {article.title}
-                            </h3>
-                          </div>
-                          <ChevronRight size={15} className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: '#6366f1' }} />
                         </motion.button>
                       ))}
                     </div>
@@ -453,7 +422,7 @@ export default function App() {
                 </section>
 
                 {/* About */}
-                <section className="section-indigo py-16 px-4 sm:px-6 relative overflow-hidden" aria-labelledby="about-heading">
+                <section className="section-indigo py-16 px-6 sm:px-8 relative overflow-hidden" aria-labelledby="about-heading">
                   <div className="absolute inset-0 grid-dots opacity-40 pointer-events-none" aria-hidden="true" />
                   <div className="max-w-6xl mx-auto relative">
                     <div className="text-center mb-12">
@@ -508,7 +477,7 @@ export default function App() {
                 key="category"
                 initial={{ opacity:0, x:20 }} animate={{ opacity:1, x:0 }} exit={{ opacity:0, x:-20 }}
                 transition={{ duration:0.2 }}
-                className="max-w-6xl mx-auto px-4 sm:px-6 py-10"
+                className="max-w-6xl mx-auto px-6 sm:px-8 py-10"
               >
                 <div className="flex items-center gap-3 mb-2">
                   <BackButton onClick={reset} isDark={isDark} />
@@ -574,7 +543,7 @@ export default function App() {
                 key={activeCalcId}
                 initial={{ opacity:0, y:14 }} animate={{ opacity:1, y:0 }} exit={{ opacity:0, y:-14 }}
                 transition={{ duration:0.2 }}
-                className="max-w-6xl mx-auto px-4 sm:px-6 py-10"
+                className="max-w-6xl mx-auto px-6 sm:px-8 py-10"
               >
                 <div className="flex items-center gap-3 mb-8">
                   <BackButton onClick={() => setActiveCalcId(null)} isDark={isDark} />
@@ -610,7 +579,7 @@ export default function App() {
           style={{ borderColor: isDark ? 'rgba(255,255,255,0.06)' : '#e5e7eb' }}
           role="contentinfo"
         >
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
+          <div className="max-w-6xl mx-auto px-6 sm:px-8 py-12">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
               <div className="md:col-span-2">
                 <div className="flex items-center gap-2 mb-3">
