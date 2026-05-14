@@ -183,6 +183,18 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .footer-grid { grid-template-columns: 2fr 1fr 1fr; }
 @media (max-width: 640px) { .footer-grid { grid-template-columns: 1fr; } }
 
+/* ── Hero stat grid (2col mobile → 4col desktop) ─────────── */
+.hero-stats { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; max-width:580px; margin:0 auto; }
+@media (min-width:600px) { .hero-stats { grid-template-columns:repeat(4,1fr); gap:14px; } }
+
+/* ── Search modal overlay ────────────────────────────────── */
+.search-overlay {
+  position:fixed; inset:0; z-index:100;
+  background:rgba(0,0,0,0.55); backdrop-filter:blur(10px);
+  display:flex; flex-direction:column; align-items:center;
+  padding-top:80px; padding-left:16px; padding-right:16px;
+}
+
 /* ── Legacy compatibility (used by calculator components) ─── */
 .glass {
   background: #ffffff;
