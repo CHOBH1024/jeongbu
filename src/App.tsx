@@ -38,6 +38,15 @@ import { SeveranceCalculator } from './components/calculators/SeveranceCalculato
 import { NasElectricity } from './components/calculators/NasElectricity';
 import { ParkingAccount } from './components/calculators/ParkingAccount';
 import { AnnualLeave } from './components/calculators/AnnualLeave';
+import { InsuranceContribution } from './components/calculators/InsuranceContribution';
+import { DripSnowball } from './components/calculators/DripSnowball';
+import { SilverAvgPrice } from './components/calculators/SilverAvgPrice';
+import { MovingCost } from './components/calculators/MovingCost';
+import { BrokerFee } from './components/calculators/BrokerFee';
+import { SubscriptionLeak } from './components/calculators/SubscriptionLeak';
+import { CoffeeRetirement } from './components/calculators/CoffeeRetirement';
+import { AiVsCloud } from './components/calculators/AiVsCloud';
+import { ServerTco } from './components/calculators/ServerTco';
 import { PrivacyPolicy } from './components/pages/PrivacyPolicy';
 import { TermsOfService } from './components/pages/TermsOfService';
 import { ARTICLES, type Article } from './data/articles';
@@ -84,7 +93,7 @@ const CATEGORIES: Category[] = [
     calculators: [
       { id: 'severance', name: '퇴직금 정밀 계산기', desc: '평균임금 기준 법정 퇴직금을 정확하게 계산', component: <SeveranceCalculator /> },
       { id: 'annual', name: '연차 계산기', desc: '입사일 기준 연차 발생일수 및 잔여일수 계산', component: <AnnualLeave />, isNew: true },
-      { id: 'insurance', name: '4대보험 사업자 부담금', desc: '회사 부담 4대보험료를 직종·급여별로 산출', status: '준비중' },
+      { id: 'insurance', name: '4대보험 사업자 부담금', desc: '회사 부담 4대보험료를 직종·급여별로 산출', component: <InsuranceContribution />, isNew: true },
     ],
   },
   {
@@ -95,8 +104,8 @@ const CATEGORIES: Category[] = [
     desc: '개발자와 IT 매니아를 위한 비용 분석 도구',
     calculators: [
       { id: 'nas', name: 'NAS 24시간 전기요금 계산기', desc: '누진세 포함 월 전기요금과 손익분기점 계산', component: <NasElectricity /> },
-      { id: 'ai', name: 'Local AI vs Cloud API 가성비', desc: 'GPU 구매 vs 클라우드 API 비용 비교', status: '준비중' },
-      { id: 'cloud', name: '클라우드 vs 물리 서버 손익', desc: '총 소유비용(TCO) 기준 최적 선택 안내', status: '준비중' },
+      { id: 'ai', name: 'Local AI vs Cloud API 가성비', desc: 'GPU 구매 vs 클라우드 API 비용 비교', component: <AiVsCloud />, isNew: true },
+      { id: 'cloud', name: '클라우드 vs 물리 서버 손익', desc: '총 소유비용(TCO) 기준 최적 선택 안내', component: <ServerTco />, isNew: true },
     ],
   },
   {
@@ -107,8 +116,8 @@ const CATEGORIES: Category[] = [
     desc: '파킹통장부터 배당 스노우볼까지, 자산을 굴리는 법',
     calculators: [
       { id: 'parking', name: '파킹통장 일복리 쪼개기', desc: '은행별 금리 비교와 복리 수익을 시각화', component: <ParkingAccount /> },
-      { id: 'silver', name: '은(Silver) 현물 평단가 계산기', desc: '분할 매수 시 평균 단가와 손익을 계산', status: '준비중' },
-      { id: 'drip', name: '배당주 재투자 스노우볼', desc: '배당금 재투자로 쌓이는 복리 효과 시뮬레이션', status: '준비중' },
+      { id: 'silver', name: '은(Silver) 현물 평단가 계산기', desc: '분할 매수 시 평균 단가와 손익을 계산', component: <SilverAvgPrice />, isNew: true },
+      { id: 'drip', name: '배당주 재투자 스노우볼', desc: '배당금 재투자로 쌓이는 복리 효과 시뮬레이션', component: <DripSnowball />, isNew: true },
     ],
   },
   {
@@ -118,8 +127,8 @@ const CATEGORIES: Category[] = [
     color: '#ec4899',
     desc: '이사 비용부터 중개 수수료까지 한 번에 파악',
     calculators: [
-      { id: 'moving', name: '포장이사 견적 예측기', desc: '거리·물량 기준 이사 비용 예상액 산출', status: '준비중' },
-      { id: 'broker', name: '중개 수수료 · 등기 비용', desc: '매매·전세 중개보수와 취득세 합산 계산', status: '준비중' },
+      { id: 'moving', name: '포장이사 견적 예측기', desc: '거리·물량 기준 이사 비용 예상액 산출', component: <MovingCost />, isNew: true },
+      { id: 'broker', name: '중개 수수료 · 등기 비용', desc: '매매·전세 중개보수와 취득세 합산 계산', component: <BrokerFee />, isNew: true },
     ],
   },
   {
@@ -130,20 +139,20 @@ const CATEGORIES: Category[] = [
     desc: '무의식 지출을 숫자로 때려잡는 뼈 때리기 계산기',
     calculators: [
       { id: 'carpoor', name: '자동차 할부 vs 카푸어 타이머', desc: '차 할부가 자산에 미치는 실질적 충격 계산', component: <CarPoorTimer /> },
-      { id: 'sub', name: '구독료 누수 탐지기', desc: '월별 구독 지출이 연간·10년에 얼마인지 계산', status: '준비중' },
-      { id: 'coffee', name: '커피값 노후 연금 환산기', desc: '매일 커피값을 투자했다면 노후에 얼마가 될까', status: '준비중' },
+      { id: 'sub', name: '구독료 누수 탐지기', desc: '월별 구독 지출이 연간·10년에 얼마인지 계산', component: <SubscriptionLeak />, isNew: true },
+      { id: 'coffee', name: '커피값 노후 연금 환산기', desc: '매일 커피값을 투자했다면 노후에 얼마가 될까', component: <CoffeeRetirement />, isNew: true },
     ],
   },
 ];
 
 const STATS = [
-  { icon: <Calculator size={18} />, value: '9+', label: '계산기 운영 중' },
+  { icon: <Calculator size={18} />, value: '18+', label: '계산기 운영 중' },
   { icon: <TrendingUp size={18} />, value: '무료', label: '완전 무료 서비스' },
   { icon: <Zap size={18} />, value: '실시간', label: '즉시 계산 결과' },
   { icon: <Shield size={18} />, value: '100%', label: '개인정보 미수집' },
 ];
 
-const FEATURED = ['loan', 'annual', 'fire', 'severance', 'carpoor', 'parking'];
+const FEATURED = ['loan', 'annual', 'fire', 'severance', 'drip', 'broker', 'sub', 'insurance', 'coffee'];
 
 function getFeatured() {
   return CATEGORIES.flatMap((c) =>
