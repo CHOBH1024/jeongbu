@@ -55,8 +55,8 @@ export function PrivacyPolicy() {
           본 서비스의 개인정보 관련 문의는 아래 이메일로 연락해 주세요.
           <br />
           이메일:{' '}
-          <a href="mailto:contact@byeolbyeol-calc.com" className="text-primary underline">
-            contact@byeolbyeol-calc.com
+          <a href="mailto:mirririnside1024@gmail.com" className="text-primary underline">
+            mirririnside1024@gmail.com
           </a>
         </p>
       </Section>

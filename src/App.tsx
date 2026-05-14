@@ -581,7 +581,7 @@ export default function App() {
                   </li>
                   <li>
                     <a
-                      href="mailto:contact@byeolbyeol-calc.com"
+                      href="mailto:mirririnside1024@gmail.com"
                       className="text-sm text-muted hover:text-primary transition-colors flex items-center gap-1"
                     >
                       <Mail size={14} /> 문의하기
@@ -589,7 +589,7 @@ export default function App() {
                   </li>
                   <li>
                     <a
-                      href="mailto:contact@byeolbyeol-calc.com"
+                      href="mailto:mirririnside1024@gmail.com"
                       className="text-sm text-muted hover:text-primary transition-colors flex items-center gap-1"
                     >
                       <Briefcase size={14} /> 광고 문의
@@ -693,8 +693,8 @@ function AboutContent() {
         <p>
           서비스 이용 중 문의사항이 있으시면 이메일로 연락주세요.
           <br />
-          <a href="mailto:contact@byeolbyeol-calc.com" className="text-primary font-semibold">
-            contact@byeolbyeol-calc.com
+          <a href="mailto:mirririnside1024@gmail.com" className="text-primary font-semibold">
+            mirririnside1024@gmail.com
           </a>
         </p>
       </div>
