@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://byeolbyeol-calc.com/sitemap.xml
+Sitemap: https://jeongbu.vercel.app/sitemap.xml
