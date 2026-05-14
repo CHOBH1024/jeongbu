@@ -21,6 +21,10 @@ import {
   Users,
   Zap,
   Star,
+  BookOpen,
+  Clock,
+  Tag,
+  FileText,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -35,6 +39,8 @@ import { NasElectricity } from './components/calculators/NasElectricity';
 import { ParkingAccount } from './components/calculators/ParkingAccount';
 import { AnnualLeave } from './components/calculators/AnnualLeave';
 import { PrivacyPolicy } from './components/pages/PrivacyPolicy';
+import { TermsOfService } from './components/pages/TermsOfService';
+import { ARTICLES, type Article } from './data/articles';
 
 type CalcDef = {
   id: string;
@@ -151,7 +157,8 @@ export default function App() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [activeCalcId, setActiveCalcId] = useState<string | null>(null);
   const [isDark, setIsDark] = useState(false);
-  const [modal, setModal] = useState<'privacy' | 'about' | null>(null);
+  const [modal, setModal] = useState<'privacy' | 'about' | 'terms' | null>(null);
+  const [activeArticle, setActiveArticle] = useState<Article | null>(null);
 
   const selectedCategory = CATEGORIES.find((c) => c.id === activeCategory);
   const selectedCalc = selectedCategory?.calculators.find((c) => c.id === activeCalcId);
@@ -353,6 +360,72 @@ export default function App() {
                       );
                     })}
                   </div>
+                </section>
+
+                {/* Articles / Guide section */}
+                <section className="mb-16" aria-labelledby="articles-heading">
+                  <div className="text-left mb-6">
+                    <div className="flex items-center gap-2 mb-1">
+                      <BookOpen size={20} className="text-primary" />
+                      <h2 id="articles-heading" className="text-xl font-bold">알아두면 돈 되는 금융 상식</h2>
+                    </div>
+                    <p className="text-sm text-muted ml-7">계산기와 함께 읽으면 더 유용한 실전 가이드</p>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {ARTICLES.slice(0, 6).map((article, idx) => (
+                      <motion.button
+                        key={article.id}
+                        initial={{ opacity: 0, y: 16 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: idx * 0.055 }}
+                        onClick={() => setActiveArticle(article)}
+                        className="glass rounded-2xl p-5 text-left hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 group"
+                      >
+                        <div className="flex items-center gap-2 mb-3">
+                          <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
+                            {article.category}
+                          </span>
+                          <span className="flex items-center gap-1 text-xs text-muted">
+                            <Clock size={11} /> {article.readTime}
+                          </span>
+                        </div>
+                        <h3 className="font-bold text-sm leading-snug mb-2 group-hover:text-primary transition-colors line-clamp-2">
+                          {article.title}
+                        </h3>
+                        <p className="text-xs text-muted leading-relaxed line-clamp-3">
+                          {article.summary}
+                        </p>
+                        <div className="flex items-center gap-1 mt-4 text-xs font-semibold text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                          자세히 읽기 <ArrowRight size={12} />
+                        </div>
+                      </motion.button>
+                    ))}
+                  </div>
+                  {ARTICLES.length > 6 && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                      {ARTICLES.slice(6).map((article, idx) => (
+                        <motion.button
+                          key={article.id}
+                          initial={{ opacity: 0, y: 12 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.33 + idx * 0.055 }}
+                          onClick={() => setActiveArticle(article)}
+                          className="glass rounded-2xl p-5 text-left hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 group flex gap-4"
+                        >
+                          <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                            <FileText size={18} />
+                          </div>
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-xs font-bold text-primary">{article.category}</span>
+                              <span className="flex items-center gap-1 text-xs text-muted"><Clock size={11} /> {article.readTime}</span>
+                            </div>
+                            <h3 className="font-bold text-sm leading-snug group-hover:text-primary transition-colors line-clamp-2">{article.title}</h3>
+                          </div>
+                        </motion.button>
+                      ))}
+                    </div>
+                  )}
                 </section>
 
                 {/* About section for AdSense */}
@@ -580,6 +653,14 @@ export default function App() {
                     </button>
                   </li>
                   <li>
+                    <button
+                      onClick={() => setModal('terms')}
+                      className="text-sm text-muted hover:text-primary transition-colors flex items-center gap-1"
+                    >
+                      <FileText size={14} /> 이용약관
+                    </button>
+                  </li>
+                  <li>
                     <a
                       href="mailto:mirririnside1024@gmail.com"
                       className="text-sm text-muted hover:text-primary transition-colors flex items-center gap-1"
@@ -604,6 +685,10 @@ export default function App() {
               <div className="flex items-center gap-4">
                 <button onClick={() => setModal('privacy')} className="hover:text-primary transition-colors">
                   개인정보처리방침
+                </button>
+                <span>·</span>
+                <button onClick={() => setModal('terms')} className="hover:text-primary transition-colors">
+                  이용약관
                 </button>
                 <span>·</span>
                 <button onClick={() => setModal('about')} className="hover:text-primary transition-colors">
@@ -634,7 +719,7 @@ export default function App() {
               >
                 <div className="flex items-center justify-between p-6 border-b border-slate-100 dark:border-slate-800">
                   <h2 className="text-xl font-extrabold">
-                    {modal === 'privacy' ? '개인정보처리방침' : '서비스 소개'}
+                    {modal === 'privacy' ? '개인정보처리방침' : modal === 'terms' ? '이용약관' : '서비스 소개'}
                   </h2>
                   <button
                     onClick={() => setModal(null)}
@@ -646,9 +731,78 @@ export default function App() {
                 <div className="p-6">
                   {modal === 'privacy' ? (
                     <PrivacyPolicy />
+                  ) : modal === 'terms' ? (
+                    <TermsOfService />
                   ) : (
                     <AboutContent />
                   )}
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* ── Article Detail Modal ─────────────────────── */}
+        <AnimatePresence>
+          {activeArticle && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 flex items-center justify-center p-4"
+              style={{ backgroundColor: 'rgba(0,0,0,0.55)' }}
+              onClick={() => setActiveArticle(null)}
+            >
+              <motion.div
+                initial={{ scale: 0.95, y: 24 }}
+                animate={{ scale: 1, y: 0 }}
+                exit={{ scale: 0.95, y: 24 }}
+                onClick={(e) => e.stopPropagation()}
+                className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+              >
+                <div className="p-6 border-b border-slate-100 dark:border-slate-800">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
+                          {activeArticle.category}
+                        </span>
+                        <span className="flex items-center gap-1 text-xs text-muted">
+                          <Clock size={11} /> {activeArticle.readTime} 읽기
+                        </span>
+                      </div>
+                      <h2 className="text-xl font-extrabold leading-tight">{activeArticle.title}</h2>
+                      <p className="text-sm text-muted mt-2 leading-relaxed">{activeArticle.summary}</p>
+                    </div>
+                    <button
+                      onClick={() => setActiveArticle(null)}
+                      className="flex-shrink-0 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-muted transition-colors"
+                    >
+                      <X size={20} />
+                    </button>
+                  </div>
+                </div>
+                <div className="p-6 space-y-5">
+                  {activeArticle.content.map((paragraph, i) => (
+                    <p key={i} className="text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+                      {paragraph}
+                    </p>
+                  ))}
+                  <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
+                    <div className="flex flex-wrap gap-2">
+                      {activeArticle.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-muted"
+                        >
+                          <Tag size={10} /> {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted">
+                    ※ 본 가이드는 참고용이며, 중요한 재무·법률 결정 전에는 전문가 상담을 권장합니다.
+                  </p>
                 </div>
               </motion.div>
             </motion.div>
