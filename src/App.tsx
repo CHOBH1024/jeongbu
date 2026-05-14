@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import {
   Rocket, Building2, Monitor, Coins, Truck, Wallet,
   Calculator, Moon, Sun, ChevronLeft, ChevronRight,
   ArrowRight, Briefcase, X, Mail, Shield, Info,
-  Clock, Tag,
+  Clock, Tag, Search, Laugh,
   FileText, Sparkles,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -25,10 +25,20 @@ import { MovingCost }            from './components/calculators/MovingCost';
 import { BrokerFee }             from './components/calculators/BrokerFee';
 import DidimdolLoan               from './components/calculators/DidimdolLoan';
 import BeotimokJeonse             from './components/calculators/BeotimokJeonse';
+import BogeumjariLoan             from './components/calculators/BogeumjariLoan';
+import YouthHousingLoan           from './components/calculators/YouthHousingLoan';
 import { SubscriptionLeak }      from './components/calculators/SubscriptionLeak';
 import { CoffeeRetirement }      from './components/calculators/CoffeeRetirement';
 import { AiVsCloud }             from './components/calculators/AiVsCloud';
 import { ServerTco }             from './components/calculators/ServerTco';
+import { NetSalary }             from './components/calculators/NetSalary';
+import { UnemploymentBenefit }   from './components/calculators/UnemploymentBenefit';
+import { ParentalLeave }         from './components/calculators/ParentalLeave';
+import { HousingSubscription }   from './components/calculators/HousingSubscription';
+import { EvVsGas }               from './components/calculators/EvVsGas';
+import { LifeTimeCalc }          from './components/calculators/LifeTimeCalc';
+import { ChickenCount }          from './components/calculators/ChickenCount';
+import { BitcoinWhatIf }         from './components/calculators/BitcoinWhatIf';
 import { PrivacyPolicy }         from './components/pages/PrivacyPolicy';
 import { TermsOfService }        from './components/pages/TermsOfService';
 import { ARTICLES, type Article } from './data/articles';
@@ -52,17 +62,20 @@ const CATEGORIES: Category[] = [
       { id:'fire',  emoji:'🔥', name:'FIRE(조기은퇴) 시뮬레이터',    desc:'목표 자산과 생존 자금을 역산해 은퇴 시점을 계산', component:<FireSimulator/> },
       { id:'njob',  emoji:'💼', name:'N잡 · 프리랜서 실소득 계산기', desc:'세금·4대보험 공제 후 실수령액을 정확히 계산',     component:<NJobCalculator/> },
       { id:'lotto', emoji:'🎰', name:'로또 vs S&P500 기회비용',       desc:'로또 구입비를 투자했다면 얼마가 됐을지 비교',    component:<LottoOpportunity/> },
-      { id:'remit', emoji:'✈️', name:'해외송금 환율 최적화',          desc:'수수료·환율 포함 실제 수령액 비교',              component:<RemittanceOptimizer/> },
+      { id:'remit', emoji:'✈️', name:'해외송금 환율 최적화',          desc:'실시간 환율 조회로 수수료·환율 포함 실제 수령액 비교', component:<RemittanceOptimizer/> },
     ],
   },
   {
     id:'hr', name:'인사 · 노무', emoji:'🏢',
     icon:<Building2 size={24}/>, color:'#10b981', bg:'#ecfdf5',
-    desc:'퇴직금, 연차 등 근로자가 꼭 알아야 할 계산기',
+    desc:'퇴직금, 연차, 실업급여 등 근로자가 꼭 알아야 할 계산기',
     calculators:[
-      { id:'severance', emoji:'📋', name:'퇴직금 정밀 계산기',   desc:'평균임금 기준 법정 퇴직금을 정확하게 계산',  component:<SeveranceCalculator/> },
-      { id:'annual',    emoji:'🗓️', name:'연차 계산기',           desc:'입사일 기준 연차 발생일수 및 잔여일수 계산', component:<AnnualLeave/>, isNew:true },
-      { id:'insurance', emoji:'🛡️', name:'4대보험 사업자 부담금', desc:'회사 부담 4대보험료를 직종·급여별로 산출',  component:<InsuranceContribution/>, isNew:true },
+      { id:'severance',    emoji:'📋', name:'퇴직금 정밀 계산기',       desc:'평균임금 기준 법정 퇴직금 + 퇴직소득세 정확 계산',   component:<SeveranceCalculator/> },
+      { id:'annual',       emoji:'🗓️', name:'연차 계산기',               desc:'2018년 이후 현행법 기준 연차 발생·잔여·수당 계산',    component:<AnnualLeave/>, isNew:true },
+      { id:'insurance',    emoji:'🛡️', name:'4대보험 사업자 부담금',     desc:'회사 부담 4대보험료를 직종·급여별로 산출',            component:<InsuranceContribution/>, isNew:true },
+      { id:'netsalary',    emoji:'💸', name:'월급 실수령액 계산기',       desc:'국민연금·건강보험·소득세 공제 후 실수령액 계산',       component:<NetSalary/>, isNew:true },
+      { id:'unemployment', emoji:'📉', name:'실업급여 계산기',           desc:'고용보험법 기준 구직급여 일수·금액 산출',             component:<UnemploymentBenefit/>, isNew:true },
+      { id:'parental',     emoji:'👶', name:'육아휴직급여 계산기',       desc:'육아휴직 기간·임금 기준 급여 지급액 계산',            component:<ParentalLeave/>, isNew:true },
     ],
   },
   {
@@ -70,9 +83,10 @@ const CATEGORIES: Category[] = [
     icon:<Monitor size={24}/>, color:'#3b82f6', bg:'#eff6ff',
     desc:'개발자와 IT 매니아를 위한 비용 분석 도구',
     calculators:[
-      { id:'nas',   emoji:'🖥️', name:'NAS 24시간 전기요금 계산기',   desc:'누진세 포함 월 전기요금과 손익분기점 계산', component:<NasElectricity/> },
-      { id:'ai',    emoji:'🤖', name:'Local AI vs Cloud API 가성비', desc:'GPU 구매 vs 클라우드 API 비용 비교',       component:<AiVsCloud/>, isNew:true },
-      { id:'cloud', emoji:'☁️', name:'클라우드 vs 물리 서버 손익',   desc:'총 소유비용(TCO) 기준 최적 선택 안내',     component:<ServerTco/>, isNew:true },
+      { id:'nas',    emoji:'🖥️', name:'NAS 24시간 전기요금 계산기',    desc:'누진세 포함 월 전기요금과 손익분기점 계산',     component:<NasElectricity/> },
+      { id:'ai',     emoji:'🤖', name:'Local AI vs Cloud API 가성비',  desc:'GPU 구매 vs 클라우드 API 비용 비교',           component:<AiVsCloud/>, isNew:true },
+      { id:'cloud',  emoji:'☁️', name:'클라우드 vs 물리 서버 손익',    desc:'총 소유비용(TCO) 기준 최적 선택 안내',         component:<ServerTco/>, isNew:true },
+      { id:'evvsgas',emoji:'⚡', name:'전기차 vs 내연기관 비교',       desc:'연료비·유지비·취득가 포함 손익분기점 계산',     component:<EvVsGas/>, isNew:true },
     ],
   },
   {
@@ -88,12 +102,15 @@ const CATEGORIES: Category[] = [
   {
     id:'estate', name:'부동산 · 이사', emoji:'🏠',
     icon:<Truck size={24}/>, color:'#ec4899', bg:'#fdf2f8',
-    desc:'이사 비용부터 중개 수수료까지 한 번에 파악',
+    desc:'청약 가점부터 주택담보대출·이사비용까지 한 번에',
     calculators:[
-      { id:'moving',    emoji:'📦', name:'포장이사 견적 예측기',       desc:'거리·물량 기준 이사 비용 예상액 산출',        component:<MovingCost/>, isNew:true },
-      { id:'broker',    emoji:'🔑', name:'중개 수수료 · 등기 비용',    desc:'매매·전세 중개보수와 취득세 합산 계산',       component:<BrokerFee/>, isNew:true },
-      { id:'didimdol',  emoji:'🏡', name:'디딤돌 대출 계산기',         desc:'주택도시기금 디딤돌·신생아특례 대출 한도·월 상환액 계산', component:<DidimdolLoan/>, isNew:true },
-      { id:'beotimok',  emoji:'🔐', name:'버팀목 전세자금 대출',       desc:'버팀목·신생아특례 전세자금 한도·이자 계산',   component:<BeotimokJeonse/>, isNew:true },
+      { id:'moving',      emoji:'📦', name:'포장이사 견적 예측기',       desc:'거리·물량 기준 이사 비용 예상액 산출',                  component:<MovingCost/>, isNew:true },
+      { id:'broker',      emoji:'🔑', name:'중개 수수료 · 등기 비용',    desc:'매매·전세 중개보수와 취득세 합산 계산',                 component:<BrokerFee/>, isNew:true },
+      { id:'subscription',emoji:'🏆', name:'청약 가점 계산기',           desc:'무주택·부양가족·청약통장 기준 84점 만점 가점 산출',      component:<HousingSubscription/>, isNew:true },
+      { id:'didimdol',    emoji:'🏡', name:'디딤돌 대출 계산기',         desc:'주택도시기금 디딤돌·신생아특례 대출 한도·월 상환액 계산', component:<DidimdolLoan/>, isNew:true },
+      { id:'beotimok',    emoji:'🔐', name:'버팀목 전세자금 대출',       desc:'버팀목·신생아특례 전세자금 한도·이자 계산',              component:<BeotimokJeonse/>, isNew:true },
+      { id:'bogeumjari',  emoji:'🏘️', name:'보금자리론 계산기',          desc:'HF 보금자리론 유형별 금리·월 상환액 계산',               component:<BogeumjariLoan/>, isNew:true },
+      { id:'youth',       emoji:'🌱', name:'청년 전월세 대출 계산기',    desc:'중소기업 청년 전월세·청년 보증부 월세대출 계산',          component:<YouthHousingLoan/>, isNew:true },
     ],
   },
   {
@@ -106,9 +123,19 @@ const CATEGORIES: Category[] = [
       { id:'coffee',  emoji:'☕', name:'커피값 노후 연금 환산기',      desc:'매일 커피값을 투자했다면 노후에 얼마가 될까', component:<CoffeeRetirement/>, isNew:true },
     ],
   },
+  {
+    id:'fun', name:'재미있는 계산기', emoji:'🎉',
+    icon:<Laugh size={24}/>, color:'#8b5cf6', bg:'#f5f3ff',
+    desc:'숫자로 보는 인생 — 웃기고 진지한 엉뚱 계산기',
+    calculators:[
+      { id:'chicken',  emoji:'🍗', name:'연봉 치킨 환산기',           desc:'내 연봉으로 치킨·피자·커피를 몇 개나 살 수 있을까?', component:<ChickenCount/>, isNew:true },
+      { id:'lifetime', emoji:'⏳', name:'인생 시간 계산기',           desc:'남은 인생을 시간·밥·잠·월급날로 환산해 보세요',    component:<LifeTimeCalc/>, isNew:true },
+      { id:'bitcoin',  emoji:'₿', name:'비트코인을 샀다면?',          desc:'그때 비트코인을 샀다면 지금 얼마가 됐을지 계산',    component:<BitcoinWhatIf/>, isNew:true },
+    ],
+  },
 ];
 
-const FEATURED = ['loan','annual','fire','severance','drip','broker','sub','insurance','coffee'];
+const FEATURED = ['loan','netsalary','annual','severance','unemployment','drip','broker','sub','chicken','bitcoin'];
 function getFeatured() {
   return CATEGORIES.flatMap((c) =>
     c.calculators.filter((cc) => FEATURED.includes(cc.id) && !cc.status)
@@ -137,10 +164,33 @@ export default function App() {
   const [isDark,         setIsDark]         = useState(false);
   const [modal,          setModal]          = useState<'privacy'|'about'|'terms'|null>(null);
   const [activeArticle,  setActiveArticle]  = useState<Article|null>(null);
+  const [showSearch,     setShowSearch]     = useState(false);
+  const [searchQuery,    setSearchQuery]    = useState('');
 
   const selectedCategory = CATEGORIES.find((c) => c.id === activeCategory);
   const selectedCalc     = selectedCategory?.calculators.find((c) => c.id === activeCalcId);
-  const reset = () => { setActiveCategory(null); setActiveCalcId(null); };
+
+  const scrollTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  const navigate = useCallback((catId: string, calcId?: string) => {
+    setActiveCategory(catId);
+    setActiveCalcId(calcId ?? null);
+    setShowSearch(false);
+    setSearchQuery('');
+    scrollTop();
+  }, []);
+
+  const reset = () => { setActiveCategory(null); setActiveCalcId(null); scrollTop(); };
+
+  /* Search results */
+  const searchResults = searchQuery.trim().length >= 1
+    ? CATEGORIES.flatMap((c) =>
+        c.calculators
+          .filter((cc) => !cc.status &&
+            (cc.name.includes(searchQuery) || cc.desc.includes(searchQuery) || c.name.includes(searchQuery)))
+          .map((cc) => ({ ...cc, catId: c.id, catName: c.name, catEmoji: c.emoji, catColor: c.color, catBg: c.bg }))
+      )
+    : [];
 
   const titleColor  = isDark ? '#f5f5f7'               : '#1d1d1f';
   const bodyColor   = isDark ? 'rgba(235,235,245,0.85)' : '#3a3a3c';
@@ -172,13 +222,15 @@ export default function App() {
               </div>
             </button>
 
-            <nav style={{ display:'flex', alignItems:'center', gap:2 }} aria-label="카테고리" className="hidden lg:flex">
+            {/* Desktop nav — className only (no inline display so 'hidden' works on mobile) */}
+            <nav className="hidden lg:flex items-center" style={{ gap:2 }} aria-label="카테고리">
               {CATEGORIES.map((cat) => (
                 <button key={cat.id}
-                  onClick={() => { setActiveCategory(cat.id); setActiveCalcId(null); }}
+                  onClick={() => navigate(cat.id)}
                   style={{
-                    padding:'7px 13px', borderRadius:10, fontSize:13, fontWeight:600,
-                    color:'rgba(255,255,255,0.6)', transition:'all 0.15s', display:'flex', alignItems:'center', gap:5,
+                    padding:'7px 10px', borderRadius:10, fontSize:12, fontWeight:600,
+                    color:'rgba(255,255,255,0.6)', transition:'all 0.15s',
+                    display:'flex', alignItems:'center', gap:4, whiteSpace:'nowrap',
                   }}
                   onMouseEnter={(e) => { e.currentTarget.style.color='#fff'; e.currentTarget.style.background='rgba(255,255,255,0.09)'; }}
                   onMouseLeave={(e) => { e.currentTarget.style.color='rgba(255,255,255,0.6)'; e.currentTarget.style.background='transparent'; }}>
@@ -187,14 +239,25 @@ export default function App() {
               ))}
             </nav>
 
-            <button onClick={() => setIsDark(!isDark)} aria-label={isDark?'라이트모드':'다크모드'}
-              style={{
-                width:40, height:40, borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center',
-                background:'rgba(255,255,255,0.1)', color:'rgba(255,255,255,0.75)',
-                border:'1px solid rgba(255,255,255,0.12)',
-              }}>
-              {isDark ? <Sun size={17}/> : <Moon size={17}/>}
-            </button>
+            <div style={{ display:'flex', alignItems:'center', gap:8, flexShrink:0 }}>
+              {/* Search button */}
+              <button onClick={() => setShowSearch(true)} aria-label="검색"
+                style={{
+                  width:40, height:40, borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center',
+                  background:'rgba(255,255,255,0.1)', color:'rgba(255,255,255,0.75)',
+                  border:'1px solid rgba(255,255,255,0.12)',
+                }}>
+                <Search size={17}/>
+              </button>
+              <button onClick={() => setIsDark(!isDark)} aria-label={isDark?'라이트모드':'다크모드'}
+                style={{
+                  width:40, height:40, borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center',
+                  background:'rgba(255,255,255,0.1)', color:'rgba(255,255,255,0.75)',
+                  border:'1px solid rgba(255,255,255,0.12)',
+                }}>
+                {isDark ? <Sun size={17}/> : <Moon size={17}/>}
+              </button>
+            </div>
           </div>
         </header>
 
@@ -234,9 +297,9 @@ export default function App() {
                     </motion.p>
 
                     <motion.div initial={{ opacity:0, y:10 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.17 }}
-                      style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:14, maxWidth:580, margin:'0 auto' }}>
+                      className="hero-stats">
                       {([
-                        { emoji:'🧮', value:'18+',  label:'계산기 운영 중', color:'#a78bfa' },
+                        { emoji:'🧮', value:'28+',  label:'계산기 운영 중', color:'#a78bfa' },
                         { emoji:'⚡', value:'즉시', label:'실시간 계산',    color:'#34d399' },
                         { emoji:'🔒', value:'0건',  label:'정보 미수집',   color:'#fbbf24' },
                         { emoji:'🎁', value:'무료', label:'완전 무료',      color:'#f472b6' },
@@ -262,7 +325,7 @@ export default function App() {
                         initial={{ opacity:0, y:18 }} animate={{ opacity:1, y:0 }} transition={{ delay:idx*0.05 }}
                         onClick={() => {
                           const cat = CATEGORIES.find((cc) => cc.calculators.some((c) => c.id===calc.id));
-                          if (cat) { setActiveCategory(cat.id); setActiveCalcId(calc.id); }
+                          if (cat) navigate(cat.id, calc.id);
                         }}
                         className="card"
                         style={{ padding:28, textAlign:'left', width:'100%', display:'flex', flexDirection:'column', gap:0 }}>
@@ -298,7 +361,7 @@ export default function App() {
                       return (
                         <motion.button key={cat.id}
                           initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay:idx*0.07 }}
-                          onClick={() => setActiveCategory(cat.id)}
+                          onClick={() => navigate(cat.id)}
                           className="card"
                           style={{ textAlign:'left', width:'100%', overflow:'hidden', display:'flex', flexDirection:'column' }}>
                           {/* Colored header */}
@@ -515,7 +578,7 @@ export default function App() {
                       {selectedCategory.calculators.map((calc, idx) => (
                         <motion.button key={calc.id}
                           initial={{ opacity:0, y:12 }} animate={{ opacity:1, y:0 }} transition={{ delay:idx*0.07 }}
-                          onClick={() => calc.status !== '준비중' && setActiveCalcId(calc.id)}
+                          onClick={() => calc.status !== '준비중' && navigate(activeCategory!, calc.id)}
                           disabled={calc.status === '준비중'}
                           className="card"
                           style={{
@@ -713,6 +776,100 @@ export default function App() {
             </div>
           </W>
         </footer>
+
+        {/* ── Search modal ──────────────────────────────────── */}
+        <AnimatePresence>
+          {showSearch && (
+            <motion.div initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }}
+              className="search-overlay" onClick={() => setShowSearch(false)}>
+              <motion.div initial={{ y:-20, opacity:0 }} animate={{ y:0, opacity:1 }} exit={{ y:-20, opacity:0 }}
+                onClick={(e) => e.stopPropagation()}
+                style={{ width:'100%', maxWidth:600 }}>
+                {/* Search input */}
+                <div style={{
+                  display:'flex', alignItems:'center', gap:12, padding:'14px 20px',
+                  background:surfaceBg, borderRadius:18,
+                  boxShadow:'0 20px 60px rgba(0,0,0,0.3)',
+                  border:`1px solid ${borderColor}`,
+                }}>
+                  <Search size={18} color="#6366f1"/>
+                  <input autoFocus value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="계산기 이름 또는 키워드 검색..."
+                    style={{
+                      flex:1, border:'none', outline:'none', fontSize:16,
+                      background:'transparent', color:titleColor, fontFamily:'inherit',
+                    }}/>
+                  <button onClick={() => setShowSearch(false)}
+                    style={{ color:mutedColor, display:'flex', alignItems:'center' }}>
+                    <X size={18}/>
+                  </button>
+                </div>
+                {/* Results */}
+                {searchResults.length > 0 && (
+                  <div style={{
+                    marginTop:10, background:surfaceBg, borderRadius:16,
+                    boxShadow:'0 20px 60px rgba(0,0,0,0.3)',
+                    border:`1px solid ${borderColor}`,
+                    maxHeight:480, overflowY:'auto',
+                  }}>
+                    {searchResults.map((r, i) => (
+                      <button key={r.id} onClick={() => navigate(r.catId, r.id)}
+                        style={{
+                          width:'100%', padding:'14px 20px', textAlign:'left',
+                          display:'flex', alignItems:'center', gap:14,
+                          borderBottom: i < searchResults.length-1 ? `1px solid ${borderColor}` : 'none',
+                          background:'transparent',
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.background = isDark?'#1c1c1e':'#f9f9fb'}
+                        onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
+                        <div style={{
+                          width:42, height:42, borderRadius:12, flexShrink:0, fontSize:22,
+                          background:r.catBg, display:'flex', alignItems:'center', justifyContent:'center',
+                        }}>
+                          {r.emoji}
+                        </div>
+                        <div style={{ flex:1, minWidth:0 }}>
+                          <p style={{ fontWeight:700, fontSize:14, color:titleColor, marginBottom:2 }}>{r.name}</p>
+                          <p style={{ fontSize:12, color:mutedColor }}>{r.catEmoji} {r.catName}</p>
+                        </div>
+                        <ChevronRight size={14} color={mutedColor}/>
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {searchQuery.trim() && searchResults.length === 0 && (
+                  <div style={{
+                    marginTop:10, background:surfaceBg, borderRadius:16, padding:'24px',
+                    textAlign:'center', color:mutedColor, fontSize:14,
+                    boxShadow:'0 20px 60px rgba(0,0,0,0.3)',
+                  }}>
+                    <p style={{ fontSize:20, marginBottom:8 }}>🔍</p>
+                    <p>"{searchQuery}"에 해당하는 계산기를 찾지 못했습니다.</p>
+                  </div>
+                )}
+                {!searchQuery.trim() && (
+                  <div style={{
+                    marginTop:10, background:surfaceBg, borderRadius:16, padding:'20px',
+                    boxShadow:'0 20px 60px rgba(0,0,0,0.3)',
+                  }}>
+                    <p style={{ fontSize:11, color:mutedColor, fontWeight:700, marginBottom:12 }}>빠른 이동</p>
+                    <div style={{ display:'flex', flexWrap:'wrap', gap:6 }}>
+                      {['퇴직금','연차','실업급여','전기차','치킨','비트코인','대출','청약'].map((kw) => (
+                        <button key={kw} onClick={() => setSearchQuery(kw)}
+                          style={{
+                            padding:'6px 14px', borderRadius:99, fontSize:13, fontWeight:700,
+                            background:'#eef2ff', color:'#6366f1', cursor:'pointer',
+                          }}>
+                          {kw}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* ── Legal modal ───────────────────────────────────── */}
         <AnimatePresence>
