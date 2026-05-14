@@ -39,6 +39,7 @@ type Category = {
   id: string; name: string; icon: React.ReactNode;
   color: string; bg: string; desc: string; calculators: CalcDef[];
 };
+type C = { title:string; body:string; muted:string; border:string; surface:string };
 
 const CATEGORIES: Category[] = [
   {
