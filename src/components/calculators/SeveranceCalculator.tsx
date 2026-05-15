@@ -33,17 +33,20 @@ function incomeTax(taxBase: number): number {
 }
 
 /** 퇴직소득세 최종 계산 */
-function severanceTax(severance: number, years: number): { tax: number; localTax: number; net: number } {
+function severanceTax(severance: number, years: number): {
+  tax: number; localTax: number; net: number;
+  tenureDeductAmt: number; annualizedIncome: number; incomeDeductAmt: number;
+} {
   const y = Math.max(1, Math.ceil(years));
-  const deduct1 = tenureDeduction(y);
-  const taxableIncome = Math.max(0, severance - deduct1);
-  const annualized = taxableIncome * 12 / y;            // 환산급여
-  const deduct2 = incomeDeduction(annualized);
-  const taxBase = Math.max(0, annualized - deduct2);
+  const tenureDeductAmt = tenureDeduction(y);
+  const taxableIncome = Math.max(0, severance - tenureDeductAmt);
+  const annualizedIncome = taxableIncome * 12 / y;      // 환산급여
+  const incomeDeductAmt = incomeDeduction(annualizedIncome);
+  const taxBase = Math.max(0, annualizedIncome - incomeDeductAmt);
   const annualTax = incomeTax(taxBase);
   const tax = Math.floor(annualTax * y / 12);           // 환산 산출세액
   const localTax = Math.floor(tax * 0.10);              // 지방소득세 10%
-  return { tax, localTax, net: severance - tax - localTax };
+  return { tax, localTax, net: severance - tax - localTax, tenureDeductAmt, annualizedIncome, incomeDeductAmt };
 }
 
 /* ── 컴포넌트 ─────────────────────────────────────────────── */
@@ -90,12 +93,13 @@ export const SeveranceCalculator = () => {
     /* 퇴직금 = 1일 평균임금 × 30 × (재직일수 / 365) */
     const severance = Math.floor(avgDailyWage * ratio * 30 * (totalDays / 365));
 
-    const { tax, localTax, net } = severanceTax(severance, years);
+    const { tax, localTax, net, tenureDeductAmt, annualizedIncome, incomeDeductAmt } = severanceTax(severance, years);
 
     return {
       totalDays, years: Math.floor(years),
       avgDailyWage: Math.floor(avgDailyWage * ratio),
       severance, tax, localTax, net,
+      tenureDeductAmt, annualizedIncome, incomeDeductAmt,
     };
   }, [workType, avgSalary, bonus, vacationPay, startDate, endDate, weeklyHours]);
 
@@ -230,10 +234,11 @@ export const SeveranceCalculator = () => {
                 <div className="space-y-3" style={{ marginTop: 8, fontSize: 13, color: mutedColor }}>
                   {[
                     ['① 퇴직소득', fmt(result.severance)],
-                    ['② 근속연수 공제 차감', `-${fmt(result.severance - Math.max(0, result.severance - (result.severance - Math.max(0, result.tax > 0 ? result.severance * 0.1 : 0)))   )}`],
-                    ['③ 환산급여 (×12/근속)', '구간별 공제 후 과세표준 산출'],
-                    ['④ 종합소득세 세율 적용', `6~45% 누진세율`],
-                    ['⑤ 지방소득세', `소득세의 10%`],
+                    ['② 근속연수 공제', `-${fmt(result.tenureDeductAmt)}`],
+                    ['③ 환산급여 (×12/근속)', fmt(result.annualizedIncome)],
+                    ['④ 환산급여 공제', `-${fmt(result.incomeDeductAmt)}`],
+                    ['⑤ 세율 적용 산출세액', fmt(result.tax)],
+                    ['⑥ 지방소득세', fmt(result.localTax)],
                   ].map(([k, v]) => (
                     <div key={k as string} style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: 8, borderBottom: '1px solid #f2f2f7' }}>
                       <span>{k as string}</span><span style={{ fontWeight: 700, color: '#1d1d1f' }}>{v as string}</span>
