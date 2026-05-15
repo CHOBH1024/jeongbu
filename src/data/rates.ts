@@ -1,23 +1,23 @@
 /**
  * 별의별 계산기 — 법정 요율 · 상한액 중앙 관리
  * 변경 시 이 파일만 수정하면 모든 계산기에 즉시 반영됩니다.
- * 마지막 업데이트: 2025-01-01
+ * 마지막 업데이트: 2026-01-01
  */
 
-export const RATES_EFFECTIVE_DATE = '2025년 1월 기준';
+export const RATES_EFFECTIVE_DATE = '2026년 1월 기준';
 
 /* ── 최저임금 ────────────────────────────────────────────── */
 export const MINIMUM_WAGE = {
-  hourly: 10030,       // 시간급 (2024년)
-  daily: 80240,        // 일급 (8시간 기준)
-  monthly: 2096270,    // 월급 환산 (209시간)
+  hourly: 10320,       // 시간급 (2026년)
+  daily: 82560,        // 일급 (8시간 기준)
+  monthly: 2158320,    // 월급 환산 (209시간)
 };
 
 /* ── 4대보험 요율 (근로자 부담분) ───────────────────────── */
 export const INSURANCE_RATES = {
   nationalPension:    0.045,   // 국민연금 4.5%
   healthInsurance:    0.03545, // 건강보험 3.545%
-  longTermCare:       0.1295,  // 장기요양보험 (건강보험료의 12.95%)
+  longTermCare:       0.1281,  // 장기요양보험 (건강보험료의 12.81%, 2026년 0.9182%)
   employmentInsurance: 0.009,  // 고용보험 0.9%
 };
 
@@ -25,16 +25,22 @@ export const INSURANCE_RATES = {
 export const EMPLOYER_RATES = {
   nationalPension:     0.045,  // 국민연금 4.5%
   healthInsurance:     0.03545,// 건강보험 3.545%
-  longTermCare:        0.1295, // 장기요양보험
+  longTermCare:        0.1281, // 장기요양보험 (2026년)
   employmentInsurance: 0.009,  // 고용보험 0.9% (150인 미만)
   industrialAccident:  0.007,  // 산재보험 (업종평균 0.7%)
+};
+
+/* ── 국민연금 기준소득월액 상·하한 (2025년 7월 기준) ───── */
+export const NATIONAL_PENSION_CAP = {
+  min: 390000,    // 하한 기준소득월액
+  max: 6170000,   // 상한 기준소득월액
 };
 
 /* ── 실업급여 ────────────────────────────────────────────── */
 export const UNEMPLOYMENT = {
   rateOfWage:     0.60,   // 평균임금의 60%
-  maxDailyBenefit: 66000, // 상한액 (2024년)
-  minDailyBenefit: 63104, // 하한액 (최저임금의 80%)
+  maxDailyBenefit: 66000, // 상한액 (2026년, 동일 유지)
+  minDailyBenefit: 66048, // 하한액 (2026년 최저임금 82,560원 × 80%)
   /* 소정급여일수 (피보험단위기간 기준) */
   benefitDays: {
     under50: {
