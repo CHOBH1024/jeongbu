@@ -1,47 +1,74 @@
 import React, { useState, useCallback } from 'react';
 import {
-  Rocket, Building2, Monitor, Coins, Truck, Wallet,
+  Rocket, Building2, Monitor, Coins, Wallet,
   Calculator, Moon, Sun, ChevronLeft, ChevronRight,
   ArrowRight, Briefcase, X, Mail, Shield, Info,
   Clock, Tag, Search, Laugh,
-  FileText, Sparkles,
+  FileText, Sparkles, Scale, Home, TrendingUp,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-import { LoanRefinancing }       from './components/calculators/LoanRefinancing';
-import { FireSimulator }         from './components/calculators/FireSimulator';
-import { NJobCalculator }        from './components/calculators/NJobCalculator';
-import { LottoOpportunity }      from './components/calculators/LottoOpportunity';
-import { RemittanceOptimizer }   from './components/calculators/RemittanceOptimizer';
-import { CarPoorTimer }          from './components/calculators/CarPoorTimer';
-import { SeveranceCalculator }   from './components/calculators/SeveranceCalculator';
-import { NasElectricity }        from './components/calculators/NasElectricity';
-import { ParkingAccount }        from './components/calculators/ParkingAccount';
-import { AnnualLeave }           from './components/calculators/AnnualLeave';
-import { InsuranceContribution } from './components/calculators/InsuranceContribution';
-import { DripSnowball }          from './components/calculators/DripSnowball';
-import { SilverAvgPrice }        from './components/calculators/SilverAvgPrice';
-import { MovingCost }            from './components/calculators/MovingCost';
-import { BrokerFee }             from './components/calculators/BrokerFee';
-import DidimdolLoan               from './components/calculators/DidimdolLoan';
-import BeotimokJeonse             from './components/calculators/BeotimokJeonse';
-import BogeumjariLoan             from './components/calculators/BogeumjariLoan';
-import YouthHousingLoan           from './components/calculators/YouthHousingLoan';
-import { SubscriptionLeak }      from './components/calculators/SubscriptionLeak';
-import { CoffeeRetirement }      from './components/calculators/CoffeeRetirement';
-import { AiVsCloud }             from './components/calculators/AiVsCloud';
-import { ServerTco }             from './components/calculators/ServerTco';
-import { NetSalary }             from './components/calculators/NetSalary';
-import { UnemploymentBenefit }   from './components/calculators/UnemploymentBenefit';
-import { ParentalLeave }         from './components/calculators/ParentalLeave';
-import { HousingSubscription }   from './components/calculators/HousingSubscription';
-import { EvVsGas }               from './components/calculators/EvVsGas';
-import { LifeTimeCalc }          from './components/calculators/LifeTimeCalc';
-import { ChickenCount }          from './components/calculators/ChickenCount';
-import { BitcoinWhatIf }         from './components/calculators/BitcoinWhatIf';
-import { PrivacyPolicy }         from './components/pages/PrivacyPolicy';
-import { TermsOfService }        from './components/pages/TermsOfService';
-import { ARTICLES, type Article } from './data/articles';
+import { LoanRefinancing }           from './components/calculators/LoanRefinancing';
+import { FireSimulator }             from './components/calculators/FireSimulator';
+import { NJobCalculator }            from './components/calculators/NJobCalculator';
+import { LottoOpportunity }          from './components/calculators/LottoOpportunity';
+import { RemittanceOptimizer }       from './components/calculators/RemittanceOptimizer';
+import { CarPoorTimer }              from './components/calculators/CarPoorTimer';
+import { SeveranceCalculator }       from './components/calculators/SeveranceCalculator';
+import { NasElectricity }            from './components/calculators/NasElectricity';
+import { ParkingAccount }            from './components/calculators/ParkingAccount';
+import { AnnualLeave }               from './components/calculators/AnnualLeave';
+import { InsuranceContribution }     from './components/calculators/InsuranceContribution';
+import { DripSnowball }              from './components/calculators/DripSnowball';
+import { SilverAvgPrice }            from './components/calculators/SilverAvgPrice';
+import { MovingCost }                from './components/calculators/MovingCost';
+import { BrokerFee }                 from './components/calculators/BrokerFee';
+import DidimdolLoan                   from './components/calculators/DidimdolLoan';
+import BeotimokJeonse                 from './components/calculators/BeotimokJeonse';
+import BogeumjariLoan                 from './components/calculators/BogeumjariLoan';
+import YouthHousingLoan               from './components/calculators/YouthHousingLoan';
+import { SubscriptionLeak }          from './components/calculators/SubscriptionLeak';
+import { CoffeeRetirement }          from './components/calculators/CoffeeRetirement';
+import { AiVsCloud }                 from './components/calculators/AiVsCloud';
+import { ServerTco }                 from './components/calculators/ServerTco';
+import { NetSalary }                 from './components/calculators/NetSalary';
+import { UnemploymentBenefit }       from './components/calculators/UnemploymentBenefit';
+import { ParentalLeave }             from './components/calculators/ParentalLeave';
+import { HousingSubscription }       from './components/calculators/HousingSubscription';
+import { EvVsGas }                   from './components/calculators/EvVsGas';
+import { LifeTimeCalc }              from './components/calculators/LifeTimeCalc';
+import { ChickenCount }              from './components/calculators/ChickenCount';
+import { BitcoinWhatIf }             from './components/calculators/BitcoinWhatIf';
+/* ── 새 세금 계산기 ── */
+import { CapitalGainsTax }           from './components/calculators/CapitalGainsTax';
+import { GiftTax }                   from './components/calculators/GiftTax';
+import { ComprehensiveIncomeTax }    from './components/calculators/ComprehensiveIncomeTax';
+import { OverseasStockTax }          from './components/calculators/OverseasStockTax';
+/* ── 새 대출·부동산 계산기 ── */
+import { DsrCalculator }             from './components/calculators/DsrCalculator';
+import { JeonseVsBuy }               from './components/calculators/JeonseVsBuy';
+import { ReverseAnnuity }            from './components/calculators/ReverseAnnuity';
+import { PropertyAcquisitionCost }   from './components/calculators/PropertyAcquisitionCost';
+import { RentalYield }               from './components/calculators/RentalYield';
+/* ── 새 노무·연금·투자 계산기 ── */
+import { NationalPensionEstimate }   from './components/calculators/NationalPensionEstimate';
+import { OvertimePay }               from './components/calculators/OvertimePay';
+import { MaternityLeave }            from './components/calculators/MaternityLeave';
+import { CompoundGoal }              from './components/calculators/CompoundGoal';
+import { PensionTaxOptimizer }       from './components/calculators/PensionTaxOptimizer';
+import { DcaSimulator }              from './components/calculators/DcaSimulator';
+/* ── 새 생활·소비·바이럴 계산기 ── */
+import { ElectricityBill }           from './components/calculators/ElectricityBill';
+import { CarTax }                    from './components/calculators/CarTax';
+import { InstallmentVsLump }         from './components/calculators/InstallmentVsLump';
+import { BreakevenPoint }            from './components/calculators/BreakevenPoint';
+import { FreelanceRate }             from './components/calculators/FreelanceRate';
+import { LottoExpectation }          from './components/calculators/LottoExpectation';
+import { TimeValue }                 from './components/calculators/TimeValue';
+import { WeddingCost }               from './components/calculators/WeddingCost';
+import { PrivacyPolicy }             from './components/pages/PrivacyPolicy';
+import { TermsOfService }            from './components/pages/TermsOfService';
+import { ARTICLES, type Article }    from './data/articles';
 
 type CalcDef = {
   id: string; name: string; desc: string; emoji: string;
@@ -60,18 +87,38 @@ const CATEGORIES: Category[] = [
     icon:<Rocket size={24}/>, color:'#6366f1', bg:'#eef2ff',
     desc:'대출부터 FIRE까지, 재무 미래를 숫자로 시뮬레이션합니다',
     highlights:[
-      '대출 갈아타기 — 현재 vs 새 대출 이자 차이를 초 단위로 비교',
-      '조기은퇴(FIRE) — 목표 자산 도달까지 몇 년 걸리는지 역산',
-      'N잡·프리랜서 — 4대보험·세금 공제 후 실제 손에 쥐는 금액',
-      '로또 기회비용 — 매주 산 로또 금액을 S&P500에 넣었다면?',
-      '해외송금 — 토스·와이즈·카카오페이 실시간 환율 비교',
+      '대출 갈아타기 — 현재 vs 새 대출 금리 차이로 절약되는 이자를 월·연·총액으로 비교',
+      '조기은퇴(FIRE) — 목표 자산 달성 시점과 필요 월 저축액을 역산해 은퇴 로드맵 제시',
+      'N잡·프리랜서 — 4대보험·소득세 공제 후 실제 통장에 들어오는 금액 정밀 계산',
+      '로또 기회비용 — 매주 구입한 로또 금액을 S&P500에 넣었다면 지금 얼마가 됐을지 비교',
+      '해외송금 — 토스·와이즈·카카오페이 환율·수수료 포함 실수령액 실시간 비교',
     ],
     calculators:[
-      { id:'loan',  emoji:'🏦', name:'대출 이자 · 대환 시뮬레이터',  desc:'현재 대출과 새 대출의 이자 차이를 한눈에 비교',   component:<LoanRefinancing/>, tags:['대출','이자','대환','금리','갈아타기','원리금','원금'] },
-      { id:'fire',  emoji:'🔥', name:'FIRE(조기은퇴) 시뮬레이터',    desc:'목표 자산과 생존 자금을 역산해 은퇴 시점을 계산', component:<FireSimulator/>, tags:['FIRE','조기은퇴','은퇴','노후','자산','독립'] },
-      { id:'njob',  emoji:'💼', name:'N잡 · 프리랜서 실소득 계산기', desc:'세금·4대보험 공제 후 실수령액을 정확히 계산',     component:<NJobCalculator/>, tags:['N잡','프리랜서','부업','세금','소득','사업소득'] },
-      { id:'lotto', emoji:'🎰', name:'로또 vs S&P500 기회비용',       desc:'로또 구입비를 투자했다면 얼마가 됐을지 비교',    component:<LottoOpportunity/>, tags:['로또','복권','기회비용','투자','S&P500'] },
-      { id:'remit', emoji:'✈️', name:'해외송금 환율 최적화',          desc:'실시간 환율 조회로 수수료·환율 포함 실제 수령액 비교', component:<RemittanceOptimizer/>, tags:['송금','환율','해외송금','달러','엔','유로','외환','토스','와이즈','카카오'] },
+      { id:'loan',     emoji:'🏦', name:'대출 이자 · 대환 시뮬레이터',  desc:'현재 대출과 새 대출의 이자 차이를 한눈에 비교',      component:<LoanRefinancing/>, tags:['대출','이자','대환','금리','갈아타기','원리금','원금'] },
+      { id:'fire',     emoji:'🔥', name:'FIRE(조기은퇴) 시뮬레이터',    desc:'목표 자산과 생존 자금을 역산해 은퇴 시점을 계산',    component:<FireSimulator/>, tags:['FIRE','조기은퇴','은퇴','노후','자산','독립'] },
+      { id:'njob',     emoji:'💼', name:'N잡 · 프리랜서 실소득 계산기', desc:'세금·4대보험 공제 후 실수령액을 정확히 계산',        component:<NJobCalculator/>, tags:['N잡','프리랜서','부업','세금','소득','사업소득'] },
+      { id:'lotto',    emoji:'🎰', name:'로또 vs S&P500 기회비용',       desc:'로또 구입비를 투자했다면 얼마가 됐을지 비교',        component:<LottoOpportunity/>, tags:['로또','복권','기회비용','투자','S&P500'] },
+      { id:'remit',    emoji:'✈️', name:'해외송금 환율 최적화',          desc:'수수료·환율 포함 실수령액 비교',                     component:<RemittanceOptimizer/>, tags:['송금','환율','해외송금','달러','엔','유로','외환','토스','와이즈','카카오'] },
+      { id:'lottoexp', emoji:'🍀', name:'로또 기대값 계산기',            desc:'등수별 당첨 확률·기대값과 S&P500 기회비용 비교',     component:<LottoExpectation/>, isNew:true, tags:['로또','기대값','확률','기회비용','복권'] },
+      { id:'timeval',  emoji:'⏱️', name:'내 시간 가치 계산기',           desc:'시급·연봉 기준 시간당 가치와 일상 소비 비용 환산',   component:<TimeValue/>, isNew:true, tags:['시간','시급','가치','연봉','기회비용'] },
+    ],
+  },
+  {
+    id:'tax', name:'세금 계산기', emoji:'⚖️',
+    icon:<Scale size={24}/>, color:'#dc2626', bg:'#fef2f2',
+    desc:'양도소득세·증여세·종합소득세 등 복잡한 세금을 정확하게',
+    highlights:[
+      '양도소득세 — 1세대1주택 비과세·장기보유특별공제·다주택 중과세율 자동 적용',
+      '증여세 — 배우자 6억·자녀 5천만 공제한도, 10년 합산 규정 및 신고세액공제 3% 반영',
+      '종합소득세 — 근로·사업·임대 소득 합산, 인적공제·연금보험료 공제 후 세액 계산',
+      '해외주식 양도세 — 250만 기본공제, 손실통산, ISA 절세 비교 분석',
+      '세금 신고 시뮬레이션 — 공제 항목별 절세 효과와 실납부세액을 한눈에 확인',
+    ],
+    calculators:[
+      { id:'capitalgains', emoji:'🏘️', name:'양도소득세 계산기',     desc:'1세대1주택 비과세·장기보유특별공제·다주택 중과 자동 계산', component:<CapitalGainsTax/>, isNew:true, tags:['양도소득세','양도세','부동산','주택','1세대1주택','장기보유','다주택'] },
+      { id:'gift',         emoji:'🎁', name:'증여세 계산기',          desc:'관계별 공제한도·10년 합산·신고공제 반영한 증여세 계산',   component:<GiftTax/>, isNew:true, tags:['증여세','증여','상속','자녀','배우자','공제','세금'] },
+      { id:'compincome',   emoji:'📊', name:'종합소득세 계산기',      desc:'다양한 소득 합산 후 인적공제·세액공제 반영한 종합소득세', component:<ComprehensiveIncomeTax/>, isNew:true, tags:['종합소득세','소득세','사업소득','임대소득','근로소득','5월신고'] },
+      { id:'overstock',    emoji:'🌏', name:'해외주식 양도세 계산기', desc:'250만 공제·손실통산·ISA 비교로 절세 전략 제시',          component:<OverseasStockTax/>, isNew:true, tags:['해외주식','양도세','미국주식','손실통산','ISA','절세','250만'] },
     ],
   },
   {
@@ -79,19 +126,22 @@ const CATEGORIES: Category[] = [
     icon:<Building2 size={24}/>, color:'#10b981', bg:'#ecfdf5',
     desc:'퇴직금, 연차, 실업급여 등 근로자가 꼭 알아야 할 계산기',
     highlights:[
-      '퇴직금 — 평균임금 기준 + 퇴직소득세까지 한번에 정확 계산',
-      '연차 — 2018년 개정법 반영, 입사 첫해 최대 26일 발생 여부 확인',
-      '월급 실수령액 — 4대보험·소득세·지방세 공제 후 통장 입금액',
-      '실업급여 — 근속·나이·고용보험 가입 기간별 수급액·수급일수',
-      '육아휴직급여 — 3개월 80%, 이후 50% + 아빠 육아휴직 보너스',
+      '퇴직금 — 3개월 평균임금 기준 법정 퇴직금에 퇴직소득세까지 한번에 정확 계산',
+      '연차 — 2018년 개정법 반영, 입사 첫해 월 단위 발생부터 최대 25일 산정',
+      '월급 실수령액 — 국민연금·건강보험·소득세·지방세 공제 후 실제 통장 입금액',
+      '실업급여 — 근속기간·나이·월급에 따른 구직급여 일수와 총 수령액 산출',
+      '출산·육아휴직 — 출산휴가 급여, 육아휴직 3개월 80%·이후 50%, 아빠 육아휴직 보너스',
     ],
     calculators:[
-      { id:'severance',    emoji:'📋', name:'퇴직금 정밀 계산기',       desc:'평균임금 기준 법정 퇴직금 + 퇴직소득세 정확 계산',   component:<SeveranceCalculator/>, tags:['퇴직금','퇴직','해고','권고사직','평균임금','퇴직소득세','DC형','DB형'] },
-      { id:'annual',       emoji:'🗓️', name:'연차 계산기',               desc:'2018년 이후 현행법 기준 연차 발생·잔여·수당 계산',    component:<AnnualLeave/>, isNew:true, tags:['연차','휴가','유급휴가','연차수당','입사일','근속'] },
-      { id:'insurance',    emoji:'🛡️', name:'4대보험 사업자 부담금',     desc:'회사 부담 4대보험료를 직종·급여별로 산출',            component:<InsuranceContribution/>, isNew:true, tags:['4대보험','국민연금','건강보험','고용보험','산재','사업자'] },
-      { id:'netsalary',    emoji:'💸', name:'월급 실수령액 계산기',       desc:'국민연금·건강보험·소득세 공제 후 실수령액 계산',       component:<NetSalary/>, isNew:true, tags:['월급','실수령','연봉','급여','세후','공제','소득세','4대보험'] },
-      { id:'unemployment', emoji:'📉', name:'실업급여 계산기',           desc:'고용보험법 기준 구직급여 일수·금액 산출',             component:<UnemploymentBenefit/>, isNew:true, tags:['실업급여','구직급여','실직','해고','권고사직','고용보험','백수'] },
-      { id:'parental',     emoji:'👶', name:'육아휴직급여 계산기',       desc:'육아휴직 기간·임금 기준 급여 지급액 계산',            component:<ParentalLeave/>, isNew:true, tags:['육아휴직','육아','출산','아빠','엄마','임신','아기'] },
+      { id:'severance',    emoji:'📋', name:'퇴직금 정밀 계산기',        desc:'평균임금 기준 법정 퇴직금 + 퇴직소득세 정확 계산',   component:<SeveranceCalculator/>, tags:['퇴직금','퇴직','해고','권고사직','평균임금','퇴직소득세','DC형','DB형'] },
+      { id:'annual',       emoji:'🗓️', name:'연차 계산기',                desc:'2018년 이후 현행법 기준 연차 발생·잔여·수당 계산',    component:<AnnualLeave/>, isNew:true, tags:['연차','휴가','유급휴가','연차수당','입사일','근속'] },
+      { id:'insurance',    emoji:'🛡️', name:'4대보험 사업자 부담금',      desc:'회사 부담 4대보험료를 직종·급여별로 산출',            component:<InsuranceContribution/>, isNew:true, tags:['4대보험','국민연금','건강보험','고용보험','산재','사업자'] },
+      { id:'netsalary',    emoji:'💸', name:'월급 실수령액 계산기',        desc:'국민연금·건강보험·소득세 공제 후 실수령액 계산',       component:<NetSalary/>, isNew:true, tags:['월급','실수령','연봉','급여','세후','공제','소득세','4대보험'] },
+      { id:'unemployment', emoji:'📉', name:'실업급여 계산기',            desc:'고용보험법 기준 구직급여 일수·금액 산출',             component:<UnemploymentBenefit/>, isNew:true, tags:['실업급여','구직급여','실직','해고','권고사직','고용보험','백수'] },
+      { id:'parental',     emoji:'👶', name:'육아휴직급여 계산기',        desc:'육아휴직 기간·임금 기준 급여 지급액 계산',            component:<ParentalLeave/>, isNew:true, tags:['육아휴직','육아','출산','아빠','엄마','임신','아기'] },
+      { id:'overtime',     emoji:'⏰', name:'야근·휴일 수당 계산기',      desc:'연장·야간·휴일 근무 시 법정 가산수당 정확 계산',      component:<OvertimePay/>, isNew:true, tags:['야근','야간수당','휴일수당','연장근무','가산수당','초과근무'] },
+      { id:'maternity',    emoji:'🤱', name:'출산휴가·육아휴직 통합',     desc:'출산휴가·육아휴직·아빠 육아휴직 급여 한번에 계산',    component:<MaternityLeave/>, isNew:true, tags:['출산휴가','출산','육아','육아휴직','아빠의달','급여'] },
+      { id:'natpension',   emoji:'🏛️', name:'국민연금 예상수령액',        desc:'납부이력 기준 조기·정상·연기 수령 시나리오 계산',     component:<NationalPensionEstimate/>, isNew:true, tags:['국민연금','연금','노후','수령액','수령나이','조기수령','연기수령'] },
     ],
   },
   {
@@ -99,52 +149,63 @@ const CATEGORIES: Category[] = [
     icon:<Monitor size={24}/>, color:'#3b82f6', bg:'#eff6ff',
     desc:'개발자와 IT 매니아를 위한 비용 분석 도구',
     highlights:[
-      'NAS 전기요금 — 누진세 포함 월 전기세와 클라우드 대비 손익분기',
-      'Local AI vs 클라우드 — GPU 직접 구매 vs API 비용 비교',
-      '서버 TCO — 물리 서버 vs AWS/GCP 5년 총 소유비용 분석',
-      '전기차 vs 내연기관 — 연료·유지·취득 비용 종합 손익분기점',
+      'NAS 전기요금 — 누진세 포함 월간 전기세와 클라우드 스토리지 대비 손익분기점 계산',
+      'Local AI vs 클라우드 — GPU 직접 구매 비용을 API 사용료로 회수하는 데 걸리는 기간',
+      '서버 TCO — 물리 서버 구매·운영 vs AWS/GCP 5년 총소유비용 정밀 비교',
+      '전기차 vs 내연기관 — 연료비·보험·유지비·취득가 모두 포함한 손익분기 시점 계산',
+      '인프라 비용 최적화 — 서비스 규모별 최적 아키텍처와 비용 절감 시나리오 제시',
     ],
     calculators:[
       { id:'nas',    emoji:'🖥️', name:'NAS 24시간 전기요금 계산기',    desc:'누진세 포함 월 전기요금과 손익분기점 계산',     component:<NasElectricity/>, tags:['NAS','전기','전기요금','누진세','서버','하드디스크'] },
       { id:'ai',     emoji:'🤖', name:'Local AI vs Cloud API 가성비',  desc:'GPU 구매 vs 클라우드 API 비용 비교',           component:<AiVsCloud/>, isNew:true, tags:['AI','GPU','ChatGPT','클라우드','API','딥러닝','머신러닝'] },
       { id:'cloud',  emoji:'☁️', name:'클라우드 vs 물리 서버 손익',    desc:'총 소유비용(TCO) 기준 최적 선택 안내',         component:<ServerTco/>, isNew:true, tags:['클라우드','AWS','GCP','서버','TCO','호스팅'] },
-      { id:'evvsgas',emoji:'⚡', name:'전기차 vs 내연기관 비교',       desc:'연료비·유지비·취득가 포함 손익분기점 계산',     component:<EvVsGas/>, isNew:true, tags:['전기차','EV','테슬라','아이오닉','주유비','기름','휘발유','손익분기'] },
+      { id:'evvsgas',emoji:'⚡', name:'전기차 vs 내연기관 비교',        desc:'연료비·유지비·취득가 포함 손익분기점 계산',     component:<EvVsGas/>, isNew:true, tags:['전기차','EV','테슬라','아이오닉','주유비','기름','휘발유','손익분기'] },
     ],
   },
   {
     id:'invest', name:'투자 · 자산', emoji:'💰',
     icon:<Coins size={24}/>, color:'#f59e0b', bg:'#fffbeb',
-    desc:'파킹통장부터 배당 스노우볼까지, 자산을 굴리는 법',
+    desc:'파킹통장부터 배당 스노우볼, 연금 절세까지 자산을 굴리는 법',
     highlights:[
-      '파킹통장 — 카카오·토스·케이뱅크 금리 비교 + 일복리 시뮬레이션',
-      '은 현물 평단가 — 분할 매수 시 평균 단가와 수익률 계산',
-      '배당 스노우볼 — 배당금 재투자로 쌓이는 복리 효과 시각화',
+      '파킹통장 — 카카오·토스·케이뱅크 금리 비교와 일복리 시뮬레이션으로 최적 분산',
+      '배당 스노우볼 — 배당금 재투자 시 10·20·30년 복리로 쌓이는 자산 규모 시각화',
+      '복리 목표 달성 — 목표 금액·기간·수익률 입력 시 필요 월 납입액 역산',
+      'DCA 시뮬레이터 — 적립식 투자의 평균 단가 효과와 일시 투자 대비 수익률 비교',
+      '연금저축·IRP 최적화 — 소득 구간별 세액공제 환급액과 최적 납입 배분 전략',
     ],
     calculators:[
-      { id:'parking', emoji:'🅿️', name:'파킹통장 일복리 쪼개기',        desc:'은행별 금리 비교와 복리 수익을 시각화',       component:<ParkingAccount/>, tags:['파킹통장','예금','적금','금리','복리','이자','저축'] },
-      { id:'silver',  emoji:'🥈', name:'은(Silver) 현물 평단가 계산기', desc:'분할 매수 시 평균 단가와 손익을 계산',        component:<SilverAvgPrice/>, isNew:true, tags:['은','실버','silver','현물','귀금속','평단가','분할매수'] },
-      { id:'drip',    emoji:'📈', name:'배당주 재투자 스노우볼',        desc:'배당금 재투자로 쌓이는 복리 효과 시뮬레이션', component:<DripSnowball/>, isNew:true, tags:['배당','배당주','재투자','DRIP','복리','주식','ETF'] },
+      { id:'parking',  emoji:'🅿️', name:'파킹통장 일복리 쪼개기',        desc:'은행별 금리 비교와 복리 수익을 시각화',       component:<ParkingAccount/>, tags:['파킹통장','예금','적금','금리','복리','이자','저축'] },
+      { id:'silver',   emoji:'🥈', name:'은(Silver) 현물 평단가 계산기', desc:'분할 매수 시 평균 단가와 손익을 계산',        component:<SilverAvgPrice/>, isNew:true, tags:['은','실버','silver','현물','귀금속','평단가','분할매수'] },
+      { id:'drip',     emoji:'📈', name:'배당주 재투자 스노우볼',         desc:'배당금 재투자로 쌓이는 복리 효과 시뮬레이션', component:<DripSnowball/>, isNew:true, tags:['배당','배당주','재투자','DRIP','복리','주식','ETF'] },
+      { id:'compgoal', emoji:'🎯', name:'복리 목표달성 계산기',           desc:'목표 금액 달성에 필요한 월 납입액·기간 역산',  component:<CompoundGoal/>, isNew:true, tags:['복리','목표','적립','월납입','수익률','투자기간'] },
+      { id:'dca',      emoji:'📉', name:'달러 코스트 에버리징(DCA)',      desc:'적립식 투자의 평균 단가와 수익률 시뮬레이션',  component:<DcaSimulator/>, isNew:true, tags:['DCA','적립식','코스트에버리징','분할매수','평단가','월적립'] },
+      { id:'pensopt',  emoji:'💎', name:'연금저축·IRP 세액공제 최적화',  desc:'소득 구간별 세액공제 환급액·최적 납입 배분',   component:<PensionTaxOptimizer/>, isNew:true, tags:['연금저축','IRP','세액공제','절세','연금','노후','ISA'] },
     ],
   },
   {
     id:'estate', name:'부동산 · 이사', emoji:'🏠',
-    icon:<Truck size={24}/>, color:'#ec4899', bg:'#fdf2f8',
-    desc:'청약 가점부터 주택담보대출·이사비용까지 한 번에',
+    icon:<Home size={24}/>, color:'#ec4899', bg:'#fdf2f8',
+    desc:'청약 가점부터 주택담보대출·부동산 세금·이사비용까지 한 번에',
     highlights:[
-      '청약 가점 — 무주택·부양가족·청약통장 기준 84점 만점 계산',
-      '디딤돌·버팀목·보금자리론 — 정부지원 대출 한도·월 상환액',
-      '청년 전월세 대출 — 중소기업 청년 전월세, 보증부 월세대출',
-      '중개 수수료 + 취득세 — 매매·전세 거래 시 총 부대비용',
-      '포장이사 견적 — 거리·물량·층수 기반 이사비용 예상액',
+      '청약 가점 — 무주택기간·부양가족·청약통장 가입기간 기준 84점 만점 가점 자동 계산',
+      'DSR 계산기 — 1금융권 40%·2금융권 50% 기준 대출 한도와 월 상환 부담 역산',
+      '전세 vs 매매 — 기회비용·집값 상승률·대출 이자 포함 10년 손익분기 시뮬레이션',
+      '부동산 취득 총비용 — 취득세+법무사+인지세+국민주택채권+이사비+중개보수 합산',
+      '임대수익률 — 공실률·관리비 공제 후 순수익과 갭투자 실투자금 기준 수익률 계산',
     ],
     calculators:[
-      { id:'moving',      emoji:'📦', name:'포장이사 견적 예측기',       desc:'거리·물량 기준 이사 비용 예상액 산출',                  component:<MovingCost/>, isNew:true, tags:['이사','포장이사','이삿짐','이사비용','용달'] },
-      { id:'broker',      emoji:'🔑', name:'중개 수수료 · 등기 비용',    desc:'매매·전세 중개보수와 취득세 합산 계산',                 component:<BrokerFee/>, isNew:true, tags:['중개수수료','복비','취득세','부동산','공인중개사'] },
-      { id:'subscription',emoji:'🏆', name:'청약 가점 계산기',           desc:'무주택·부양가족·청약통장 기준 84점 만점 가점 산출',      component:<HousingSubscription/>, isNew:true, tags:['청약','청약가점','아파트','당첨','무주택','부양가족','청약통장'] },
-      { id:'didimdol',    emoji:'🏡', name:'디딤돌 대출 계산기',         desc:'주택도시기금 디딤돌·신생아특례 대출 한도·월 상환액 계산', component:<DidimdolLoan/>, isNew:true, tags:['디딤돌','주택도시기금','신생아특례','정부대출','주담대'] },
-      { id:'beotimok',    emoji:'🔐', name:'버팀목 전세자금 대출',       desc:'버팀목·신생아특례 전세자금 한도·이자 계산',              component:<BeotimokJeonse/>, isNew:true, tags:['버팀목','전세','전세자금','전세대출','신생아','보증금'] },
-      { id:'bogeumjari',  emoji:'🏘️', name:'보금자리론 계산기',          desc:'HF 보금자리론 유형별 금리·월 상환액 계산',               component:<BogeumjariLoan/>, isNew:true, tags:['보금자리론','HF','주택금융공사','고정금리','주담대'] },
-      { id:'youth',       emoji:'🌱', name:'청년 전월세 대출 계산기',    desc:'중소기업 청년 전월세·청년 보증부 월세대출 계산',          component:<YouthHousingLoan/>, isNew:true, tags:['청년','전월세','청년대출','중소기업','월세','보증금'] },
+      { id:'moving',      emoji:'📦', name:'포장이사 견적 예측기',        desc:'거리·물량 기준 이사 비용 예상액 산출',                  component:<MovingCost/>, isNew:true, tags:['이사','포장이사','이삿짐','이사비용','용달'] },
+      { id:'broker',      emoji:'🔑', name:'중개 수수료 · 등기 비용',     desc:'매매·전세 중개보수와 취득세 합산 계산',                 component:<BrokerFee/>, isNew:true, tags:['중개수수료','복비','취득세','부동산','공인중개사'] },
+      { id:'subscription',emoji:'🏆', name:'청약 가점 계산기',            desc:'무주택·부양가족·청약통장 기준 84점 만점 가점 산출',      component:<HousingSubscription/>, isNew:true, tags:['청약','청약가점','아파트','당첨','무주택','부양가족','청약통장'] },
+      { id:'didimdol',    emoji:'🏡', name:'디딤돌 대출 계산기',          desc:'주택도시기금 디딤돌·신생아특례 대출 한도·월 상환액 계산', component:<DidimdolLoan/>, isNew:true, tags:['디딤돌','주택도시기금','신생아특례','정부대출','주담대'] },
+      { id:'beotimok',    emoji:'🔐', name:'버팀목 전세자금 대출',        desc:'버팀목·신생아특례 전세자금 한도·이자 계산',              component:<BeotimokJeonse/>, isNew:true, tags:['버팀목','전세','전세자금','전세대출','신생아','보증금'] },
+      { id:'bogeumjari',  emoji:'🏘️', name:'보금자리론 계산기',           desc:'HF 보금자리론 유형별 금리·월 상환액 계산',               component:<BogeumjariLoan/>, isNew:true, tags:['보금자리론','HF','주택금융공사','고정금리','주담대'] },
+      { id:'youth',       emoji:'🌱', name:'청년 전월세 대출 계산기',     desc:'중소기업 청년 전월세·청년 보증부 월세대출 계산',          component:<YouthHousingLoan/>, isNew:true, tags:['청년','전월세','청년대출','중소기업','월세','보증금'] },
+      { id:'dsr',         emoji:'📐', name:'DSR 계산기',                   desc:'소득 기준 DSR 40·50% 한도와 최대 대출 한도 역산',        component:<DsrCalculator/>, isNew:true, tags:['DSR','대출한도','소득','주담대','대출','1금융권','2금융권'] },
+      { id:'jeonsebuy',   emoji:'🔑', name:'전세 vs 매매 손익분기',       desc:'10년 기준 전세·매매 시나리오 총비용 비교',               component:<JeonseVsBuy/>, isNew:true, tags:['전세','매매','손익분기','아파트','내집마련','비교'] },
+      { id:'annuity',     emoji:'🏗️', name:'주택연금 예상 수령액',        desc:'나이·집값 기준 HF 주택연금 월 지급액 추정',              component:<ReverseAnnuity/>, isNew:true, tags:['주택연금','역모기지','노후','HF','주택금융공사','연금'] },
+      { id:'acqcost',     emoji:'💰', name:'부동산 취득 총비용',           desc:'취득세·법무사·채권·이사·중개보수 합산 계산',             component:<PropertyAcquisitionCost/>, isNew:true, tags:['취득세','취득비용','부동산비용','법무사','중개수수료','이사비'] },
+      { id:'rental',      emoji:'📊', name:'임대수익률 계산기',            desc:'공실률·관리비 공제 후 실질 임대 수익률 계산',             component:<RentalYield/>, isNew:true, tags:['임대수익률','월세','임대','갭투자','수익률','부동산수익'] },
     ],
   },
   {
@@ -152,14 +213,36 @@ const CATEGORIES: Category[] = [
     icon:<Wallet size={24}/>, color:'#ef4444', bg:'#fef2f2',
     desc:'무의식 지출을 숫자로 때려잡는 계산기',
     highlights:[
-      '구독료 누수 — 넷플릭스·유튜브·카카오 구독료 연간·10년 환산',
-      '카푸어 타이머 — 차 할부가 내 자산에 미치는 실제 충격 계산',
-      '커피 연금 — 매일 커피값을 30년 투자하면 노후 자금이 얼마?',
+      '구독료 누수 — 넷플릭스·유튜브·카카오 구독료를 연간·10년 단위로 환산해 지출 충격 시각화',
+      '카푸어 타이머 — 차 할부 기회비용이 10·20년 후 자산에 미치는 실제 충격 계산',
+      '전기요금 — 주택용 누진 3단계 기준 2026년 정확한 월 전기료와 절약 가능 구간 확인',
+      '자동차세 — 배기량별 세율·차령 감면·연납 할인을 적용한 연간 실납부액 계산',
+      '할부 vs 일시불 — 무이자·유이자 할부의 실질 비용을 투자 기회비용과 함께 비교',
     ],
     calculators:[
-      { id:'carpoor', emoji:'🚗', name:'자동차 할부 vs 카푸어 타이머', desc:'차 할부가 자산에 미치는 실질적 충격 계산',  component:<CarPoorTimer/>, tags:['자동차','할부','카푸어','차','자산','기회비용'] },
-      { id:'sub',     emoji:'📱', name:'구독료 누수 탐지기',           desc:'월별 구독 지출이 연간·10년에 얼마인지 계산', component:<SubscriptionLeak/>, isNew:true, tags:['구독','넷플릭스','유튜브','카카오','구독료','OTT'] },
-      { id:'coffee',  emoji:'☕', name:'커피값 노후 연금 환산기',      desc:'매일 커피값을 투자했다면 노후에 얼마가 될까', component:<CoffeeRetirement/>, isNew:true, tags:['커피','스타벅스','노후','연금','투자','절약'] },
+      { id:'carpoor',  emoji:'🚗', name:'자동차 할부 vs 카푸어 타이머', desc:'차 할부가 자산에 미치는 실질적 충격 계산',         component:<CarPoorTimer/>, tags:['자동차','할부','카푸어','차','자산','기회비용'] },
+      { id:'sub',      emoji:'📱', name:'구독료 누수 탐지기',            desc:'월별 구독 지출이 연간·10년에 얼마인지 계산',       component:<SubscriptionLeak/>, isNew:true, tags:['구독','넷플릭스','유튜브','카카오','구독료','OTT'] },
+      { id:'coffee',   emoji:'☕', name:'커피값 노후 연금 환산기',       desc:'매일 커피값을 투자했다면 노후에 얼마가 될까',      component:<CoffeeRetirement/>, isNew:true, tags:['커피','스타벅스','노후','연금','투자','절약'] },
+      { id:'elec',     emoji:'💡', name:'전기요금 계산기',               desc:'주택용 누진세 기준 2026년 전기요금 정확 계산',     component:<ElectricityBill/>, isNew:true, tags:['전기요금','전기세','누진세','한전','에너지','kWh'] },
+      { id:'cartax',   emoji:'🚙', name:'자동차세 계산기',               desc:'배기량·차령 감면·연납 할인 포함 자동차세 계산',    component:<CarTax/>, isNew:true, tags:['자동차세','자동차','세금','배기량','연납','감면'] },
+      { id:'install',  emoji:'💳', name:'할부 vs 일시불 손익',           desc:'할부 이자와 기회비용을 고려한 최적 결제 방법',     component:<InstallmentVsLump/>, isNew:true, tags:['할부','무이자','일시불','신용카드','기회비용'] },
+      { id:'wedding',  emoji:'💒', name:'결혼 비용 계산기',              desc:'예식장·신혼여행·예물 등 항목별 결혼 총비용 계산', component:<WeddingCost/>, isNew:true, tags:['결혼','웨딩','결혼비용','신혼여행','예물','예식장','혼수'] },
+    ],
+  },
+  {
+    id:'biz', name:'사업 · 프리랜서', emoji:'📈',
+    icon:<TrendingUp size={24}/>, color:'#0ea5e9', bg:'#f0f9ff',
+    desc:'1인 창업자·프리랜서를 위한 수익성과 단가 계산기',
+    highlights:[
+      '손익분기점(BEP) — 고정비·변동비·판매가 입력 시 흑자 전환에 필요한 최소 매출 계산',
+      '프리랜서 단가 — 목표 연수입에서 세금·보험·비용을 역산한 적정 시간당·일당 단가',
+      '공헌이익 분석 — 제품별 단위 공헌이익과 전체 이익 구조를 한눈에 파악',
+      '목표 이익 역산 — 원하는 순이익 달성을 위한 필요 매출액과 판매 수량 계산',
+      '프리랜서 세금 시뮬레이션 — 3.3% 원천징수 기준 연간 세금 환급·추납 예측',
+    ],
+    calculators:[
+      { id:'bep',       emoji:'📊', name:'사업 손익분기점(BEP) 계산기', desc:'고정비·변동비 기반 흑자 전환 매출·수량 계산', component:<BreakevenPoint/>, isNew:true, tags:['BEP','손익분기점','창업','사업','고정비','변동비','매출'] },
+      { id:'freelance', emoji:'💼', name:'프리랜서 적정 단가 계산기',   desc:'목표 수입에서 세금·비용 역산한 시간당 단가',  component:<FreelanceRate/>, isNew:true, tags:['프리랜서','단가','시급','일당','세금','3.3%','독립','N잡'] },
     ],
   },
   {
@@ -167,19 +250,21 @@ const CATEGORIES: Category[] = [
     icon:<Laugh size={24}/>, color:'#8b5cf6', bg:'#f5f3ff',
     desc:'숫자로 보는 인생 — 웃기고 진지한 엉뚱 계산기',
     highlights:[
-      '치킨 환산기 — 내 연봉으로 치킨·피자·스타벅스 몇 개 살 수 있나',
-      '인생 시간 — 남은 인생을 밥·잠·월급날·심장박동수로 환산',
-      '비트코인 가정 — 그때 비트코인을 샀다면 지금 얼마가 됐을까?',
+      '치킨 환산기 — 내 연봉으로 치킨·피자·스타벅스 아메리카노 몇 개 살 수 있는지 계산',
+      '인생 시간 — 남은 인생을 밥·잠·월급날·심장박동수로 환산해 삶의 유한성을 체감',
+      '비트코인 가정 — 그때 비트코인을 샀다면 지금 얼마가 됐을지 날짜별로 계산',
+      '내 시간 가치 — 시급·연봉 기준으로 출퇴근·유튜브·대기 시간의 실제 비용 환산',
+      '로또 기대값 — 등수별 당첨 확률과 기대 손실을 수학적으로 계산',
     ],
     calculators:[
-      { id:'chicken',  emoji:'🍗', name:'연봉 치킨 환산기',           desc:'내 연봉으로 치킨·피자·커피를 몇 개나 살 수 있을까?', component:<ChickenCount/>, isNew:true, tags:['치킨','연봉','환산','재미','피자','커피','스타벅스'] },
-      { id:'lifetime', emoji:'⏳', name:'인생 시간 계산기',           desc:'남은 인생을 시간·밥·잠·월급날로 환산해 보세요',    component:<LifeTimeCalc/>, isNew:true, tags:['인생','수명','나이','시간','남은','기대수명','생일'] },
-      { id:'bitcoin',  emoji:'₿', name:'비트코인을 샀다면?',          desc:'그때 비트코인을 샀다면 지금 얼마가 됐을지 계산',    component:<BitcoinWhatIf/>, isNew:true, tags:['비트코인','BTC','코인','가상화폐','암호화폐','투자','이더리움'] },
+      { id:'chicken',  emoji:'🍗', name:'연봉 치킨 환산기',  desc:'내 연봉으로 치킨·피자·커피를 몇 개나 살 수 있을까?', component:<ChickenCount/>, isNew:true, tags:['치킨','연봉','환산','재미','피자','커피','스타벅스'] },
+      { id:'lifetime', emoji:'⏳', name:'인생 시간 계산기',  desc:'남은 인생을 시간·밥·잠·월급날로 환산해 보세요',     component:<LifeTimeCalc/>, isNew:true, tags:['인생','수명','나이','시간','남은','기대수명','생일'] },
+      { id:'bitcoin',  emoji:'₿',  name:'비트코인을 샀다면?', desc:'그때 비트코인을 샀다면 지금 얼마가 됐을지 계산',     component:<BitcoinWhatIf/>, isNew:true, tags:['비트코인','BTC','코인','가상화폐','암호화폐','투자','이더리움'] },
     ],
   },
 ];
 
-const FEATURED = ['loan','netsalary','annual','severance','unemployment','drip','broker','sub','chicken','bitcoin'];
+const FEATURED = ['loan','netsalary','annual','severance','dsr','capitalgains','compgoal','broker','elec','sub','chicken','bitcoin'];
 function getFeatured() {
   return CATEGORIES.flatMap((c) =>
     c.calculators.filter((cc) => FEATURED.includes(cc.id) && !cc.status)
@@ -367,7 +452,7 @@ export default function App() {
                     <motion.div initial={{ opacity:0, y:10 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.17 }}
                       className="hero-stats">
                       {([
-                        { emoji:'🧮', value:'28+',  label:'계산기 운영 중', color:'#a78bfa' },
+                        { emoji:'🧮', value:'40+',  label:'계산기 운영 중', color:'#a78bfa' },
                         { emoji:'⚡', value:'즉시', label:'실시간 계산',    color:'#34d399' },
                         { emoji:'🔒', value:'0건',  label:'정보 미수집',   color:'#fbbf24' },
                         { emoji:'🎁', value:'무료', label:'완전 무료',      color:'#f472b6' },
