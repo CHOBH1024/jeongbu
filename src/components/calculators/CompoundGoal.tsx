@@ -46,22 +46,18 @@ export const CompoundGoal = () => {
       return { yr, fv: Math.floor(fv), totalInvested, profit: Math.floor(profit), realFv: Math.floor(realFv) };
     });
 
-    if (months === null) {
-      return { error: true, milestones };
-    }
-
-    const yrs = Math.floor(months / 12);
-    const mos = months % 12;
-    const fv   = calcFV(current, monthly, r, months);
-    const totalInvested = current + monthly * months;
+    const yrs = months === null ? 0 : Math.floor(months / 12);
+    const mos = months === null ? 0 : months % 12;
+    const fv   = months === null ? 0 : calcFV(current, monthly, r, months);
+    const totalInvested = months === null ? 0 : current + monthly * months;
     const profit = fv - totalInvested;
 
     // 실질 구매력 (물가 반영)
-    const realValue = fv / Math.pow(1 + inf * 12, yrs + mos / 12);
+    const realValue = months === null ? 0 : fv / Math.pow(1 + inf * 12, yrs + mos / 12);
 
     return {
-      error: false,
-      months, yrs, mos,
+      error: months === null,
+      months: months ?? 0, yrs, mos,
       fv:   Math.floor(fv),
       totalInvested: Math.floor(totalInvested),
       profit:        Math.floor(profit),
