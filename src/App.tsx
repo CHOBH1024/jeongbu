@@ -177,16 +177,6 @@ const CATEGORIES: Category[] = [
       { id:'bitcoin',  emoji:'₿', name:'비트코인을 샀다면?',          desc:'그때 비트코인을 샀다면 지금 얼마가 됐을지 계산',    component:<BitcoinWhatIf/>, isNew:true, tags:['비트코인','BTC','코인','가상화폐','암호화폐','투자','이더리움'] },
     ],
   },
-  {
-    id:'fun', name:'재미있는 계산기', emoji:'🎉',
-    icon:<Laugh size={24}/>, color:'#8b5cf6', bg:'#f5f3ff',
-    desc:'숫자로 보는 인생 — 웃기고 진지한 엉뚱 계산기',
-    calculators:[
-      { id:'chicken',  emoji:'🍗', name:'연봉 치킨 환산기',           desc:'내 연봉으로 치킨·피자·커피를 몇 개나 살 수 있을까?', component:<ChickenCount/>, isNew:true },
-      { id:'lifetime', emoji:'⏳', name:'인생 시간 계산기',           desc:'남은 인생을 시간·밥·잠·월급날로 환산해 보세요',    component:<LifeTimeCalc/>, isNew:true },
-      { id:'bitcoin',  emoji:'₿', name:'비트코인을 샀다면?',          desc:'그때 비트코인을 샀다면 지금 얼마가 됐을지 계산',    component:<BitcoinWhatIf/>, isNew:true },
-    ],
-  },
 ];
 
 const FEATURED = ['loan','netsalary','annual','severance','unemployment','drip','broker','sub','chicken','bitcoin'];
