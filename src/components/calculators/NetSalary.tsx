@@ -6,34 +6,44 @@ function fmt(n: number) {
   return Math.round(n).toLocaleString('ko-KR') + '원';
 }
 
+/**
+ * 월 소득세 간이세액표 근사 계산
+ * 부양가족 1인당 연 150만 원 소득공제 근사 적용 (월 125,000원 차감).
+ * 정확한 세액은 국세청 간이세액표를 기준으로 합니다.
+ */
 function calcIncomeTax(taxable: number, dependents: number): number {
-  if (taxable <= 1_500_000) return 0;
-  const depReduction = 1 - Math.min(0.5, (dependents - 1) * 0.05);
+  // 부양가족 공제: 1인당 연 150만 원 → 월 125,000원 차감 (근사치)
+  const depDeductMonthly = (dependents - 1) * 125_000;
+  const adjusted = Math.max(0, taxable - depDeductMonthly);
+  if (adjusted <= 1_500_000) return 0;
   let rate = 0;
-  if (taxable <= 3_500_000) rate = 0.06;
-  else if (taxable <= 8_500_000) rate = 0.15;
+  if (adjusted <= 3_500_000) rate = 0.06;
+  else if (adjusted <= 8_500_000) rate = 0.15;
   else rate = 0.24;
-  return taxable * rate * depReduction;
+  return adjusted * rate;
 }
 
 export function NetSalary() {
   const [monthlyGross, setMonthlyGross] = useState(3_500_000);
   const [dependents, setDependents] = useState(1);
-  const [mealNonTax, setMealNonTax] = useState(true);
+  const [mealNonTax, setMealNonTax] = useState(200_000);       // 식대 비과세 (월)
+  const [carNonTax, setCarNonTax] = useState(200_000);         // 차량유지비 비과세 (월)
+  const [childcareNonTax, setChildcareNonTax] = useState(0);   // 육아수당 비과세 (월)
 
   const result = useMemo(() => {
     const gross = monthlyGross;
+    const totalNonTax = mealNonTax + carNonTax + childcareNonTax;
     const pension = Math.round(gross * 0.045);
     const health = Math.round(gross * 0.03545);
-    const ltc = Math.round(health * 0.1295);
+    const ltc = Math.round(health * 0.1281);
     const employment = Math.round(gross * 0.009);
-    const taxable = gross - (mealNonTax ? 200_000 : 0);
+    const taxable = Math.max(0, gross - totalNonTax);
     const incomeTax = Math.round(calcIncomeTax(taxable, dependents));
     const localTax = Math.round(incomeTax * 0.1);
     const totalDeduction = pension + health + ltc + employment + incomeTax + localTax;
     const netSalary = gross - totalDeduction;
-    return { pension, health, ltc, employment, incomeTax, localTax, totalDeduction, netSalary };
-  }, [monthlyGross, dependents, mealNonTax]);
+    return { pension, health, ltc, employment, incomeTax, localTax, totalDeduction, netSalary, totalNonTax };
+  }, [monthlyGross, dependents, mealNonTax, carNonTax, childcareNonTax]);
 
   const deductionPct = Math.round((result.totalDeduction / monthlyGross) * 100);
   const netPct = 100 - deductionPct;
@@ -65,30 +75,40 @@ export function NetSalary() {
             label="부양가족 수 (본인 포함)"
             type="number"
             min={1}
-            max={20}
+            max={11}
             value={dependents}
             unit="명"
-            onChange={(e) => setDependents(Math.max(1, Number(e.target.value)))}
+            onChange={(e) => setDependents(Math.min(11, Math.max(1, Number(e.target.value))))}
           />
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <label style={{ fontSize: 13, fontWeight: 700, color: '#6e6e73' }}>식대 비과세 적용</label>
-            <label style={{
-              display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer',
-              padding: '12px 16px', background: '#f9f9fb', borderRadius: 12,
-              border: `1.5px solid ${mealNonTax ? '#6366f1' : '#e5e5ea'}`,
-              transition: 'border-color 0.15s',
-            }}>
-              <input
-                type="checkbox"
-                checked={mealNonTax}
-                onChange={(e) => setMealNonTax(e.target.checked)}
-                style={{ width: 16, height: 16, accentColor: '#6366f1' }}
-              />
-              <span style={{ fontSize: 14, color: '#1d1d1f', fontWeight: 500 }}>
-                식대 20만원 비과세 적용
-              </span>
-            </label>
-          </div>
+          <Input
+            label="식대 비과세 (월)"
+            type="number"
+            min={0}
+            max={200000}
+            step={10000}
+            value={mealNonTax}
+            unit="원"
+            onChange={(e) => setMealNonTax(Number(e.target.value))}
+          />
+          <Input
+            label="차량유지비 비과세 (월)"
+            type="number"
+            min={0}
+            max={200000}
+            step={10000}
+            value={carNonTax}
+            unit="원"
+            onChange={(e) => setCarNonTax(Number(e.target.value))}
+          />
+          <Input
+            label="육아수당 비과세 (월)"
+            type="number"
+            min={0}
+            step={10000}
+            value={childcareNonTax}
+            unit="원"
+            onChange={(e) => setChildcareNonTax(Number(e.target.value))}
+          />
         </div>
       </Card>
 
@@ -162,7 +182,7 @@ export function NetSalary() {
           {[
             { label: '국민연금', value: result.pension, rate: '4.5%', color: '#6366f1' },
             { label: '건강보험', value: result.health, rate: '3.545%', color: '#8b5cf6' },
-            { label: '장기요양보험', value: result.ltc, rate: '건강보험료 × 12.95%', color: '#a78bfa' },
+            { label: '장기요양보험', value: result.ltc, rate: '건강보험료 × 12.81%', color: '#a78bfa' },
             { label: '고용보험', value: result.employment, rate: '0.9%', color: '#c4b5fd' },
             { label: '소득세', value: result.incomeTax, rate: '간이세액표 기준', color: '#f59e0b' },
             { label: '지방소득세', value: result.localTax, rate: '소득세 × 10%', color: '#fbbf24' },
@@ -202,9 +222,9 @@ export function NetSalary() {
           marginTop: 16, padding: '12px 16px', borderRadius: 10,
           background: '#f2f2f7', fontSize: 12, color: '#6e6e73', lineHeight: 1.7,
         }}>
-          ※ 2024년 기준 간이세액표 적용. 실제 세액은 연말정산 후 확정됩니다.<br />
-          ※ 식대 비과세(20만원)는 2023년 1월부터 10만→20만원으로 상향되었습니다.<br />
-          ※ 소득세는 부양가족 수에 따라 감면됩니다.
+          ※ 2026년 기준 적용. 실제 세액은 연말정산 후 확정됩니다.<br />
+          ※ 비과세 합계 (식대 + 차량유지비 + 육아수당): {result.totalNonTax.toLocaleString('ko-KR')}원 — 이 금액은 과세표준에서 제외됩니다.<br />
+          ※ 부양가족 공제는 간이세액표 근사치 적용 (1인당 연 150만 원 소득공제 기준). 정확한 세액은 국세청 간이세액표를 참고하세요.
         </div>
       </Card>
     </div>
