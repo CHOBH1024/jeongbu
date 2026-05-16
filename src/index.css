@@ -32,6 +32,15 @@ body {
 .dark body, body.dark { background: #000; color: #f5f5f7; }
 
 input, select, textarea { font-family: inherit; outline: none; }
+input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+}
+button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
 button { font-family: inherit; cursor: pointer; border: none; background: none; }
 
 ::-webkit-scrollbar { width: 4px; }
@@ -79,7 +88,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 .card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.08), 0 16px 40px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08), 0 16px 40px rgba(0,0,0,0.1), 0 0 0 1px rgba(99,102,241,0.08);
 }
 .dark .stat-card { background: #1c1c1e; }
 
@@ -186,6 +195,18 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 /* ── Hero stat grid (2col mobile → 4col desktop) ─────────── */
 .hero-stats { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; max-width:580px; margin:0 auto; }
 @media (min-width:600px) { .hero-stats { grid-template-columns:repeat(4,1fr); gap:14px; } }
+
+/* Responsive 2-col calculator layout */
+.calc-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+@media (min-width: 680px) {
+  .calc-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+}
 
 /* ── Search modal overlay ────────────────────────────────── */
 .search-overlay {

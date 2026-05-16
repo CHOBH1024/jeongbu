@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 /* ── Design tokens ── */
 export const TOKEN = {
@@ -77,25 +77,26 @@ interface StatCardProps {
 
 export const StatCard: React.FC<StatCardProps> = ({ label, value, sub, color = TOKEN.primary, icon }) => (
   <div style={{
-    background: '#fff',
+    background: `linear-gradient(135deg, #fff 0%, ${color}06 100%)`,
     borderRadius: 18,
     padding: '22px 18px',
     textAlign: 'center',
-    boxShadow: '0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)',
+    boxShadow: `0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04), 0 0 0 1px ${color}15`,
     display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
+    transition: 'transform 0.15s',
   }}>
     {icon && (
       <div style={{
         width: 40, height: 40, borderRadius: 12, marginBottom: 4,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        background: `${color}12`, color,
+        background: `${color}15`, color,
       }}>
         {icon}
       </div>
     )}
-    <p style={{ fontSize: 12, fontWeight: 700, color: '#8e8e93', letterSpacing: '0.04em', textTransform: 'uppercase' }}>{label}</p>
-    <p className="num" style={{ fontSize: 24, fontWeight: 800, color, lineHeight: 1.1 }}>{value}</p>
-    {sub && <p style={{ fontSize: 12, color: '#aeaeb2', fontWeight: 500 }}>{sub}</p>}
+    <p style={{ fontSize: 11, fontWeight: 700, color: '#8e8e93', letterSpacing: '0.06em', textTransform: 'uppercase' }}>{label}</p>
+    <p className="num" style={{ fontSize: 22, fontWeight: 800, color, lineHeight: 1.1, wordBreak: 'break-all' }}>{value}</p>
+    {sub && <p style={{ fontSize: 11, color: '#aeaeb2', fontWeight: 500, lineHeight: 1.5 }}>{sub}</p>}
   </div>
 );
 
@@ -135,9 +136,10 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   hint?: string;
   unit?: string;
+  error?: string;
 }
 
-export const Input: React.FC<InputProps> = ({ label, hint, unit, className = '', style: extStyle, ...props }) => {
+export const Input: React.FC<InputProps> = ({ label, hint, unit, error, className = '', style: extStyle, ...props }) => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8, width: '100%' }}>
       {label && (
@@ -148,14 +150,25 @@ export const Input: React.FC<InputProps> = ({ label, hint, unit, className = '',
           className={className}
           style={{
             width: '100%', padding: unit ? '12px 44px 12px 16px' : '12px 16px',
-            background: '#f9f9fb', border: '1.5px solid #e5e5ea',
+            background: error ? '#fef2f2' : '#f9f9fb',
+            border: `1.5px solid ${error ? '#ef4444' : '#e5e5ea'}`,
             borderRadius: 12, fontSize: 14, color: '#1d1d1f',
             fontFamily: 'inherit', outline: 'none', transition: 'border-color 0.15s, background 0.15s',
             boxSizing: 'border-box',
             ...extStyle,
           }}
-          onFocus={(e) => { e.currentTarget.style.borderColor = TOKEN.primary; e.currentTarget.style.background = '#fff'; }}
-          onBlur={(e) => { e.currentTarget.style.borderColor = '#e5e5ea'; e.currentTarget.style.background = '#f9f9fb'; }}
+          onFocus={(e) => {
+            if (!error) {
+              e.currentTarget.style.borderColor = TOKEN.primary;
+              e.currentTarget.style.background = '#fff';
+            }
+          }}
+          onBlur={(e) => {
+            if (!error) {
+              e.currentTarget.style.borderColor = '#e5e5ea';
+              e.currentTarget.style.background = '#f9f9fb';
+            }
+          }}
           {...props}
         />
         {unit && (
@@ -167,7 +180,8 @@ export const Input: React.FC<InputProps> = ({ label, hint, unit, className = '',
           </span>
         )}
       </div>
-      {hint && <p style={{ fontSize: 12, color: '#8e8e93', lineHeight: 1.6 }}>{hint}</p>}
+      {error && <p style={{ fontSize: 12, color: '#ef4444', lineHeight: 1.6 }}>{error}</p>}
+      {hint && !error && <p style={{ fontSize: 12, color: '#8e8e93', lineHeight: 1.6 }}>{hint}</p>}
     </div>
   );
 };
@@ -219,5 +233,46 @@ export const ResultBox: React.FC<{ children: React.ReactNode }> = ({ children })
     fontSize: 14, color: '#3a3a3c', lineHeight: 1.8,
   }}>
     {children}
+  </div>
+);
+
+/* ── CopyButton ── */
+export const CopyButton: React.FC<{ text: string; label?: string }> = ({ text, label = '복사' }) => {
+  const [copied, setCopied] = useState(false);
+  const handleCopy = () => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+  return (
+    <button
+      onClick={handleCopy}
+      style={{
+        display: 'inline-flex', alignItems: 'center', gap: 5,
+        padding: '5px 12px', borderRadius: 8, fontSize: 12, fontWeight: 700,
+        background: copied ? '#ecfdf5' : '#f2f2f7',
+        color: copied ? '#059669' : '#6e6e73',
+        border: `1px solid ${copied ? '#a7f3d0' : '#e5e5ea'}`,
+        cursor: 'pointer', transition: 'all 0.15s', fontFamily: 'inherit',
+      }}
+    >
+      {copied ? '✓ 복사됨' : `📋 ${label}`}
+    </button>
+  );
+};
+
+/* ── EmptyState ── */
+export const EmptyState: React.FC<{ message?: string; emoji?: string }> = ({
+  message = '값을 입력하면 결과가 표시됩니다',
+  emoji = '🧮',
+}) => (
+  <div style={{
+    padding: '48px 24px', textAlign: 'center', borderRadius: 20,
+    background: 'linear-gradient(135deg, #f9f9fb, #f2f2f7)',
+    border: '1.5px dashed #e5e5ea',
+  }}>
+    <div style={{ fontSize: 40, marginBottom: 16 }}>{emoji}</div>
+    <p style={{ fontSize: 14, color: '#8e8e93', lineHeight: 1.7 }}>{message}</p>
   </div>
 );

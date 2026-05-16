@@ -52,14 +52,14 @@ interface CalcResult {
 function calcCapitalGainsTax(params: {
   acquisitionPrice: number;
   transferPrice: number;
+  necessaryCost: number;
   holdingYears: number;
   isOneHousehold: boolean;
   isMultiHouse: boolean;
   isRegulatedArea: boolean;
 }): CalcResult {
-  const { acquisitionPrice, transferPrice, holdingYears, isOneHousehold, isMultiHouse, isRegulatedArea } = params;
+  const { acquisitionPrice, transferPrice, necessaryCost, holdingYears, isOneHousehold, isMultiHouse, isRegulatedArea } = params;
 
-  const necessaryCost = Math.floor(transferPrice * 0.003); // 필요경비 근사 0.3%
   const gain = Math.max(0, transferPrice - acquisitionPrice - necessaryCost);
   const BASIC_DEDUCTION = 2500000;
   const HIGH_PRICE_THRESHOLD = 1200000000; // 12억
@@ -138,6 +138,7 @@ const mutedColor = '#6e6e73';
 export const CapitalGainsTax = () => {
   const [acquisitionPrice, setAcquisitionPrice] = useState(500000000);
   const [transferPrice, setTransferPrice] = useState(900000000);
+  const [necessaryCost, setNecessaryCost] = useState(0); // 취득세·중개수수료 등 실제 입력
   const [holdingYears, setHoldingYears] = useState(5);
   const [isOneHousehold, setIsOneHousehold] = useState(true);
   const [isMultiHouse, setIsMultiHouse] = useState(false);
@@ -148,7 +149,7 @@ export const CapitalGainsTax = () => {
   const result = useMemo(() => {
     if (acquisitionPrice <= 0 || transferPrice <= 0) return null;
     return calcCapitalGainsTax({
-      acquisitionPrice, transferPrice, holdingYears,
+      acquisitionPrice, transferPrice, necessaryCost, holdingYears,
       isOneHousehold, isMultiHouse, isRegulatedArea,
     });
   }, [acquisitionPrice, transferPrice, holdingYears, isOneHousehold, isMultiHouse, isRegulatedArea]);
@@ -188,6 +189,13 @@ export const CapitalGainsTax = () => {
               <div>
                 <label style={{ fontSize: 12, fontWeight: 700, color: mutedColor, display: 'block', marginBottom: 6 }}>보유 기간 (년)</label>
                 <input type="number" value={holdingYears} onChange={e => setHoldingYears(+e.target.value)} style={INPUT_H} step={0.5} min={0} />
+              </div>
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 700, color: mutedColor, display: 'block', marginBottom: 6 }}>
+                  필요경비 (원)
+                  <span style={{ marginLeft: 6, fontWeight: 400, color: '#aeaeb2', fontSize: 11 }}>취득세·중개수수료 등 실납부액</span>
+                </label>
+                <input type="number" value={necessaryCost} onChange={e => setNecessaryCost(+e.target.value)} style={INPUT_H} step={1000000} min={0} />
               </div>
             </div>
           </Card>
@@ -260,13 +268,16 @@ export const CapitalGainsTax = () => {
                 <Card title="세금 계산 근거">
                   <div className="space-y-3" style={{ marginTop: 8, fontSize: 13, color: mutedColor }}>
                     {[
-                      ['① 양도차익', fmt(result.gain)],
-                      ['② 과세 대상 차익', fmt(result.taxableGain)],
-                      [`③ 장기보유특별공제 (${fmtPct(result.ltdRate)})`, `-${fmt(result.ltdAmt)}`],
-                      ['④ 기본공제', `-${fmt(result.basicDeduction)}`],
-                      ['⑤ 과세표준', fmt(result.taxBase)],
-                      ['⑥ 산출세액', fmt(result.tax)],
-                      ['⑦ 지방소득세 (10%)', fmt(result.localTax)],
+                      ['① 양도가액', fmt(transferPrice)],
+                      ['② 취득가액', `-${fmt(acquisitionPrice)}`],
+                      ['③ 필요경비', `-${fmt(necessaryCost)}`],
+                      ['④ 양도차익', fmt(result.gain)],
+                      ['⑤ 과세 대상 차익', fmt(result.taxableGain)],
+                      [`⑥ 장기보유특별공제 (${fmtPct(result.ltdRate)})`, `-${fmt(result.ltdAmt)}`],
+                      ['⑦ 기본공제', `-${fmt(result.basicDeduction)}`],
+                      ['⑧ 과세표준', fmt(result.taxBase)],
+                      ['⑨ 산출세액', fmt(result.tax)],
+                      ['⑩ 지방소득세 (10%)', fmt(result.localTax)],
                     ].map(([k, v]) => (
                       <div key={k as string} style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: 8, borderBottom: '1px solid #f2f2f7' }}>
                         <span>{k as string}</span>

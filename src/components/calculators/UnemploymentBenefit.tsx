@@ -33,7 +33,7 @@ export function UnemploymentBenefit() {
   const result = useMemo(() => {
     const dailyWage = monthlyWage / 30;
     const benefitDaily = Math.min(dailyWage * 0.6, 66_000);
-    const finalDaily = Math.max(benefitDaily, 63_104);
+    const finalDaily = Math.max(benefitDaily, 66_048); // 2026: 최저임금 10,320×8×0.8
     const benefitDays = getBenefitDays(age, insuredMonths);
     const totalBenefit = finalDaily * benefitDays;
     const monthlyEquiv = (totalBenefit / benefitDays) * 30;
@@ -147,7 +147,7 @@ export function UnemploymentBenefit() {
             <StatCard
               label="일 수급액"
               value={fmt(result.finalDaily)}
-              sub={`상한 66,000원 / 하한 63,104원`}
+              sub={`상한 66,000원 / 하한 66,048원`}
               color="#6366f1"
               icon={<DollarSign size={18} />}
             />
@@ -180,7 +180,7 @@ export function UnemploymentBenefit() {
               {[
                 { label: '일 평균 임금', value: fmt(result.dailyWage), note: '월급 ÷ 30일' },
                 { label: '기초 일액 (60%)', value: fmt(result.benefitDaily), note: '일 평균 임금 × 60%' },
-                { label: '적용 일액', value: fmt(result.finalDaily), note: '상한(66,000) / 하한(63,104) 반영' },
+                { label: '적용 일액', value: fmt(result.finalDaily), note: '상한(66,000원) / 하한(66,048원) 반영' },
                 { label: '소정 급여일수', value: `${result.benefitDays}일`, note: `나이 ${age}세, 가입 ${insuredMonths}개월 기준` },
               ].map((row, i, arr) => (
                 <div key={row.label} style={{
@@ -253,7 +253,7 @@ export function UnemploymentBenefit() {
             }}>
               ※ 고용보험 피보험 단위기간 180일 이상 요건 필요<br />
               ※ 수급 기간은 퇴직일 다음날부터 12개월 이내<br />
-              ※ 일 수급액 상한: 66,000원 / 하한: 최저임금의 80% (2024년 기준 63,104원)
+              ※ 일 수급액 상한: 66,000원 / 하한: 최저임금의 80% (2026년 기준 66,048원)
             </div>
           </Card>
         </>
