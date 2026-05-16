@@ -294,11 +294,15 @@ export function AnnualLeave() {
                       <p>• 입사 첫 해 월차: <strong style={{ color: '#6366f1' }}>{Math.floor(11 * (workerType === 'parttime' ? Math.min(weeklyHours / 40, 1) : 1))}일</strong></p>
                       <p>• 현재 근속 연차 ({result.fullYears}년): <strong style={{ color: '#10b981' }}>{result.yearlyLeave}일</strong></p>
                       <p>• 합계: <strong style={{ color: '#6366f1' }}>{result.totalLeave}일</strong></p>
-                      {result.fullYears < 21 && (
-                        <p style={{ marginTop: 8, color: '#aeaeb2', fontSize: 12 }}>
-                          다음 증가: {result.fullYears + (2 - (result.fullYears % 2) || 2)}년 → {annualLeaveDays(result.fullYears + (2 - (result.fullYears % 2) || 2))}일
-                        </p>
-                      )}
+                      {result.fullYears < 21 && (() => {
+                        // 증가 시점: 3, 5, 7, 9... (홀수년). 1→3, 2→3, 3→5, 4→5 ...
+                        const nextYear = result.fullYears % 2 === 1 ? result.fullYears + 2 : result.fullYears + 1;
+                        return (
+                          <p style={{ marginTop: 8, color: '#aeaeb2', fontSize: 12 }}>
+                            다음 증가: {nextYear}년 → {annualLeaveDays(nextYear)}일
+                          </p>
+                        );
+                      })()}
                     </div>
                   )}
                 </div>

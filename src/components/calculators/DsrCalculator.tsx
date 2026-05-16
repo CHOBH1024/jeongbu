@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
-import { Card, StatCard } from '../ui/Base';
+import { Card, StatCard, EmptyState } from '../ui/Base';
+import { fmtKRWLabel } from '../../utils/fmt';
 import { Info } from 'lucide-react';
 
 const INPUT_H: React.CSSProperties = {
@@ -65,7 +66,7 @@ export const DsrCalculator = () => {
         </span>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(340px,1fr))', gap: 20 }}>
+      <div className="calc-grid">
         {/* 입력 */}
         <div className="space-y-5">
           <Card title="금융권 구분">
@@ -138,10 +139,10 @@ export const DsrCalculator = () => {
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                <StatCard label="신규 월 상환액" value={fmt(result.newMonthly)} color="#6366f1"/>
-                <StatCard label="총 월 상환액" value={fmt(result.totalMonthly)} color="#8b5cf6"/>
-                <StatCard label="최대 대출 가능" value={fmt(result.maxLoan)} color="#10b981"/>
-                <StatCard label="추가 가능 대출" value={fmt(result.additionalLoan)} color="#f59e0b"/>
+                <StatCard label="신규 월 상환액" value={fmt(result.newMonthly)} sub={fmtKRWLabel(result.newMonthly)} color="#6366f1"/>
+                <StatCard label="총 월 상환액" value={fmt(result.totalMonthly)} sub={fmtKRWLabel(result.totalMonthly)} color="#8b5cf6"/>
+                <StatCard label="최대 대출 가능" value={fmt(result.maxLoan)} sub={fmtKRWLabel(result.maxLoan)} color="#10b981"/>
+                <StatCard label="추가 가능 대출" value={fmt(result.additionalLoan)} sub={fmtKRWLabel(result.additionalLoan)} color="#f59e0b"/>
               </div>
 
               <Card title="DSR 계산 근거">
@@ -162,9 +163,7 @@ export const DsrCalculator = () => {
               </Card>
             </>
           ) : (
-            <div style={{ padding: 40, textAlign: 'center', color: mutedColor, fontSize: 14 }}>
-              연 소득을 입력하면 계산됩니다
-            </div>
+            <EmptyState message="연 소득을 입력하면 계산됩니다" emoji="🏦" />
           )}
 
           <Card title="알아두세요 💡">
