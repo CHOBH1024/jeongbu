@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DisclaimerBar } from './components/ui/DisclaimerBar';
+import { AdResult, AdBanner } from './components/ui/AdUnit';
 
 import { LoanRefinancing }           from './components/calculators/LoanRefinancing';
 import { FireSimulator }             from './components/calculators/FireSimulator';
@@ -760,6 +761,8 @@ export default function App() {
                     </div>
                   </div>
 
+                  <AdBanner />
+
                   <div style={{ paddingTop:28 }}>
                     <p style={{ fontSize:12, fontWeight:800, color:mutedColor, letterSpacing:'0.06em', marginBottom:16 }}>
                       전체 계산기 {selectedCategory.calculators.filter(c=>!c.status).length}개
@@ -861,6 +864,7 @@ export default function App() {
                 <W>
                   <div style={{ paddingTop:36 }}>
                     {selectedCalc.component}
+                    <AdResult />
                   </div>
                 </W>
               </div>
