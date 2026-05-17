@@ -7,6 +7,7 @@ import {
   FileText, Sparkles, Scale, Home, TrendingUp,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { DisclaimerBar } from './components/ui/DisclaimerBar';
 
 import { LoanRefinancing }           from './components/calculators/LoanRefinancing';
 import { FireSimulator }             from './components/calculators/FireSimulator';
@@ -659,8 +660,8 @@ export default function App() {
                         title:'실시간 즉시 계산',
                         desc:'숫자를 입력하는 즉시 결과가 업데이트됩니다. 별도의 버튼 클릭이 필요 없습니다.' },
                       { emoji:'🎯', color:'#f59e0b', bg:'#fffbeb',
-                        title:'전문가 수준 정확도',
-                        desc:'금융감독원 기준과 세법을 반영한 정확한 계산 로직으로 신뢰할 수 있는 결과를 제공합니다.' },
+                        title:'최신 법령 기준 반영',
+                        desc:'세법·노동법·보험료율 등을 최신 기준으로 유지합니다. 결과는 참고용이며 중요한 결정 전 전문가 확인을 권장합니다.' },
                     ].map((item) => (
                       <div key={item.title} className="card" style={{ padding:36, textAlign:'center' }}>
                         <div style={{
@@ -848,6 +849,7 @@ export default function App() {
                     </div>
                   </W>
                 </div>
+                <DisclaimerBar categoryId={activeCategory!} />
                 <W>
                   <div style={{ paddingTop:36 }}>
                     {selectedCalc.component}
