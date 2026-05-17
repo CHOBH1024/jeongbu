@@ -31,8 +31,8 @@ export function InsuranceContribution() {
   const result = useMemo(() => {
     const s = salary;
 
-    // 국민연금 (월 상한 5,900,000원, 하한 370,000원)
-    const pensionBase = Math.min(Math.max(s, 370000), 5900000);
+    // 국민연금 (월 상한 6,170,000원, 하한 390,000원) — 2025년 7월 기준
+    const pensionBase = Math.min(Math.max(s, 390000), 6170000);
     const pension = { emp: pensionBase * 0.045, co: pensionBase * 0.045 };
 
     // 건강보험 (2025년 기준 3.545%)
@@ -158,7 +158,7 @@ export function InsuranceContribution() {
         </div>
         <div className="mt-4 flex items-start gap-2 text-xs text-muted">
           <Info size={14} className="flex-shrink-0 mt-0.5 text-primary" />
-          <p>2025년 요율 기준. 국민연금 상한 월 5,900,000원 적용. 건강보험료에 장기요양보험료 별도 가산됩니다.</p>
+          <p>2026년 요율 기준. 국민연금 상한 월 6,170,000원 (2025년 7월 기준). 건강보험료에 장기요양보험료 별도 가산됩니다.</p>
         </div>
       </Card>
 

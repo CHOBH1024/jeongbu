@@ -33,9 +33,10 @@ export function NetSalary() {
   const result = useMemo(() => {
     const gross = monthlyGross;
     const totalNonTax = mealNonTax + carNonTax + childcareNonTax;
-    const pension = Math.round(gross * 0.045);
+    const pensionBase = Math.min(Math.max(gross, 390_000), 6_170_000); // 상한 2025.07 기준
+    const pension = Math.round(pensionBase * 0.045);
     const health = Math.round(gross * 0.03545);
-    const ltc = Math.round(health * 0.1281);
+    const ltc = Math.round(health * 0.1295);
     const employment = Math.round(gross * 0.009);
     const taxable = Math.max(0, gross - totalNonTax);
     const incomeTax = Math.round(calcIncomeTax(taxable, dependents));
@@ -182,7 +183,7 @@ export function NetSalary() {
           {[
             { label: '국민연금', value: result.pension, rate: '4.5%', color: '#6366f1' },
             { label: '건강보험', value: result.health, rate: '3.545%', color: '#8b5cf6' },
-            { label: '장기요양보험', value: result.ltc, rate: '건강보험료 × 12.81%', color: '#a78bfa' },
+            { label: '장기요양보험', value: result.ltc, rate: '건강보험료 × 12.95%', color: '#a78bfa' },
             { label: '고용보험', value: result.employment, rate: '0.9%', color: '#c4b5fd' },
             { label: '소득세', value: result.incomeTax, rate: '간이세액표 기준', color: '#f59e0b' },
             { label: '지방소득세', value: result.localTax, rate: '소득세 × 10%', color: '#fbbf24' },
