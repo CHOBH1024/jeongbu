@@ -17,7 +17,7 @@ export const MINIMUM_WAGE = {
 export const INSURANCE_RATES = {
   nationalPension:    0.045,   // 국민연금 4.5%
   healthInsurance:    0.03545, // 건강보험 3.545%
-  longTermCare:       0.1281,  // 장기요양보험 (건강보험료의 12.81%, 2026년 0.9182%)
+  longTermCare:       0.1295,  // 장기요양보험 (건강보험료의 12.95%, 2024년 이후)
   employmentInsurance: 0.009,  // 고용보험 0.9%
 };
 
@@ -25,7 +25,7 @@ export const INSURANCE_RATES = {
 export const EMPLOYER_RATES = {
   nationalPension:     0.045,  // 국민연금 4.5%
   healthInsurance:     0.03545,// 건강보험 3.545%
-  longTermCare:        0.1281, // 장기요양보험 (2026년)
+  longTermCare:        0.1295, // 장기요양보험 (건강보험료의 12.95%, 2024년 이후)
   employmentInsurance: 0.009,  // 고용보험 0.9% (150인 미만)
   industrialAccident:  0.007,  // 산재보험 (업종평균 0.7%)
 };
