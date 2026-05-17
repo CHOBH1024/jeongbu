@@ -302,6 +302,14 @@ export default function App() {
 
   const scrollTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
+  /* AdSense SPA 페이지뷰 신호 — 계산기 이동 시 자동광고 재스캔 */
+  React.useEffect(() => {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+    } catch (_) { /* ignore */ }
+  }, [activeCalcId, activeCategory]);
+
   /* Ctrl+K / Cmd+K to open search */
   React.useEffect(() => {
     const handler = (e: KeyboardEvent) => {
