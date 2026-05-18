@@ -20,20 +20,22 @@ export const MaternityLeave = () => {
   const [leaveType, setLeaveType]         = useState<LeaveType>('maternity');
   const [parentalMonths, setParentalMonths] = useState(6);
   const [daddyUsed, setDaddyUsed]         = useState(false);
+  const [multipleBirth, setMultipleBirth] = useState(false); // 다태아 여부
 
   const result = useMemo(() => {
+    const maternityMonths = multipleBirth ? 4 : 3; // 다태아 120일(4개월)
     if (leaveType === 'maternity') {
-      /* 출산휴가 90일(3개월) */
+      /* 출산휴가 단태아 90일 / 다태아 120일 */
       const govPay    = Math.min(monthlyWage, MATERNITY_MAX);
-      const compPay   = Math.max(0, monthlyWage - MATERNITY_MAX);   // 회사 차액 부담
-      const totalGov  = govPay * 3;
-      const totalComp = compPay * 3;
+      const compPay   = Math.max(0, monthlyWage - MATERNITY_MAX);
+      const totalGov  = govPay * maternityMonths;
+      const totalComp = compPay * maternityMonths;
       return {
         type: 'maternity' as const,
         govPay, compPay, totalGov, totalComp,
-        totalPay: (monthlyWage) * 3,
+        totalPay: monthlyWage * maternityMonths,
         periods: [
-          { label:'출산휴가 3개월', govPay, compPay, total: monthlyWage },
+          { label: `출산휴가 ${maternityMonths}개월${multipleBirth ? ' (다태아)' : ''}`, govPay, compPay, total: monthlyWage },
         ],
       };
     }
@@ -94,7 +96,7 @@ export const MaternityLeave = () => {
       totalPay: monthlyWage,
       periods: [{ label:'아빠의 달 1개월 (100%)', govPay, compPay, total: monthlyWage }],
     };
-  }, [monthlyWage, leaveType, parentalMonths, daddyUsed]);
+  }, [monthlyWage, leaveType, parentalMonths, daddyUsed, multipleBirth]);
 
   const fmt = (n: number) => '₩' + n.toLocaleString('ko-KR');
 
@@ -121,7 +123,7 @@ export const MaternityLeave = () => {
                 <label style={{ fontSize:12, fontWeight:700, color:mutedColor, display:'block', marginBottom:10 }}>휴가 구분</label>
                 <div className="space-y-2">
                   {([
-                    ['maternity', '출산휴가 (90일)'],
+                    ['maternity', multipleBirth ? '출산휴가 (120일, 다태아)' : '출산휴가 (90일)'],
                     ['parental',  '육아휴직'],
                     ['daddy',     '아빠 육아휴직 (아빠의 달)'],
                   ] as const).map(([t, label]) => (
@@ -133,6 +135,15 @@ export const MaternityLeave = () => {
                   ))}
                 </div>
               </div>
+
+              {leaveType === 'maternity' && (
+                <label style={{ display:'flex', alignItems:'center', gap:10, cursor:'pointer', fontSize:13, padding:'12px 14px', borderRadius:10, background: multipleBirth ? '#fef3c7' : '#f9f9fb', border:`1.5px solid ${multipleBirth ? '#f59e0b' : '#e5e5ea'}` }}>
+                  <input type="checkbox" checked={multipleBirth} onChange={(e) => setMultipleBirth(e.target.checked)} style={{ accentColor:'#f59e0b', width:16, height:16 }}/>
+                  <span style={{ fontWeight: multipleBirth ? 700 : 500, color: multipleBirth ? '#92400e' : '#1d1d1f' }}>
+                    다태아 (쌍둥이·삼둥이 등) — 출산휴가 120일 적용
+                  </span>
+                </label>
+              )}
 
               {leaveType === 'parental' && (
                 <div>
