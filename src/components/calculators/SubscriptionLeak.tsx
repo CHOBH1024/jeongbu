@@ -17,48 +17,66 @@ const PRESET_GROUPS = [
   {
     label: '📺 영상 스트리밍', color: TOKEN.primary,
     items: [
-      { name: '넷플릭스',     monthly: 17000, emoji: '🎬' },
-      { name: '유튜브 프리미엄', monthly: 14900, emoji: '▶️' },
-      { name: '웨이브',       monthly:  7900, emoji: '🌊' },
-      { name: '티빙',         monthly:  7900, emoji: '📡' },
-      { name: '쿠팡플레이',   monthly:  4990, emoji: '🎥' },
-      { name: '왓챠',         monthly: 12900, emoji: '🎞️' },
+      { name: '넷플릭스 광고형',      monthly:  5500, emoji: '🎬', tier: '광고형 스탠다드' },
+      { name: '넷플릭스 스탠다드',    monthly: 13500, emoji: '🎬', tier: '스탠다드' },
+      { name: '넷플릭스 프리미엄',    monthly: 17000, emoji: '🎬', tier: '프리미엄 (4K)' },
+      { name: '유튜브 프리미엄 개인', monthly: 14900, emoji: '▶️', tier: '개인' },
+      { name: '유튜브 프리미엄 학생', monthly:  8690, emoji: '▶️', tier: '학생 할인' },
+      { name: '유튜브 프리미엄 가족', monthly: 22900, emoji: '▶️', tier: '가족 (최대 6명)' },
+      { name: '티빙 광고형',          monthly:  5500, emoji: '📡', tier: '광고형' },
+      { name: '티빙 스탠다드',        monthly:  7900, emoji: '📡', tier: '스탠다드' },
+      { name: '티빙 프리미엄',        monthly: 10900, emoji: '📡', tier: '프리미엄' },
+      { name: '웨이브 베이직',        monthly:  7900, emoji: '🌊', tier: '베이직' },
+      { name: '웨이브 스탠다드',      monthly: 10900, emoji: '🌊', tier: '스탠다드' },
+      { name: '쿠팡플레이',           monthly:  4990, emoji: '🎥', tier: '단일' },
+      { name: '왓챠',                 monthly: 12900, emoji: '🎞️', tier: '단일' },
+      { name: '디즈니+ 스탠다드',     monthly:  9900, emoji: '🏰', tier: '스탠다드' },
+      { name: '디즈니+ 프리미엄',     monthly: 13900, emoji: '🏰', tier: '프리미엄' },
+      { name: 'Apple TV+',            monthly:  9900, emoji: '🍏', tier: '단일' },
     ],
   },
   {
     label: '🎵 음악', color: TOKEN.success,
     items: [
-      { name: '스포티파이',   monthly: 10900, emoji: '🎧' },
-      { name: '애플 뮤직',   monthly: 10900, emoji: '🍎' },
-      { name: '멜론',         monthly: 10900, emoji: '🍈' },
-      { name: '지니뮤직',     monthly:  8900, emoji: '🎶' },
-      { name: '네이버 바이브', monthly:  7900, emoji: '🎵' },
+      { name: '스포티파이 개인',  monthly: 10900, emoji: '🎧', tier: '개인' },
+      { name: '스포티파이 학생',  monthly:  5500, emoji: '🎧', tier: '학생 50% 할인' },
+      { name: '스포티파이 듀오',  monthly: 14900, emoji: '🎧', tier: '듀오 (2인)' },
+      { name: '스포티파이 가족',  monthly: 16900, emoji: '🎧', tier: '가족 (6인)' },
+      { name: '유튜브 뮤직 개인', monthly: 10900, emoji: '🎵', tier: '개인' },
+      { name: '유튜브 뮤직 가족', monthly: 16900, emoji: '🎵', tier: '가족' },
+      { name: '애플 뮤직 개인',   monthly: 10900, emoji: '🍎', tier: '개인' },
+      { name: '애플 뮤직 가족',   monthly: 16900, emoji: '🍎', tier: '가족 (6인)' },
+      { name: '멜론',              monthly: 10900, emoji: '🍈', tier: '스트리밍' },
+      { name: '지니뮤직',          monthly:  8900, emoji: '🎶', tier: '스트리밍' },
     ],
   },
   {
     label: '🛍️ 쇼핑 · 혜택', color: TOKEN.warning,
     items: [
-      { name: '쿠팡 로켓와우', monthly:  7890, emoji: '📦' },
-      { name: '네이버 플러스', monthly:  6900, emoji: '🟢' },
-      { name: '카카오 이모티콘', monthly: 4900, emoji: '💬' },
-      { name: '올리브영 클럽', monthly:  3900, emoji: '💄' },
+      { name: '쿠팡 로켓와우',          monthly:  7890, emoji: '📦', tier: '월정액' },
+      { name: '쿠팡 로켓와우 (연환산)',  monthly:  4908, emoji: '📦', tier: '연간 58,900원÷12' },
+      { name: '네이버 플러스',           monthly:  6900, emoji: '🟢', tier: '월정액' },
+      { name: '카카오 이모티콘 플러스',  monthly:  4900, emoji: '💬', tier: '단일' },
+      { name: 'SSG 유니버스클럽',        monthly:  3900, emoji: '🛒', tier: '월정액' },
+      { name: 'Apple One 개인',          monthly: 16900, emoji: '🍏', tier: 'TV+·뮤직·Arcade·iCloud' },
     ],
   },
   {
     label: '📚 독서 · 교육', color: TOKEN.pink,
     items: [
-      { name: '밀리의서재',   monthly:  9900, emoji: '📖' },
-      { name: '리디셀렉트',   monthly:  6500, emoji: '📕' },
-      { name: '클래스101',    monthly: 12900, emoji: '🎓' },
-      { name: '콘텐츠플러스', monthly:  4900, emoji: '🧠' },
+      { name: '밀리의서재',    monthly:  9900, emoji: '📖', tier: '기본' },
+      { name: '리디셀렉트',    monthly:  6500, emoji: '📕', tier: '기본' },
+      { name: '클래스101+',    monthly: 12900, emoji: '🎓', tier: '구독' },
+      { name: 'Duolingo Plus', monthly:  9900, emoji: '🦜', tier: '월정액' },
+      { name: '콘텐츠플러스',  monthly:  4900, emoji: '🧠', tier: '기본' },
     ],
   },
 ];
 
 const INIT_SUBS: Sub[] = [
-  { id: 1, name: '넷플릭스',      monthly: 17000, emoji: '🎬' },
-  { id: 2, name: '유튜브 프리미엄', monthly: 14900, emoji: '▶️' },
-  { id: 3, name: '쿠팡 로켓와우', monthly:  7890, emoji: '📦' },
+  { id: 1, name: '넷플릭스 스탠다드',    monthly: 13500, emoji: '🎬' },
+  { id: 2, name: '유튜브 프리미엄 개인', monthly: 14900, emoji: '▶️' },
+  { id: 3, name: '쿠팡 로켓와우',        monthly:  7890, emoji: '📦' },
 ];
 
 type CustomSlot = { name: string; monthly: number | '' };
@@ -158,22 +176,31 @@ export function SubscriptionLeak() {
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
           {PRESET_GROUPS[activeGroup].items.map((p) => {
             const added = subs.some((s) => s.name === p.name);
+            const color = PRESET_GROUPS[activeGroup].color;
             return (
               <button key={p.name} onClick={() => addPreset(p)} disabled={added}
                 style={{
-                  display: 'flex', alignItems: 'center', gap: 8,
-                  padding: '10px 18px', borderRadius: 12, fontSize: 13, fontWeight: 600,
-                  background: added ? '#f2f2f7' : `${PRESET_GROUPS[activeGroup].color}12`,
-                  color:      added ? '#aeaeb2' : PRESET_GROUPS[activeGroup].color,
-                  border:     `1.5px solid ${added ? '#e5e5ea' : `${PRESET_GROUPS[activeGroup].color}35`}`,
+                  display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 4,
+                  padding: '10px 14px', borderRadius: 12, fontSize: 13, fontWeight: 600,
+                  background: added ? '#f2f2f7' : `${color}10`,
+                  color:      added ? '#aeaeb2' : color,
+                  border:     `1.5px solid ${added ? '#e5e5ea' : `${color}35`}`,
                   cursor: added ? 'not-allowed' : 'pointer', transition: 'all 0.15s',
+                  minWidth: 130,
                 }}>
-                <span style={{ fontSize: 18 }}>{p.emoji}</span>
-                <span>{p.name}</span>
-                <span style={{ fontWeight: 800, color: added ? '#aeaeb2' : PRESET_GROUPS[activeGroup].color }}>
-                  {fmt(p.monthly)}원
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span style={{ fontSize: 16 }}>{p.emoji}</span>
+                  <span style={{ fontWeight: 700 }}>{fmt(p.monthly)}원</span>
+                  {added && <span style={{ fontSize: 11 }}>✓</span>}
+                </div>
+                <span style={{ fontSize: 11, color: added ? '#c7c7cc' : `${color}bb`, fontWeight: 500, lineHeight: 1.3 }}>
+                  {p.name.replace(p.emoji, '').trim()}
                 </span>
-                {added && <span style={{ fontSize: 11, opacity: 0.7 }}>✓</span>}
+                {'tier' in p && (
+                  <span style={{ fontSize: 10, color: added ? '#c7c7cc' : `${color}88`, fontWeight: 600 }}>
+                    {(p as { tier: string }).tier}
+                  </span>
+                )}
               </button>
             );
           })}
