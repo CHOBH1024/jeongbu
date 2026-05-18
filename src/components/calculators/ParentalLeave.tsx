@@ -6,31 +6,36 @@ function fmt(n: number) {
   return Math.round(n).toLocaleString('ko-KR') + '원';
 }
 
-function calcMonthBenefit(monthNum: number, wage: number): number {
-  if (monthNum <= 3) {
-    const raw = wage * 0.8;
-    return Math.min(Math.max(raw, 700_000), 1_500_000);
-  } else {
-    const raw = wage * 0.5;
-    return Math.min(Math.max(raw, 700_000), 1_200_000);
+// 6+6 부모육아휴직제 월별 상한 (2024.01 시행)
+const SIX_SIX_CAPS = [2_000_000, 2_500_000, 3_000_000, 3_500_000, 4_000_000, 4_500_000];
+
+function calcMonthBenefit(monthNum: number, wage: number, sixSix = false): number {
+  if (sixSix && monthNum <= 6) {
+    const cap = SIX_SIX_CAPS[monthNum - 1];
+    return Math.min(Math.max(wage, 700_000), cap);
   }
+  if (monthNum <= 3) {
+    return Math.min(Math.max(wage * 0.8, 700_000), 1_500_000);
+  }
+  return Math.min(Math.max(wage * 0.5, 700_000), 1_200_000);
 }
 
 export function ParentalLeave() {
   const [monthlyWage, setMonthlyWage] = useState(3_000_000);
   const [leaveDuration, setLeaveDuration] = useState(6);
+  const [sixSix, setSixSix] = useState(false); // 6+6 부모육아휴직제
 
   const result = useMemo(() => {
     const months: { month: number; rate: string; raw: number; benefit: number }[] = [];
     let total = 0;
 
     for (let m = 1; m <= leaveDuration; m++) {
-      const isEarly = m <= 3;
-      const raw = monthlyWage * (isEarly ? 0.8 : 0.5);
-      const benefit = calcMonthBenefit(m, monthlyWage);
+      const isSixSixPeriod = sixSix && m <= 6;
+      const raw = isSixSixPeriod ? monthlyWage : monthlyWage * (m <= 3 ? 0.8 : 0.5);
+      const benefit = calcMonthBenefit(m, monthlyWage, sixSix);
       months.push({
         month: m,
-        rate: isEarly ? '80%' : '50%',
+        rate: isSixSixPeriod ? '100%' : (m <= 3 ? '80%' : '50%'),
         raw,
         benefit,
       });
@@ -39,7 +44,7 @@ export function ParentalLeave() {
 
     const monthlyAvg = leaveDuration > 0 ? total / leaveDuration : 0;
     return { months, total, monthlyAvg };
-  }, [monthlyWage, leaveDuration]);
+  }, [monthlyWage, leaveDuration, sixSix]);
 
   const bonusMonth1 = Math.min(Math.max(monthlyWage * 1.0, 700_000), 2_500_000);
 
@@ -72,6 +77,29 @@ export function ParentalLeave() {
               />
               <span style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', fontSize: 13, color: '#8e8e93', fontWeight: 600, pointerEvents: 'none' }}>원</span>
             </div>
+          </div>
+
+          {/* 6+6 제도 */}
+          <div style={{ gridColumn: '1 / -1' }}>
+            <label style={{
+              display: 'flex', alignItems: 'flex-start', gap: 12, cursor: 'pointer',
+              padding: '14px 18px', borderRadius: 12,
+              background: sixSix ? '#fef3c7' : '#f9f9fb',
+              border: `1.5px solid ${sixSix ? '#f59e0b' : '#e5e5ea'}`,
+            }}>
+              <input type="checkbox" checked={sixSix} onChange={(e) => setSixSix(e.target.checked)}
+                style={{ accentColor: '#f59e0b', width: 16, height: 16, marginTop: 2, flexShrink: 0 }}
+              />
+              <div>
+                <p style={{ fontSize: 13, fontWeight: 700, color: sixSix ? '#92400e' : '#1d1d1f', marginBottom: 4 }}>
+                  6+6 부모육아휴직제 적용 (2024.01 시행)
+                </p>
+                <p style={{ fontSize: 12, color: '#6e6e73', lineHeight: 1.6 }}>
+                  부모 모두 사용 시 각 6개월 통상임금 100% 지급.<br/>
+                  월별 상한: 1개월 200만 → 2개월 250만 → 3개월 300만 → 4개월 350만 → 5개월 400만 → 6개월 450만원
+                </p>
+              </div>
+            </label>
           </div>
 
           {/* Duration slider */}

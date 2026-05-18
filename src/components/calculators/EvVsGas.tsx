@@ -7,6 +7,24 @@ function fmt(n: number) {
   return Math.round(n).toLocaleString('ko-KR');
 }
 
+const EV_PRESETS = [
+  { label: '아이오닉6 Standard', price: 40_000_000, eff: 6.3 },
+  { label: '아이오닉5 Standard', price: 42_000_000, eff: 5.6 },
+  { label: 'EV6 Standard RWD',   price: 42_000_000, eff: 5.8 },
+  { label: '테슬라 Model 3 RWD', price: 55_000_000, eff: 7.0 },
+  { label: '테슬라 Model Y RWD', price: 57_000_000, eff: 6.5 },
+  { label: 'GV60 Standard',      price: 57_000_000, eff: 5.5 },
+];
+
+const GAS_PRESETS = [
+  { label: '쏘나타 2.0',   price: 28_000_000, eff: 12.8 },
+  { label: 'K5 2.0',       price: 27_000_000, eff: 12.0 },
+  { label: '아반떼 1.6',   price: 22_000_000, eff: 14.5 },
+  { label: '그랜저 2.5',   price: 40_000_000, eff: 11.2 },
+  { label: '싼타페 2.5',   price: 38_000_000, eff: 10.0 },
+  { label: '투싼 2.0',     price: 31_000_000, eff: 12.5 },
+];
+
 export function EvVsGas() {
   const [annualKm, setAnnualKm] = useState(15000);
   const [evPrice, setEvPrice] = useState(50000000);
@@ -62,9 +80,39 @@ export function EvVsGas() {
 
   const maxTco10 = Math.max(calc.tco10ev, calc.tco10gas);
 
+  const btnStyle = (active: boolean): React.CSSProperties => ({
+    padding: '7px 13px', borderRadius: 10, fontSize: 12, fontWeight: 600, cursor: 'pointer',
+    border: `1.5px solid ${active ? '#6366f1' : '#e5e5ea'}`,
+    background: active ? '#eef2ff' : '#f9f9fb', color: active ? '#6366f1' : '#6e6e73',
+    transition: 'all 0.15s',
+  });
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-      <Card title="전기차 vs 내연기관 비교 계산기" icon={<span style={{ fontSize: 20 }}>⚡</span>}>
+      {/* 차종 빠른선택 */}
+      <Card title="⚡ 전기차 모델 선택" icon={<span style={{ fontSize: 18 }}>🔌</span>}>
+        <p style={{ fontSize: 12, color: '#aeaeb2', marginBottom: 10 }}>클릭하면 구매가·연비 자동 입력 (보조금 미반영 출고가 기준)</p>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          {EV_PRESETS.map(p => (
+            <button key={p.label} onClick={() => { setEvPrice(p.price); setEvEfficiency(p.eff); }}
+              style={btnStyle(evPrice === p.price && evEfficiency === p.eff)}>
+              {p.label}
+            </button>
+          ))}
+        </div>
+      </Card>
+      <Card title="🚗 내연기관 모델 선택" icon={<span style={{ fontSize: 18 }}>⛽</span>}>
+        <p style={{ fontSize: 12, color: '#aeaeb2', marginBottom: 10 }}>클릭하면 구매가·연비 자동 입력 (기본 트림 기준)</p>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          {GAS_PRESETS.map(p => (
+            <button key={p.label} onClick={() => { setGasPrice(p.price); setGasEfficiency(p.eff); }}
+              style={btnStyle(gasPrice === p.price && gasEfficiency === p.eff)}>
+              {p.label}
+            </button>
+          ))}
+        </div>
+      </Card>
+      <Card title="전기차 vs 내연기관 상세 입력" icon={<span style={{ fontSize: 20 }}>⚡</span>}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 16, marginTop: 8 }}>
           {fields.map((f) => (
             <div key={f.label} style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
