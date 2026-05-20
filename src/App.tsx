@@ -8,11 +8,12 @@ import {
   Calculator, Moon, Sun, ChevronLeft, ChevronRight,
   ArrowRight, Briefcase, X, Mail, Shield, Info,
   Clock, Tag, Search, Laugh,
-  FileText, Sparkles, Scale, Home, TrendingUp, BookOpen,
+  FileText, Sparkles, Scale, Home, TrendingUp, BookOpen, Star,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DisclaimerBar } from './components/ui/DisclaimerBar';
 import { AdResult, AdBanner } from './components/ui/AdUnit';
+import { ErrorBoundary } from './components/ui/ErrorBoundary';
 
 import { LoanRefinancing }           from './components/calculators/LoanRefinancing';
 import { FireSimulator }             from './components/calculators/FireSimulator';
@@ -334,6 +335,22 @@ export default function App() {
   const [showSearch,     setShowSearch]     = useState(false);
   const [searchQuery,    setSearchQuery]    = useState('');
 
+  const [favorites, setFavorites] = useState<string[]>(() => {
+    try {
+      return JSON.parse(localStorage.getItem('favorites') || '[]');
+    } catch (_) { return []; }
+  });
+
+  const toggleFavorite = (calcId: string) => {
+    const isFav = favorites.includes(calcId);
+    const next = isFav ? favorites.filter(id => id !== calcId) : [...favorites, calcId];
+    setFavorites(next);
+    localStorage.setItem('favorites', JSON.stringify(next));
+    window.dispatchEvent(new CustomEvent('show-toast', {
+      detail: isFav ? '즐겨찾기에서 제거되었습니다.' : '즐겨찾기에 추가되었습니다! 🌟'
+    }));
+  };
+
   const selectedCategory = CATEGORIES.find((c) => c.id === activeCategory);
   const selectedCalc     = selectedCategory?.calculators.find((c) => c.id === activeCalcId);
 
@@ -567,6 +584,75 @@ export default function App() {
                   </div>
                 </W>
               </section>
+
+              {/* Favorites calculators */}
+              {favorites.length > 0 && (
+                <section style={{ background: pageBg, padding: '88px 0 0' }}>
+                  <W>
+                    <SectionTitle emoji="🌟" title="내가 즐겨찾는 계산기" sub="자주 쓰는 계산기를 빠르게 모아보세요" titleColor={titleColor} mutedColor={mutedColor}/>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(290px,1fr))', gap: 20 }}>
+                      {CATEGORIES.flatMap((c) =>
+                        c.calculators
+                          .filter((cc) => favorites.includes(cc.id) && !cc.status)
+                          .map((cc) => ({ ...cc, catId: c.id, catName: c.name, catEmoji: c.emoji, catColor: c.color, catBg: c.bg }))
+                      ).map((calc, idx) => (
+                        <motion.div key={calc.id}
+                          initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.05 }}
+                          className="card"
+                          style={{ padding: 28, position: 'relative', display: 'flex', flexDirection: 'column', gap: 0 }}>
+                          
+                          {/* Favorite Star button at top-right */}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleFavorite(calc.id);
+                            }}
+                            style={{
+                              position: 'absolute',
+                              top: 24,
+                              right: 24,
+                              background: 'transparent',
+                              border: 'none',
+                              cursor: 'pointer',
+                              color: '#eab308',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              padding: 4,
+                              borderRadius: '50%',
+                              transition: 'all 0.2s ease',
+                              zIndex: 10
+                            }}
+                            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.2)'}
+                            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                            aria-label="즐겨찾기 해제"
+                          >
+                            <Star size={18} fill="#eab308" />
+                          </button>
+
+                          <div onClick={() => handleNavigate(calc.catId, calc.id)} style={{ cursor: 'pointer', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                            {/* Top row */}
+                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: 18 }}>
+                              <Pill color={calc.catColor} bg={calc.catBg}>
+                                {calc.catEmoji} {calc.catName}
+                              </Pill>
+                            </div>
+                            {/* Emoji + title */}
+                            <div style={{ fontSize: 36, marginBottom: 12, lineHeight: 1 }}>{calc.emoji}</div>
+                            <h3 style={{ fontWeight: 700, fontSize: 16, color: titleColor, lineHeight: 1.5, marginBottom: 10, flex: 1 }}>
+                              {calc.name}
+                            </h3>
+                            <p style={{ fontSize: 13, color: mutedColor, lineHeight: 1.75, marginBottom: 20 }}>{calc.desc}</p>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 700, color: calc.catColor }}>
+                              바로가기 <ArrowRight size={13}/>
+                            </div>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </W>
+                </section>
+              )}
 
               {/* Featured calculators */}
               <section style={{ background:altBg, padding:'88px 0' }}>
@@ -949,12 +1035,58 @@ export default function App() {
                         }}>
                         <ChevronLeft size={20}/>
                       </button>
-                      <div style={{ fontSize:36, flexShrink:0 }}>{selectedCalc.emoji}</div>
-                      <div>
-                        <h2 style={{ fontSize:22, fontWeight:800, color:selectedCategory.color, letterSpacing:'-0.02em', marginBottom:4 }}>
-                          {selectedCalc.name}
-                        </h2>
-                        <p style={{ fontSize:13, color:`${selectedCategory.color}bb`, lineHeight:1.6 }}>{selectedCalc.desc}</p>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6, flexWrap: 'wrap' }}>
+                          <span style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 4,
+                            fontSize: 11,
+                            fontWeight: 700,
+                            color: '#10b981',
+                            background: 'rgba(16,185,129,0.1)',
+                            padding: '3px 8px',
+                            borderRadius: 8,
+                          }}>
+                            ✓ 2026년 5월 최신 반영
+                          </span>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                          <h2 style={{ fontSize:22, fontWeight:800, color:selectedCategory.color, letterSpacing:'-0.02em', margin:0, display: 'flex', alignItems: 'center', gap: 6 }}>
+                            <span style={{ fontSize: 24, flexShrink: 0 }}>{selectedCalc.emoji}</span>
+                            <span>{selectedCalc.name}</span>
+                          </h2>
+                          <button
+                            onClick={() => toggleFavorite(selectedCalc.id)}
+                            style={{
+                              background: 'transparent',
+                              border: 'none',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              padding: 4,
+                              borderRadius: '50%',
+                              color: favorites.includes(selectedCalc.id) ? '#eab308' : `${selectedCategory.color}50`,
+                              transition: 'all 0.2s ease',
+                              outline: 'none',
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.transform = 'scale(1.2)';
+                              if (!favorites.includes(selectedCalc.id)) {
+                                e.currentTarget.style.color = '#eab308aa';
+                              }
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.transform = 'scale(1)';
+                              e.currentTarget.style.color = favorites.includes(selectedCalc.id) ? '#eab308' : `${selectedCategory.color}50`;
+                            }}
+                            aria-label={favorites.includes(selectedCalc.id) ? '즐겨찾기 해제' : '즐겨찾기 등록'}
+                          >
+                            <Star size={20} fill={favorites.includes(selectedCalc.id) ? '#eab308' : 'none'} style={{ transition: 'fill 0.2s ease' }} />
+                          </button>
+                        </div>
+                        <p style={{ fontSize:13, color:`${selectedCategory.color}bb`, lineHeight:1.6, marginTop:6, marginBottom:0 }}>{selectedCalc.desc}</p>
                       </div>
                     </div>
                   </W>
@@ -962,7 +1094,11 @@ export default function App() {
                 <DisclaimerBar categoryId={activeCategory!} />
                 <W>
                   <div style={{ paddingTop:36 }}>
-                    <React.Suspense fallback={<div style={{padding: 40, textAlign: "center", color: "#a1a1aa"}}>계산기를 불러오는 중입니다...</div>}>{selectedCalc.component}</React.Suspense>
+                    <ErrorBoundary>
+                      <React.Suspense fallback={<div style={{padding: 40, textAlign: "center", color: "#a1a1aa"}}>계산기를 불러오는 중입니다...</div>}>
+                        {selectedCalc.component}
+                      </React.Suspense>
+                    </ErrorBoundary>
                     <AdResult />
 
                     {/* Article Content Section */}
