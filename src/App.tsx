@@ -1,3 +1,4 @@
+import { saveHistory, getHistory, type HistoryItem } from './utils/history';
 import React, { useState, useCallback } from 'react';
 import {
   Rocket, Building2, Monitor, Coins, Wallet,
@@ -289,11 +290,21 @@ function Pill({ children, color, bg }: { children:React.ReactNode; color:string;
   );
 }
 
+import { Routes, Route, useNavigate, useParams, useLocation, Navigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
+
+import { BottomTab } from './components/ui/BottomTab';
+
 export default function App() {
-  const [activeCategory, setActiveCategory] = useState<string|null>(null);
-  const [activeCalcId,   setActiveCalcId]   = useState<string|null>(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const catMatch = location.pathname.match(/^\/calc\/([^\/]+)/);
+  const calcMatch = location.pathname.match(/^\/calc\/[^\/]+\/([^\/]+)/);
+  const activeCategory = catMatch ? catMatch[1] : null;
+  const activeCalcId = calcMatch ? calcMatch[1] : null;
+
   const [isDark,         setIsDark]         = useState(false);
-  const [modal,          setModal]          = useState<'privacy'|'about'|'terms'|null>(null);
+  const [modal,          setModal]          = useState<'privacy'|'about'|'terms'|'history'|null>(null);
   const [activeArticle,  setActiveArticle]  = useState<Article|null>(null);
   const [showSearch,     setShowSearch]     = useState(false);
   const [searchQuery,    setSearchQuery]    = useState('');
@@ -303,13 +314,31 @@ export default function App() {
 
   const scrollTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
-  /* AdSense SPA 페이지뷰 신호 — 계산기 이동 시 자동광고 재스캔 */
+  
+  React.useEffect(() => {
+    if (activeCalcId && activeCategory && selectedCalc) {
+      saveHistory({
+        calcId: activeCalcId,
+        catId: activeCategory,
+        name: selectedCalc.name,
+        emoji: selectedCalc.emoji
+      });
+    }
+  }, [activeCalcId, activeCategory, selectedCalc]);
+
+  
+  React.useEffect(() => {
+    const handler = () => setModal('history');
+    window.addEventListener('open-history', handler);
+    return () => window.removeEventListener('open-history', handler);
+  }, []);
+\n  /* AdSense SPA 페이지뷰 신호 — 계산기 이동 시 자동광고 재스캔 */
   React.useEffect(() => {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
     } catch (_) { /* ignore */ }
-  }, [activeCalcId, activeCategory]);
+  }, [location.pathname]);
 
   /* Ctrl+K / Cmd+K to open search */
   React.useEffect(() => {
@@ -321,15 +350,15 @@ export default function App() {
     return () => window.removeEventListener('keydown', handler);
   }, []);
 
-  const navigate = useCallback((catId: string, calcId?: string) => {
-    setActiveCategory(catId);
-    setActiveCalcId(calcId ?? null);
+  const handleNavigate = useCallback((catId: string, calcId?: string) => {
+    if (calcId) navigate(`/calc/${catId}/${calcId}`);
+    else navigate(`/calc/${catId}`);
     setShowSearch(false);
     setSearchQuery('');
     scrollTop();
-  }, []);
+  }, [navigate]);
 
-  const reset = () => { setActiveCategory(null); setActiveCalcId(null); scrollTop(); };
+  const reset = () => { navigate('/'); scrollTop(); };
 
   /* Search results — 이름, 설명, 카테고리명, 태그 모두 검색 */
   const searchResults = searchQuery.trim().length >= 1
@@ -383,7 +412,7 @@ export default function App() {
             <nav className="hidden lg:flex items-center" style={{ gap:2 }} aria-label="카테고리">
               {CATEGORIES.map((cat) => (
                 <button key={cat.id}
-                  onClick={() => navigate(cat.id)}
+                  onClick={() => handleNavigate(cat.id)}
                   style={{
                     padding:'7px 10px', borderRadius:10, fontSize:12, fontWeight:600,
                     color:'rgba(255,255,255,0.6)', transition:'all 0.15s',
@@ -423,6 +452,13 @@ export default function App() {
             </div>
           </div>
         </header>
+
+        <Helmet>
+          <title>{selectedCalc ? `${selectedCalc.name} - 별의별 계산기` : '별의별 계산기 - 무료 웹 계산기 모음'}</title>
+          <meta name="description" content={selectedCalc ? selectedCalc.desc : '대출, 퇴직금, 연차, FIRE 등 일상의 복잡한 계산을 숫자로 바로 해결하세요.'} />
+          {selectedCalc?.tags && <meta name="keywords" content={selectedCalc.tags.join(', ')} />}
+          <link rel="canonical" href={selectedCalc ? `https://jeongbu.vercel.app/calc/${selectedCategory?.id}/${selectedCalc.id}` : 'https://jeongbu.vercel.app'} />
+        </Helmet>
 
         <AnimatePresence mode="wait">
 
@@ -488,7 +524,7 @@ export default function App() {
                         initial={{ opacity:0, y:18 }} animate={{ opacity:1, y:0 }} transition={{ delay:idx*0.05 }}
                         onClick={() => {
                           const cat = CATEGORIES.find((cc) => cc.calculators.some((c) => c.id===calc.id));
-                          if (cat) navigate(cat.id, calc.id);
+                          if (cat) handleNavigate(cat.id, calc.id);
                         }}
                         className="card"
                         style={{ padding:28, textAlign:'left', width:'100%', display:'flex', flexDirection:'column', gap:0 }}>
@@ -524,7 +560,7 @@ export default function App() {
                       return (
                         <motion.button key={cat.id}
                           initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay:idx*0.07 }}
-                          onClick={() => navigate(cat.id)}
+                          onClick={() => handleNavigate(cat.id)}
                           className="card"
                           style={{ textAlign:'left', width:'100%', overflow:'hidden', display:'flex', flexDirection:'column' }}>
                           {/* Colored header */}
@@ -771,7 +807,7 @@ export default function App() {
                       {selectedCategory.calculators.map((calc, idx) => (
                         <motion.button key={calc.id}
                           initial={{ opacity:0, y:12 }} animate={{ opacity:1, y:0 }} transition={{ delay:idx*0.07 }}
-                          onClick={() => calc.status !== '준비중' && navigate(activeCategory!, calc.id)}
+                          onClick={() => calc.status !== '준비중' && handleNavigate(activeCategory!, calc.id)}
                           disabled={calc.status === '준비중'}
                           className="card"
                           style={{
@@ -830,7 +866,7 @@ export default function App() {
                         🏠 홈
                       </button>
                       <ChevronRight size={11}/>
-                      <button onClick={() => setActiveCalcId(null)}
+                      <button onClick={() => handleNavigate(activeCategory!)}
                         style={{ fontWeight:600, color:`${selectedCategory.color}aa` }}
                         onMouseEnter={(e) => e.currentTarget.style.color=selectedCategory.color}
                         onMouseLeave={(e) => e.currentTarget.style.color=`${selectedCategory.color}aa`}>
@@ -840,7 +876,7 @@ export default function App() {
                       <span style={{ color:selectedCategory.color, fontWeight:700 }}>{selectedCalc.name}</span>
                     </nav>
                     <div style={{ display:'flex', alignItems:'center', gap:16 }}>
-                      <button onClick={() => setActiveCalcId(null)}
+                      <button onClick={() => handleNavigate(activeCategory!)}
                         style={{
                           width:42, height:42, borderRadius:13, flexShrink:0,
                           background:`${selectedCategory.color}20`,
@@ -906,7 +942,7 @@ export default function App() {
                     ['parking','invest','🅿️ 파킹통장 계산기'],
                   ].map(([id,cat,name]) => (
                     <li key={id}>
-                      <button onClick={() => { setActiveCategory(cat); setActiveCalcId(id); }}
+                      <button onClick={() => handleNavigate(cat, id)}
                         style={{ fontSize:13, color:mutedColor, lineHeight:1.6, transition:'color 0.15s' }}
                         onMouseEnter={(e) => e.currentTarget.style.color='#6366f1'}
                         onMouseLeave={(e) => e.currentTarget.style.color=mutedColor}>
@@ -1008,7 +1044,7 @@ export default function App() {
                     maxHeight:480, overflowY:'auto',
                   }}>
                     {searchResults.map((r, i) => (
-                      <button key={r.id} onClick={() => navigate(r.catId, r.id)}
+                      <button key={r.id} onClick={() => handleNavigate(r.catId, r.id)}
                         style={{
                           width:'100%', padding:'14px 20px', textAlign:'left',
                           display:'flex', alignItems:'center', gap:14,
@@ -1096,7 +1132,7 @@ export default function App() {
                   padding:'22px 28px', borderBottom:`1px solid ${borderColor}`,
                 }}>
                   <h2 style={{ fontSize:18, fontWeight:800, color:titleColor }}>
-                    {modal==='privacy'?'🔒 개인정보처리방침':modal==='terms'?'📄 이용약관':'✨ 서비스 소개'}
+                    {modal==='history'?'🕒 최근 사용 기록':modal==='privacy'?'🔒 개인정보처리방침':modal==='terms'?'📄 이용약관':'✨ 서비스 소개'}
                   </h2>
                   <button onClick={() => setModal(null)}
                     style={{
@@ -1107,7 +1143,7 @@ export default function App() {
                   </button>
                 </div>
                 <div style={{ padding:28 }}>
-                  {modal==='privacy' ? <PrivacyPolicy/>
+                  {modal==='history' ? <HistoryContent navigate={handleNavigate} setModal={setModal} isDark={isDark} titleColor={titleColor} mutedColor={mutedColor} />\n                    : modal==='privacy' ? <PrivacyPolicy/>
                     : modal==='terms' ? <TermsOfService/>
                     : <AboutContent titleColor={titleColor} mutedColor={mutedColor}/>}
                 </div>
@@ -1265,6 +1301,39 @@ function AboutContent({ titleColor, mutedColor }: { titleColor:string; mutedColo
           </a>
         </p>
       </div>
+    </div>
+  );
+}
+
+
+function HistoryContent({ navigate, setModal, isDark, titleColor, mutedColor }: any) {
+  const [history, setHistory] = React.useState<HistoryItem[]>([]);
+  React.useEffect(() => {
+    setHistory(getHistory());
+  }, []);
+  
+  if (history.length === 0) {
+    return <div style={{ padding: 40, textAlign: 'center', color: mutedColor }}>최근 사용 기록이 없습니다.</div>;
+  }
+  
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      {history.map((h, i) => (
+        <button key={i} onClick={() => { navigate(h.catId, h.calcId); setModal(null); }}
+          style={{
+            padding: '16px 20px', borderRadius: 16, display: 'flex', alignItems: 'center', gap: 14,
+            background: isDark ? 'rgba(255,255,255,0.05)' : '#f9f9fb', border: '1px solid ' + (isDark ? 'rgba(255,255,255,0.1)' : '#e5e5ea'),
+            textAlign: 'left'
+          }}>
+          <div style={{ fontSize: 24 }}>{h.emoji}</div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontWeight: 700, color: titleColor }}>{h.name}</div>
+            <div style={{ fontSize: 12, color: mutedColor, marginTop: 4 }}>
+              {new Date(h.timestamp).toLocaleDateString()}
+            </div>
+          </div>
+        </button>
+      ))}
     </div>
   );
 }

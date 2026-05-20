@@ -1,7 +1,9 @@
 import { useState, useMemo } from 'react';
 import { Card, StatCard } from '../ui/Base';
 import { RATES_EFFECTIVE_DATE, INCOME_TAX_BRACKETS } from '../../data/rates';
-import { Briefcase, Info, AlertTriangle } from 'lucide-react';
+import { Briefcase, Info, AlertTriangle, Download } from 'lucide-react';
+import { CountUpNumber } from '../ui/CountUpNumber';
+import { captureAndDownload } from '../../utils/exportImage';
 
 /* ── 퇴직소득세 계산 (소득세법 §48) ─────────────────────── */
 
@@ -207,15 +209,20 @@ export const SeveranceCalculator = () => {
           ) : result ? (
             <>
               {/* 핵심 결과 */}
-              <div style={{
+              <div id="severance-result" style={{
                 padding: '28px', borderRadius: 20,
                 background: 'linear-gradient(135deg,#eef2ff,#fdf4ff)',
                 border: '1.5px solid rgba(99,102,241,0.2)',
                 textAlign: 'center',
+                position: 'relative'
               }}>
+                <button onClick={() => captureAndDownload('severance-result', '퇴직금_계산결과')} 
+                  style={{ position: 'absolute', top: 16, right: 16, color: '#6366f1', background: 'rgba(99,102,241,0.1)', padding: 8, borderRadius: 10 }}>
+                  <Download size={16} />
+                </button>
                 <p style={{ fontSize: 13, color: mutedColor, fontWeight: 700, marginBottom: 8 }}>예상 퇴직금 (세전)</p>
                 <p className="num" style={{ fontSize: 36, fontWeight: 900, color: '#6366f1', letterSpacing: '-0.03em', marginBottom: 4 }}>
-                  {fmt(result.severance)}
+                  <CountUpNumber value={result.severance} prefix="₩" />
                 </p>
                 <p style={{ fontSize: 12, color: mutedColor }}>
                   재직 {result.totalDays.toLocaleString()}일 ({result.years}년 {Math.floor((result.totalDays % 365) / 30)}개월)
