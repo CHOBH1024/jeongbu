@@ -1,3 +1,5 @@
+import { Toast } from './components/ui/Toast';
+import { JsonLd } from './components/ui/JsonLd';
 import { SeoColumn } from './components/ui/SeoColumn';
 import { saveHistory, getHistory, type HistoryItem } from './utils/history';
 import React, { useState, useCallback } from 'react';
@@ -306,6 +308,14 @@ export default function App() {
 
   const [isDark,         setIsDark]         = useState(false);
   const [modal,          setModal]          = useState<'privacy'|'about'|'terms'|'history'|null>(null);
+
+  const isPrivacyRoute = location.pathname === '/privacy';
+  const isTermsRoute = location.pathname === '/terms';
+  const isAboutRoute = location.pathname === '/about';
+
+  // Replace modal render
+  const currentModal = isPrivacyRoute ? 'privacy' : isTermsRoute ? 'terms' : isAboutRoute ? 'about' : modal;
+
   const [activeArticle,  setActiveArticle]  = useState<Article|null>(null);
   const [showSearch,     setShowSearch]     = useState(false);
   const [searchQuery,    setSearchQuery]    = useState('');
@@ -333,7 +343,8 @@ export default function App() {
     window.addEventListener('open-history', handler);
     return () => window.removeEventListener('open-history', handler);
   }, []);
-\n  /* AdSense SPA 페이지뷰 신호 — 계산기 이동 시 자동광고 재스캔 */
+
+  /* AdSense SPA 페이지뷰 신호 — 계산기 이동 시 자동광고 재스캔 */
   React.useEffect(() => {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -461,6 +472,7 @@ export default function App() {
           <link rel="canonical" href={selectedCalc ? `https://jeongbu.vercel.app/calc/${selectedCategory?.id}/${selectedCalc.id}` : 'https://jeongbu.vercel.app'} />
         </Helmet>
 
+        {selectedCalc && <JsonLd calc={selectedCalc} categoryName={selectedCategory?.name} categoryId={activeCategory!} article={ARTICLES.find(a => a.calcId === activeCalcId) || null} />}
         <AnimatePresence mode="wait">
 
           {/* ── Home ──────────────────────────────────────────── */}
@@ -803,7 +815,8 @@ export default function App() {
     <SeoColumn 
       isDark={isDark}
       title="일상의 필수 계산기 모음, 별의별 계산기"
-      content="대출이자, 연봉, 세금, 부동산, 가상화폐 등 복잡한 계산을 언제 어디서나 쉽게 할 수 있습니다.\n무료로 제공되는 40여 종의 스마트 계산기로 여러분의 시간을 절약하세요."
+      content="대출이자, 연봉, 세금, 부동산, 가상화폐 등 복잡한 계산을 언제 어디서나 쉽게 할 수 있습니다.
+무료로 제공되는 40여 종의 스마트 계산기로 여러분의 시간을 절약하세요."
     />
   </div>
 
@@ -908,8 +921,97 @@ export default function App() {
                 <DisclaimerBar categoryId={activeCategory!} />
                 <W>
                   <div style={{ paddingTop:36 }}>
-                    {selectedCalc.component}
+                    <React.Suspense fallback={<div style={{padding: 40, textAlign: "center", color: "#a1a1aa"}}>계산기를 불러오는 중입니다...</div>}>{selectedCalc.component}</React.Suspense>
                     <AdResult />
+
+                    {/* Article Content Section */}
+                    {(() => {
+                      const matchedArticle = ARTICLES.find(a => a.calcId === activeCalcId);
+                      if (matchedArticle) {
+                        return (
+                          <article style={{ marginTop: 48, padding: '32px 0' }}>
+                            {/* Article header */}
+                            <div style={{ marginBottom: 24, paddingBottom: 20, borderBottom: `2px solid ${borderColor}` }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                                <Pill color="#6366f1" bg="#eef2ff">{matchedArticle.category}</Pill>
+                                <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: mutedColor }}>
+                                  <Clock size={11}/> {matchedArticle.readTime} 읽기
+                                </span>
+                              </div>
+                              <h3 style={{ fontSize: 20, fontWeight: 800, color: titleColor, lineHeight: 1.4, marginBottom: 8 }}>
+                                {matchedArticle.title}
+                              </h3>
+                              <p style={{ fontSize: 14, color: mutedColor, lineHeight: 1.7 }}>
+                                {matchedArticle.summary}
+                              </p>
+                            </div>
+                            {/* Article body */}
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                              {matchedArticle.content.map((block, i) => {
+                                if (block.startsWith('## ')) {
+                                  return <h3 key={i} style={{ fontSize: 17, fontWeight: 800, color: titleColor, letterSpacing: '-0.02em', marginTop: 8, lineHeight: 1.4, paddingBottom: 10, borderBottom: `2px solid rgba(99,102,241,0.15)` }}>{block.slice(3)}</h3>;
+                                }
+                                if (block.startsWith('### ')) {
+                                  return <h4 key={i} style={{ fontSize: 15, fontWeight: 800, color: titleColor, marginTop: 4 }}>{block.slice(4)}</h4>;
+                                }
+                                if (block.startsWith('💡')) {
+                                  return <div key={i} style={{ padding: '14px 18px', borderRadius: 14, fontSize: 13, lineHeight: 1.8, background: 'linear-gradient(135deg,#eef2ff,#f5f3ff)', border: '1px solid rgba(99,102,241,0.2)', color: '#4338ca' }}>{block}</div>;
+                                }
+                                if (block.startsWith('📌')) {
+                                  return <div key={i} style={{ padding: '14px 18px', borderRadius: 14, fontSize: 13, lineHeight: 1.8, background: '#ecfdf5', border: '1px solid #a7f3d0', color: '#065f46', fontWeight: 600 }}>{block}</div>;
+                                }
+                                return <p key={i} style={{ fontSize: 14, color: bodyColor, lineHeight: 1.95 }}>{block}</p>;
+                              })}
+                            </div>
+                            {/* Tags */}
+                            <div style={{ paddingTop: 20, marginTop: 20, borderTop: `1px solid ${borderColor}`, display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                              {matchedArticle.tags.map((tag) => (
+                                <span key={tag} style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, padding: '5px 13px', borderRadius: 99, background: isDark ? '#2c2c2e' : '#f2f2f7', color: mutedColor }}>
+                                  <Tag size={10}/> {tag}
+                                </span>
+                              ))}
+                            </div>
+                            {/* Disclaimer */}
+                            <p style={{ fontSize: 12, padding: '14px 18px', borderRadius: 16, lineHeight: 1.75, marginTop: 16, background: isDark ? 'rgba(255,149,0,0.08)' : '#fff8ee', color: isDark ? '#ff9500' : '#92400e', border: `1px solid ${isDark ? 'rgba(255,149,0,0.15)' : '#fde68a'}` }}>
+                              ⚠️ 본 가이드는 참고용이며, 중요한 재무·법률 결정 전에는 전문가 상담을 권장합니다.
+                            </p>
+                          </article>
+                        );
+                      }
+                      // Fallback: keep original SeoColumn for calculators without articles
+                      return selectedCalc.desc ? (
+                        <div style={{ marginTop: 40 }}>
+                          <SeoColumn 
+                            isDark={isDark}
+                            title={`${selectedCalc.name} 자주 묻는 질문(FAQ)`}
+                            content={`${selectedCalc.desc}\n\n${selectedCalc.name}에 대한 결과는 가장 최신 알고리즘을 기반으로 제공됩니다. 정확한 수치는 개인별 요건에 따라 다를 수 있으므로 참고용으로만 사용해주세요.`}
+                          />
+                        </div>
+                      ) : null;
+                    })()}
+
+                    {/* Related calculators from same category */}
+                    {selectedCategory && (
+                      <div style={{ marginTop: 32, padding: '24px 0', borderTop: `1px solid ${borderColor}` }}>
+                        <h4 style={{ fontSize: 15, fontWeight: 800, color: titleColor, marginBottom: 16 }}>📌 관련 계산기</h4>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 12 }}>
+                          {selectedCategory.calculators
+                            .filter(c => c.id !== activeCalcId && !c.status)
+                            .slice(0, 3)
+                            .map(c => (
+                              <button key={c.id} onClick={() => handleNavigate(activeCategory!, c.id)}
+                                style={{ padding: '16px 20px', borderRadius: 14, display: 'flex', alignItems: 'center', gap: 12, background: isDark ? '#1c1c1e' : '#f9f9fb', border: `1px solid ${borderColor}`, textAlign: 'left', width: '100%', cursor: 'pointer' }}>
+                                <span style={{ fontSize: 24 }}>{c.emoji}</span>
+                                <div>
+                                  <div style={{ fontWeight: 700, fontSize: 13, color: titleColor }}>{c.name}</div>
+                                  <div style={{ fontSize: 11, color: mutedColor, marginTop: 2 }}>{c.desc.slice(0, 40)}...</div>
+                                </div>
+                              </button>
+                            ))}
+                        </div>
+                      </div>
+                    )}
+
                   </div>
                 </W>
               </div>
@@ -965,9 +1067,9 @@ export default function App() {
                 <p style={{ fontSize:13, fontWeight:800, color:titleColor, marginBottom:18 }}>📬 정보</p>
                 <ul style={{ listStyle:'none', display:'flex', flexDirection:'column', gap:12 }}>
                   {([
-                    { icon:<Info size={13}/>,     label:'서비스 소개',      act:()=>setModal('about')   },
-                    { icon:<Shield size={13}/>,   label:'개인정보처리방침', act:()=>setModal('privacy') },
-                    { icon:<FileText size={13}/>, label:'이용약관',         act:()=>setModal('terms')   },
+                    { icon:<Info size={13}/>,     label:'서비스 소개',      act:()=>navigate('/about')   },
+                    { icon:<Shield size={13}/>,   label:'개인정보처리방침', act:()=>navigate('/privacy') },
+                    { icon:<FileText size={13}/>, label:'이용약관',         act:()=>navigate('/terms')   },
                   ] as const).map((item) => (
                     <li key={item.label}>
                       <button onClick={item.act}
@@ -1004,7 +1106,7 @@ export default function App() {
                 {(['privacy' as const,'terms' as const,'about' as const]).map((m, i) => (
                   <span key={m} style={{ display:'flex', alignItems:'center', gap:16 }}>
                     {i>0 && <span style={{ opacity:0.3 }}>·</span>}
-                    <button onClick={()=>setModal(m)}
+                    <button onClick={()=>navigate('/' + m)}
                       style={{ color:mutedColor, transition:'color 0.15s' }}
                       onMouseEnter={(e) => e.currentTarget.style.color='#6366f1'}
                       onMouseLeave={(e) => e.currentTarget.style.color=mutedColor}>
@@ -1141,7 +1243,7 @@ export default function App() {
                   padding:'22px 28px', borderBottom:`1px solid ${borderColor}`,
                 }}>
                   <h2 style={{ fontSize:18, fontWeight:800, color:titleColor }}>
-                    {modal==='history'?'🕒 최근 사용 기록':modal==='privacy'?'🔒 개인정보처리방침':modal==='terms'?'📄 이용약관':'✨ 서비스 소개'}
+                    {currentModal==='history'?'🕒 최근 사용 기록':currentModal==='privacy'?'🔒 개인정보처리방침':currentModal==='terms'?'📄 이용약관':'✨ 서비스 소개'}
                   </h2>
                   <button onClick={() => setModal(null)}
                     style={{
@@ -1152,7 +1254,8 @@ export default function App() {
                   </button>
                 </div>
                 <div style={{ padding:28 }}>
-                  {modal==='history' ? <HistoryContent navigate={handleNavigate} setModal={setModal} isDark={isDark} titleColor={titleColor} mutedColor={mutedColor} />\n                    : modal==='privacy' ? <PrivacyPolicy/>
+                  {modal==='history' ? <HistoryContent navigate={handleNavigate} setModal={setModal} isDark={isDark} titleColor={titleColor} mutedColor={mutedColor} />
+                    : modal==='privacy' ? <PrivacyPolicy/>
                     : modal==='terms' ? <TermsOfService/>
                     : <AboutContent titleColor={titleColor} mutedColor={mutedColor}/>}
                 </div>
