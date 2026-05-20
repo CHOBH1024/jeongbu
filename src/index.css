@@ -270,3 +270,55 @@ textarea {
 
 /* recharts label fix */
 .recharts-text { fill: var(--text-muted); font-size: 12px; }
+
+/* ── Print Styles ──────────────────────────────── */
+@media print {
+  /* Hide navigation, footer, ads, search, bottom tab */
+  header[role="banner"],
+  footer[role="contentinfo"],
+  .search-overlay,
+  .bottom-tab,
+  [class*="AdUnit"],
+  [class*="ad-"],
+  ins.adsbygoogle {
+    display: none !important;
+  }
+
+  /* Reset backgrounds */
+  body, #root, .dark {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  /* Ensure readability */
+  * {
+    color: #000 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Cards should have borders for clarity */
+  .card, [style*="borderRadius"] {
+    border: 1px solid #ddd !important;
+    page-break-inside: avoid;
+  }
+
+  /* Show URLs after links */
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #666;
+  }
+
+  /* Page margins */
+  @page {
+    margin: 2cm;
+  }
+
+  /* Force full width */
+  .w {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+}

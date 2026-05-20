@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 export function useUrlState<T>(key: string, initialValue: T): [T, (val: T) => void] {

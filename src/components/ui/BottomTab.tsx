@@ -1,5 +1,4 @@
-import React from 'react';
-import { Home, Clock, Share2 } from 'lucide-react';
+import { Home, Clock, Share2, BookOpen } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 export function BottomTab({ isDark }: { isDark: boolean }) {
@@ -7,7 +6,7 @@ export function BottomTab({ isDark }: { isDark: boolean }) {
   const location = useLocation();
 
   const isHome = location.pathname === '/';
-  const isHistory = location.pathname === '/history';
+  const isBlog = location.pathname === '/blog' || location.pathname.startsWith('/blog/');
 
   const tabColor = isDark ? 'rgba(255,255,255,0.4)' : '#a1a1aa';
   const activeColor = '#6366f1';
@@ -16,6 +15,7 @@ export function BottomTab({ isDark }: { isDark: boolean }) {
 
   const tabs = [
     { id: 'home', icon: Home, label: '홈', action: () => navigate('/'), active: isHome },
+    { id: 'blog', icon: BookOpen, label: '가이드', action: () => navigate('/blog'), active: isBlog },
     { id: 'history', icon: Clock, label: '최근기록', action: () => {
       // We can emit a custom event to open the modal from App.tsx
       window.dispatchEvent(new CustomEvent('open-history'));
@@ -28,7 +28,7 @@ export function BottomTab({ isDark }: { isDark: boolean }) {
           }).catch(() => {});
         } else {
           navigator.clipboard.writeText(window.location.href);
-          alert('링크가 복사되었습니다!');
+          window.dispatchEvent(new CustomEvent('show-toast', { detail: '링크가 복사되었습니다!' }));
         }
       }, active: false
     }
@@ -44,7 +44,7 @@ export function BottomTab({ isDark }: { isDark: boolean }) {
     }}>
       {tabs.map((t) => (
         <button key={t.id}
-          onClick={() => t.action ? t.action() : navigate(t.path!)}
+          onClick={t.action}
           style={{
             display: 'flex', flexDirection: 'column', alignItems: 'center',
             gap: 4, color: t.active ? activeColor : tabColor,

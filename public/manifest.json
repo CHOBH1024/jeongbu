@@ -9,6 +9,34 @@
   "orientation": "portrait-primary",
   "lang": "ko",
   "categories": ["finance", "utilities", "productivity"],
+  "id": "/",
+  "scope": "/",
+  "shortcuts": [
+    {
+      "name": "월급 실수령액",
+      "short_name": "실수령액",
+      "url": "/calc/hr/netsalary",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "퇴직금 계산기",
+      "short_name": "퇴직금",
+      "url": "/calc/hr/severance",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "연차 계산기",
+      "short_name": "연차",
+      "url": "/calc/hr/annual",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "양도소득세",
+      "short_name": "양도세",
+      "url": "/calc/tax/capitalgains",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ],
   "icons": [
     {
       "src": "/icon-192.png",

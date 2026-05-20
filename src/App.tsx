@@ -8,7 +8,7 @@ import {
   Calculator, Moon, Sun, ChevronLeft, ChevronRight,
   ArrowRight, Briefcase, X, Mail, Shield, Info,
   Clock, Tag, Search, Laugh,
-  FileText, Sparkles, Scale, Home, TrendingUp,
+  FileText, Sparkles, Scale, Home, TrendingUp, BookOpen,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DisclaimerBar } from './components/ui/DisclaimerBar';
@@ -75,6 +75,8 @@ import { WeddingCost }               from './components/calculators/WeddingCost'
 import { PrivacyPolicy }             from './components/pages/PrivacyPolicy';
 import { TermsOfService }            from './components/pages/TermsOfService';
 import { ARTICLES, type Article }    from './data/articles';
+import { BlogList } from './components/pages/BlogList';
+import { BlogDetail } from './components/pages/BlogDetail';
 
 type CalcDef = {
   id: string; name: string; desc: string; emoji: string;
@@ -293,7 +295,7 @@ function Pill({ children, color, bg }: { children:React.ReactNode; color:string;
   );
 }
 
-import { Routes, Route, useNavigate, useParams, useLocation, Navigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 
 import { BottomTab } from './components/ui/BottomTab';
@@ -306,15 +308,27 @@ export default function App() {
   const activeCategory = catMatch ? catMatch[1] : null;
   const activeCalcId = calcMatch ? calcMatch[1] : null;
 
+  const blogDetailMatch = location.pathname.match(/^\/blog\/([^\/]+)/);
+  const activeArticleId = blogDetailMatch ? blogDetailMatch[1] : null;
+
   const [isDark,         setIsDark]         = useState(false);
   const [modal,          setModal]          = useState<'privacy'|'about'|'terms'|'history'|null>(null);
 
   const isPrivacyRoute = location.pathname === '/privacy';
   const isTermsRoute = location.pathname === '/terms';
   const isAboutRoute = location.pathname === '/about';
+  const isBlogRoute = location.pathname === '/blog';
+  const isBlogDetailRoute = location.pathname.startsWith('/blog/');
 
   // Replace modal render
   const currentModal = isPrivacyRoute ? 'privacy' : isTermsRoute ? 'terms' : isAboutRoute ? 'about' : modal;
+
+  const handleCloseModal = () => {
+    setModal(null);
+    if (isPrivacyRoute || isTermsRoute || isAboutRoute) {
+      navigate('/');
+    }
+  };
 
   const [activeArticle,  setActiveArticle]  = useState<Article|null>(null);
   const [showSearch,     setShowSearch]     = useState(false);
@@ -438,6 +452,33 @@ export default function App() {
             </nav>
 
             <div style={{ display:'flex', alignItems:'center', gap:8, flexShrink:0 }}>
+              {/* Blog button */}
+              <button onClick={() => navigate('/blog')} aria-label="재테크 가이드"
+                style={{
+                  height:38, borderRadius:12, display:'flex', alignItems:'center',
+                  gap:6, padding:'0 14px',
+                  background: isBlogRoute || isBlogDetailRoute ? 'linear-gradient(135deg,#6366f1,#8b5cf6)' : 'rgba(255,255,255,0.08)',
+                  color: isBlogRoute || isBlogDetailRoute ? '#fff' : 'rgba(255,255,255,0.75)',
+                  border: isBlogRoute || isBlogDetailRoute ? 'none' : '1px solid rgba(255,255,255,0.12)',
+                  fontWeight: 600,
+                  fontSize: 12,
+                }}
+                onMouseEnter={(e) => {
+                  if (!(isBlogRoute || isBlogDetailRoute)) {
+                    e.currentTarget.style.background = 'rgba(255,255,255,0.14)';
+                    e.currentTarget.style.color = '#fff';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!(isBlogRoute || isBlogDetailRoute)) {
+                    e.currentTarget.style.background = 'rgba(255,255,255,0.08)';
+                    e.currentTarget.style.color = 'rgba(255,255,255,0.75)';
+                  }
+                }}>
+                <BookOpen size={14}/>
+                <span className="hidden sm:inline">재테크 가이드</span>
+              </button>
+
               {/* Search button */}
               <button onClick={() => setShowSearch(true)} aria-label="검색 (Ctrl+K)"
                 style={{
@@ -476,7 +517,7 @@ export default function App() {
         <AnimatePresence mode="wait">
 
           {/* ── Home ──────────────────────────────────────────── */}
-          {!activeCategory && (
+          {!activeCategory && !isBlogRoute && !isBlogDetailRoute && (
             <motion.div key="home" initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }} transition={{ duration:0.2 }}>
 
               {/* Hero */}
@@ -1018,6 +1059,19 @@ export default function App() {
             </motion.div>
           )}
 
+          {/* ── Blog ─────────────────────────────────────────── */}
+          {(isBlogRoute || isBlogDetailRoute) && (
+            <motion.div key={location.pathname}
+              initial={{ opacity:0, y:16 }} animate={{ opacity:1, y:0 }} exit={{ opacity:0, y:-16 }}
+              transition={{ duration:0.2 }}>
+              {isBlogRoute ? (
+                <BlogList isDark={isDark} />
+              ) : (
+                <BlogDetail isDark={isDark} articleId={activeArticleId || undefined} />
+              )}
+            </motion.div>
+          )}
+
         </AnimatePresence>
 
         {/* ── Footer ────────────────────────────────────────── */}
@@ -1067,6 +1121,7 @@ export default function App() {
                 <p style={{ fontSize:13, fontWeight:800, color:titleColor, marginBottom:18 }}>📬 정보</p>
                 <ul style={{ listStyle:'none', display:'flex', flexDirection:'column', gap:12 }}>
                   {([
+                    { icon:<BookOpen size={13}/>, label:'재테크 가이드',    act:()=>navigate('/blog')    },
                     { icon:<Info size={13}/>,     label:'서비스 소개',      act:()=>navigate('/about')   },
                     { icon:<Shield size={13}/>,   label:'개인정보처리방침', act:()=>navigate('/privacy') },
                     { icon:<FileText size={13}/>, label:'이용약관',         act:()=>navigate('/terms')   },
@@ -1223,14 +1278,14 @@ export default function App() {
 
         {/* ── Legal modal ───────────────────────────────────── */}
         <AnimatePresence>
-          {modal && (
+          {currentModal && (
             <motion.div initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }}
               style={{
                 position:'fixed', inset:0, zIndex:50, display:'flex',
                 alignItems:'center', justifyContent:'center', padding:20,
                 background:'rgba(0,0,0,0.5)', backdropFilter:'blur(10px)',
               }}
-              onClick={() => setModal(null)}>
+              onClick={handleCloseModal}>
               <motion.div initial={{ scale:0.94, y:24 }} animate={{ scale:1, y:0 }} exit={{ scale:0.94, y:24 }}
                 onClick={(e) => e.stopPropagation()}
                 style={{
@@ -1245,7 +1300,7 @@ export default function App() {
                   <h2 style={{ fontSize:18, fontWeight:800, color:titleColor }}>
                     {currentModal==='history'?'🕒 최근 사용 기록':currentModal==='privacy'?'🔒 개인정보처리방침':currentModal==='terms'?'📄 이용약관':'✨ 서비스 소개'}
                   </h2>
-                  <button onClick={() => setModal(null)}
+                  <button onClick={handleCloseModal}
                     style={{
                       width:36, height:36, borderRadius:11, display:'flex', alignItems:'center', justifyContent:'center',
                       background:isDark?'#2c2c2e':'#f2f2f7', color:mutedColor,
@@ -1254,9 +1309,9 @@ export default function App() {
                   </button>
                 </div>
                 <div style={{ padding:28 }}>
-                  {modal==='history' ? <HistoryContent navigate={handleNavigate} setModal={setModal} isDark={isDark} titleColor={titleColor} mutedColor={mutedColor} />
-                    : modal==='privacy' ? <PrivacyPolicy/>
-                    : modal==='terms' ? <TermsOfService/>
+                  {currentModal==='history' ? <HistoryContent navigate={handleNavigate} setModal={setModal} isDark={isDark} titleColor={titleColor} mutedColor={mutedColor} />
+                    : currentModal==='privacy' ? <PrivacyPolicy/>
+                    : currentModal==='terms' ? <TermsOfService/>
                     : <AboutContent titleColor={titleColor} mutedColor={mutedColor}/>}
                 </div>
               </motion.div>
@@ -1369,6 +1424,8 @@ export default function App() {
           )}
         </AnimatePresence>
 
+        <Toast />
+        <BottomTab isDark={isDark} />
       </div>
     </div>
   );

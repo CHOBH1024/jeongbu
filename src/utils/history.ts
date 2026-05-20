@@ -36,3 +36,7 @@ export function getHistory(): HistoryItem[] {
     return [];
   }
 }
+
+export function clearHistory(): void {
+  localStorage.removeItem(HISTORY_KEY);
+}

@@ -1,5 +1,3 @@
 User-agent: *
 Allow: /
-
 Sitemap: https://jeongbu.vercel.app/sitemap.xml
-Sitemap: https://jeongbu.vercel.app/rss.xml
