@@ -1,3 +1,4 @@
+import { SeoColumn } from './components/ui/SeoColumn';
 import { saveHistory, getHistory, type HistoryItem } from './utils/history';
 import React, { useState, useCallback } from 'react';
 import {
@@ -797,8 +798,16 @@ export default function App() {
                     </div>
                   </div>
 
-                  <AdBanner />
+                  
+  <div style={{ marginTop: 40 }}>
+    <SeoColumn 
+      isDark={isDark}
+      title="일상의 필수 계산기 모음, 별의별 계산기"
+      content="대출이자, 연봉, 세금, 부동산, 가상화폐 등 복잡한 계산을 언제 어디서나 쉽게 할 수 있습니다.\n무료로 제공되는 40여 종의 스마트 계산기로 여러분의 시간을 절약하세요."
+    />
+  </div>
 
+                  <AdBanner />
                   <div style={{ paddingTop:28 }}>
                     <p style={{ fontSize:12, fontWeight:800, color:mutedColor, letterSpacing:'0.06em', marginBottom:16 }}>
                       전체 계산기 {selectedCategory.calculators.filter(c=>!c.status).length}개
